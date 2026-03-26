@@ -6,10 +6,43 @@
 
   <!-- Marca / Logo -->
   <div class="sidebar-brand">
-    <div class="brand-icon">
-      <i class="bi bi-heart-pulse-fill"></i>
-    </div>
-    <span class="brand-name">PetSalud</span>
+
+    <!-- Logo SVG inline: pata + cruz médica -->
+    <svg class="brand-logo"
+         xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 40 40"
+         width="38" height="38"
+         aria-label="PetSalud logo"
+         role="img">
+      <defs>
+        <linearGradient id="ps-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#4f94f8"/>
+          <stop offset="100%" stop-color="#1a3a8f"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Fondo redondeado con gradiente -->
+      <rect width="40" height="40" rx="9" fill="url(#ps-grad)"/>
+
+      <!-- Cuatro almohadillas de dedos en arco -->
+      <ellipse cx="9.5"  cy="20"   rx="4.2" ry="3.3" fill="white" opacity=".92" transform="rotate(28  9.5 20)"/>
+      <ellipse cx="16"   cy="13"   rx="3.6" ry="2.8" fill="white" opacity=".92" transform="rotate(10  16 13)"/>
+      <ellipse cx="24"   cy="13"   rx="3.6" ry="2.8" fill="white" opacity=".92" transform="rotate(-10 24 13)"/>
+      <ellipse cx="30.5" cy="20"   rx="4.2" ry="3.3" fill="white" opacity=".92" transform="rotate(-28 30.5 20)"/>
+
+      <!-- Almohadilla central (metacarpiana) -->
+      <ellipse cx="20" cy="29" rx="8" ry="6.5" fill="white" opacity=".92"/>
+
+      <!-- Cruz médica: relieve azul oscuro sobre la almohadilla blanca -->
+      <rect x="18.2" y="24.5" width="3.6" height="9"   rx="1.4" fill="#1a3a8f"/>
+      <rect x="15.5" y="27.2" width="9"   height="3.6" rx="1.4" fill="#1a3a8f"/>
+    </svg>
+
+    <!-- Nombre de la app -->
+    <span class="brand-name">
+      <span class="brand-pet">Pet</span><span class="brand-salud">Salud</span>
+    </span>
+
   </div>
 
   <!-- Navegación principal -->
