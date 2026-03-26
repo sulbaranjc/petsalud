@@ -8,48 +8,64 @@
       <h1 class="page-title">Mascotas</h1>
       <p class="page-subtitle">Pacientes registrados en la clínica</p>
     </div>
-    <button class="btn-ps-primary">
+    <a th:href="@{/mascotas/nueva}" class="btn-ps-primary">
       <i class="bi bi-plus-lg"></i> Nueva Mascota
-    </button>
+    </a>
   </div>
 
-  <div class="ps-card filter-bar">
-    <div class="row g-2 align-items-center">
-      <div class="col-md-4">
-        <div class="filter-search-wrap">
-          <i class="bi bi-search"></i>
-          <input type="text" class="filter-input" placeholder="Buscar por nombre, propietario...">
+  <!-- Mensaje flash -->
+  <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${mensajeExito}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <!-- Filtros -->
+  <form th:action="@{/mascotas}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por nombre, propietario..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select name="idEspecie" class="filter-select">
+            <option value="">Todas las especies</option>
+            <option th:each="especie : ${especies}"
+                    th:value="${especie.id}"
+                    th:text="${especie.nombre}"
+                    th:selected="${especie.id == idEspecieFiltro}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="sexo" class="filter-select">
+            <option value="">Todos los sexos</option>
+            <option value="M"          th:selected="${sexoFiltro == 'M'}">Macho</option>
+            <option value="F"          th:selected="${sexoFiltro == 'F'}">Hembra</option>
+            <option value="Desconocido" th:selected="${sexoFiltro == 'Desconocido'}">Desconocido</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="activo" class="filter-select">
+            <option value="">Estado</option>
+            <option value="1" th:selected="${activoFiltro == '1'}">Activo</option>
+            <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/mascotas}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
         </div>
       </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Todas las especies</option>
-          <option>Perro</option>
-          <option>Gato</option>
-          <option>Ave</option>
-          <option>Conejo</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Todos los sexos</option>
-          <option>Macho</option>
-          <option>Hembra</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Estado</option>
-          <option>Activo</option>
-          <option>Inactivo</option>
-        </select>
-      </div>
-      <div class="col-md-2 text-end">
-        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
-      </div>
     </div>
-  </div>
+  </form>
 
+  <!-- Tabla -->
   <div class="ps-card">
     <table class="ps-table">
       <thead>
@@ -64,85 +80,50 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><strong>Luna</strong></td>
-          <td>Gato <small class="text-muted d-block">Siamés</small></td>
-          <td>Hembra</td>
-          <td>Ana Torres</td>
-          <td>12/05/2020</td>
-          <td><span class="ps-badge badge-success">Activo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
+        <tr th:each="mascota : ${mascotas}">
+          <td><strong th:text="${mascota.nombre}"></strong></td>
+          <td>
+            <span th:text="${mascota.nombreEspecie}"></span>
+            <small class="text-muted d-block"
+                   th:text="${mascota.nombreRaza ?: 'Mestizo / Sin raza'}"></small>
+          </td>
+          <td>
+            <span th:switch="${mascota.sexo}">
+              <span th:case="'M'">Macho</span>
+              <span th:case="'F'">Hembra</span>
+              <span th:case="*">Desconocido</span>
+            </span>
+          </td>
+          <td th:text="${mascota.nombrePropietario}"></td>
+          <td th:text="${mascota.fechaNacimiento != null}
+                        ? ${#temporals.format(mascota.fechaNacimiento, 'dd/MM/yyyy')}
+                        : '—'"></td>
+          <td>
+            <span th:if="${mascota.activo}"    class="ps-badge badge-success">Activo</span>
+            <span th:unless="${mascota.activo}" class="ps-badge badge-neutral">Inactivo</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a th:href="@{/mascotas/{id}/editar(id=${mascota.id})}"
+                 class="action-btn action-btn-edit" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <form th:action="@{/mascotas/{id}/toggle(id=${mascota.id})}"
+                    method="post" style="display:inline;">
+                <button type="submit"
+                        th:class="${mascota.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
+                        th:title="${mascota.activo} ? 'Desactivar' : 'Activar'">
+                  <i th:class="${mascota.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+                </button>
+              </form>
+            </div>
+          </td>
         </tr>
-        <tr>
-          <td><strong>Max</strong></td>
-          <td>Perro <small class="text-muted d-block">Labrador</small></td>
-          <td>Macho</td>
-          <td>Carlos Díaz</td>
-          <td>03/11/2019</td>
-          <td><span class="ps-badge badge-success">Activo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Pipa</strong></td>
-          <td>Conejo <small class="text-muted d-block">Mestizo</small></td>
-          <td>Hembra</td>
-          <td>María López</td>
-          <td>20/08/2022</td>
-          <td><span class="ps-badge badge-warning">En tratamiento</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Rocky</strong></td>
-          <td>Perro <small class="text-muted d-block">Golden Retriever</small></td>
-          <td>Macho</td>
-          <td>Pedro Ruiz</td>
-          <td>15/02/2018</td>
-          <td><span class="ps-badge badge-success">Activo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Kiwi</strong></td>
-          <td>Ave <small class="text-muted d-block">Loro</small></td>
-          <td>Desconocido</td>
-          <td>Laura Vega</td>
-          <td>—</td>
-          <td><span class="ps-badge badge-danger">Crítico</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
+        <tr th:if="${#lists.isEmpty(mascotas)}">
+          <td colspan="7" class="text-center text-muted py-4">No hay mascotas registradas.</td>
         </tr>
       </tbody>
     </table>
-    <div class="ps-pagination">
-      <span class="pagination-info">Mostrando 1–5 de 230 registros</span>
-      <div class="pagination-controls">
-        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <span class="page-ellipsis">…</span>
-        <button class="page-btn">46</button>
-        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
-      </div>
-    </div>
   </div>
 
 </main>
