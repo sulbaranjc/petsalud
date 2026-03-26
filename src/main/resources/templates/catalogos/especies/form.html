@@ -1,0 +1,75 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout(${especie.id == null} ? 'Nueva Especie' : 'Editar Especie', ~{::main})}"
+      lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-especies'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title" th:text="${especie.id == null} ? 'Nueva Especie' : 'Editar Especie'"></h1>
+      <p class="page-subtitle">Catálogo de especies animales atendidas</p>
+    </div>
+    <a th:href="@{/catalogos/especies}" class="btn-ps-outline">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+  </div>
+
+  <div class="ps-card" style="max-width: 640px;">
+    <form th:action="${especie.id == null} ? @{/catalogos/especies} : @{/catalogos/especies/{id}/editar(id=${especie.id})}"
+          th:object="${especie}"
+          method="post"
+          novalidate>
+
+      <!-- Nombre -->
+      <div class="mb-3">
+        <label for="nombre" class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+        <input type="text"
+               id="nombre"
+               th:field="*{nombre}"
+               th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+               class="form-control"
+               placeholder="Ej: Perro, Gato, Ave"
+               maxlength="60">
+        <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+          <span th:errors="*{nombre}"></span>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-3">
+        <label for="descripcion" class="form-label fw-semibold">Descripción</label>
+        <textarea id="descripcion"
+                  th:field="*{descripcion}"
+                  th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid'"
+                  class="form-control"
+                  rows="3"
+                  maxlength="255"
+                  placeholder="Descripción opcional de la especie"></textarea>
+        <div th:if="${#fields.hasErrors('descripcion')}" class="invalid-feedback">
+          <span th:errors="*{descripcion}"></span>
+        </div>
+      </div>
+
+      <!-- Activo (solo en edición) -->
+      <div class="mb-4" th:if="${especie.id != null}">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
+          <label class="form-check-label fw-semibold" for="activo">Activo</label>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn-ps-primary">
+          <i class="bi bi-floppy-fill"></i>
+          <span th:text="${especie.id == null} ? 'Guardar' : 'Actualizar'"></span>
+        </button>
+        <a th:href="@{/catalogos/especies}" class="btn-ps-outline">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Especies', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-especies'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Especies</h1>
+      <p class="page-subtitle">Catálogo de especies animales atendidas</p>
+    </div>
+    <a th:href="@{/catalogos/especies/nueva}" class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Especie
+    </a>
+  </div>
+
+  <!-- Mensaje flash -->
+  <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${mensajeExito}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="especie : ${especies}">
+          <td><strong th:text="${especie.nombre}"></strong></td>
+          <td th:text="${especie.descripcion ?: '—'}"></td>
+          <td>
+            <span th:if="${especie.activo}"  class="ps-badge badge-success">Activo</span>
+            <span th:unless="${especie.activo}" class="ps-badge badge-neutral">Inactivo</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a th:href="@{/catalogos/especies/{id}/editar(id=${especie.id})}"
+                 class="action-btn action-btn-edit" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <form th:action="@{/catalogos/especies/{id}/toggle(id=${especie.id})}"
+                    method="post" style="display:inline;">
+                <button type="submit"
+                        th:class="${especie.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
+                        th:title="${especie.activo} ? 'Desactivar' : 'Activar'">
+                  <i th:class="${especie.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(especies)}">
+          <td colspan="4" class="text-center text-muted py-4">No hay especies registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>
