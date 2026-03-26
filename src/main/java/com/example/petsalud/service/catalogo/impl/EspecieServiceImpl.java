@@ -3,11 +3,11 @@ package com.example.petsalud.service.catalogo.impl;
 import com.example.petsalud.model.catalogo.Especie;
 import com.example.petsalud.repository.catalogo.EspecieRepository;
 import com.example.petsalud.service.catalogo.EspecieService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional
@@ -29,7 +29,7 @@ public class EspecieServiceImpl implements EspecieService {
     @Transactional(readOnly = true)
     public Especie findById(Integer id) {
         return especieRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Especie no encontrada con id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Especie no encontrada con id: " + id));
     }
 
     @Override

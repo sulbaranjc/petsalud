@@ -1,17 +1,15 @@
 package com.example.petsalud.repository.catalogo;
 
 import com.example.petsalud.model.catalogo.Especie;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public interface EspecieRepository extends JpaRepository<Especie, Integer> {
+public interface EspecieRepository {
 
     List<Especie> findAllByOrderByNombreAsc();
 
-    boolean existsByNombreIgnoreCase(String nombre);
+    Optional<Especie> findById(Integer id);
 
-    boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Integer id);
+    void save(Especie especie);
 }
