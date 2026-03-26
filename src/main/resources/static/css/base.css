@@ -1,0 +1,74 @@
+/* =============================================================================
+   PetSalud — base.css
+   Variables CSS, reset y tipografía global
+   ============================================================================= */
+
+:root {
+  /* Paleta principal */
+  --ps-sidebar-bg:     #1a3a8f;
+  --ps-sidebar-active: #2563eb;
+  --ps-sidebar-hover:  rgba(255, 255, 255, 0.08);
+  --ps-primary:        #2563eb;
+  --ps-primary-dark:   #1e40af;
+  --ps-primary-light:  #dbeafe;
+
+  /* Fondo y superficies */
+  --ps-body-bg:   #eef2ff;
+  --ps-card-bg:   #ffffff;
+  --ps-border:    #e2e8f0;
+
+  /* Texto */
+  --ps-text:        #1e293b;
+  --ps-text-muted:  #64748b;
+  --ps-text-light:  #94a3b8;
+
+  /* Estado */
+  --ps-success: #22c55e;
+  --ps-warning: #f59e0b;
+  --ps-danger:  #ef4444;
+  --ps-info:    #06b6d4;
+
+  /* Dimensiones del layout */
+  --sidebar-width:        250px;
+  --sidebar-collapsed:    70px;
+  --topbar-height:        64px;
+
+  /* Sombras */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:  0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.05);
+  --shadow-lg:  0 10px 15px rgba(0,0,0,.07), 0 4px 6px rgba(0,0,0,.04);
+
+  /* Bordes */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Tipografía */
+  --font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+                 "Helvetica Neue", Arial, sans-serif;
+  --font-size-base: 0.875rem;
+}
+
+/* Reset mínimo */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background-color: var(--ps-body-bg);
+  color: var(--ps-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}

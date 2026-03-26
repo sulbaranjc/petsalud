@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="topbar" class="topbar">
+
+  <!-- Búsqueda -->
+  <div class="topbar-search">
+    <i class="bi bi-search"></i>
+    <input type="text" placeholder="Buscar paciente, cita...">
+  </div>
+
+  <!-- Acciones y usuario -->
+  <div class="topbar-actions">
+
+    <button class="topbar-icon-btn" title="Notificaciones">
+      <i class="bi bi-bell-fill"></i>
+      <span class="topbar-badge"></span>
+    </button>
+
+    <button class="topbar-icon-btn" title="Mensajes">
+      <i class="bi bi-chat-dots-fill"></i>
+    </button>
+
+    <div class="topbar-user">
+      <div class="topbar-avatar">
+        <span>AD</span>
+      </div>
+      <div class="topbar-user-info">
+        <span class="topbar-user-name">Administrador</span>
+        <span class="topbar-user-role">Recepcionista</span>
+      </div>
+      <i class="bi bi-chevron-down" style="font-size:.7rem; color: var(--ps-text-muted); margin-left:.2rem;"></i>
+    </div>
+
+  </div>
+
+</header>
+
+</body>
+</html>

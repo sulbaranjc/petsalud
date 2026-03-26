@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebar" class="sidebar">
+
+  <!-- Marca / Logo -->
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <i class="bi bi-heart-pulse-fill"></i>
+    </div>
+    <span class="brand-name">PetSalud</span>
+  </div>
+
+  <!-- Navegación principal -->
+  <nav class="sidebar-nav">
+
+    <span class="nav-section-label">Principal</span>
+
+    <a th:href="@{/}" class="sidebar-link"
+       th:classappend="${activePage == 'dashboard'} ? 'active'">
+      <i class="bi bi-grid-1x2-fill"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a th:href="@{/citas}" class="sidebar-link"
+       th:classappend="${activePage == 'citas'} ? 'active'">
+      <i class="bi bi-calendar2-check-fill"></i>
+      <span>Citas</span>
+    </a>
+
+    <span class="nav-section-label">Gestión</span>
+
+    <a th:href="@{/mascotas}" class="sidebar-link"
+       th:classappend="${activePage == 'mascotas'} ? 'active'">
+      <i class="bi bi-patch-heart-fill"></i>
+      <span>Mascotas</span>
+    </a>
+
+    <a th:href="@{/propietarios}" class="sidebar-link"
+       th:classappend="${activePage == 'propietarios'} ? 'active'">
+      <i class="bi bi-people-fill"></i>
+      <span>Propietarios</span>
+    </a>
+
+    <a th:href="@{/veterinarios}" class="sidebar-link"
+       th:classappend="${activePage == 'veterinarios'} ? 'active'">
+      <i class="bi bi-person-badge-fill"></i>
+      <span>Veterinarios</span>
+    </a>
+
+    <span class="nav-section-label">Sistema</span>
+
+    <a th:href="@{/configuracion}" class="sidebar-link"
+       th:classappend="${activePage == 'configuracion'} ? 'active'">
+      <i class="bi bi-gear-fill"></i>
+      <span>Configuración</span>
+    </a>
+
+  </nav>
+
+  <!-- Pie del sidebar -->
+  <div class="sidebar-footer">
+    <a href="#" class="sidebar-link">
+      <i class="bi bi-box-arrow-left"></i>
+      <span>Cerrar sesión</span>
+    </a>
+  </div>
+
+</aside>
+
+</body>
+</html>

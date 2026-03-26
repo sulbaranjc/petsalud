@@ -1,0 +1,266 @@
+/* =============================================================================
+   PetSalud — components.css
+   Tarjetas, stat-cards, tablas, badges, botones personalizados
+   ============================================================================= */
+
+/* ─── Card base ─────────────────────────────────────────────────────────────── */
+.ps-card {
+  background: var(--ps-card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--ps-border);
+  padding: 1.25rem;
+}
+
+.ps-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.ps-card-title {
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--ps-text);
+  margin: 0;
+}
+
+/* ─── Stat Card ─────────────────────────────────────────────────────────────── */
+.stat-card {
+  background: var(--ps-card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--ps-border);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: box-shadow .2s, transform .2s;
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.stat-card-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ps-text);
+  line-height: 1.1;
+}
+
+.stat-card-label {
+  font-size: .8rem;
+  color: var(--ps-text-muted);
+  font-weight: 500;
+}
+
+.stat-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* Variantes de color para stat icons */
+.icon-blue    { background-color: var(--ps-primary); }
+.icon-teal    { background-color: #0d9488; }
+.icon-purple  { background-color: #7c3aed; }
+.icon-orange  { background-color: #ea580c; }
+.icon-green   { background-color: #16a34a; }
+.icon-pink    { background-color: #db2777; }
+
+/* ─── Badges / Pills ────────────────────────────────────────────────────────── */
+.ps-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .55rem;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.badge-success  { background: #dcfce7; color: #15803d; }
+.badge-warning  { background: #fef9c3; color: #a16207; }
+.badge-danger   { background: #fee2e2; color: #b91c1c; }
+.badge-info     { background: #cffafe; color: #0e7490; }
+.badge-primary  { background: var(--ps-primary-light); color: var(--ps-primary-dark); }
+.badge-neutral  { background: #f1f5f9; color: var(--ps-text-muted); }
+
+/* ─── Tabla ─────────────────────────────────────────────────────────────────── */
+.ps-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+}
+
+.ps-table thead th {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ps-text-muted);
+  padding: .6rem .75rem;
+  border-bottom: 2px solid var(--ps-border);
+  white-space: nowrap;
+}
+
+.ps-table tbody tr {
+  border-bottom: 1px solid var(--ps-border);
+  transition: background-color .15s;
+}
+
+.ps-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.ps-table tbody tr:hover {
+  background-color: #f8faff;
+}
+
+.ps-table tbody td {
+  padding: .75rem .75rem;
+  color: var(--ps-text);
+  vertical-align: middle;
+}
+
+/* ─── Avatar pequeño en tabla ───────────────────────────────────────────────── */
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--ps-primary-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ps-primary);
+  font-weight: 600;
+  font-size: .75rem;
+}
+
+/* ─── Botones personalizados ────────────────────────────────────────────────── */
+.btn-ps-primary {
+  background-color: var(--ps-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: .45rem 1rem;
+  font-size: .85rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .18s, box-shadow .18s;
+}
+
+.btn-ps-primary:hover {
+  background-color: var(--ps-primary-dark);
+  box-shadow: 0 4px 12px rgba(37,99,235,.3);
+  color: #fff;
+}
+
+.btn-ps-outline {
+  background: transparent;
+  color: var(--ps-primary);
+  border: 1px solid var(--ps-primary);
+  border-radius: var(--radius-sm);
+  padding: .45rem 1rem;
+  font-size: .85rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .18s;
+}
+
+.btn-ps-outline:hover {
+  background: var(--ps-primary-light);
+  color: var(--ps-primary-dark);
+}
+
+/* ─── Link tipo "Ver todo" ──────────────────────────────────────────────────── */
+.link-see-all {
+  font-size: .8rem;
+  color: var(--ps-primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.link-see-all:hover {
+  text-decoration: underline;
+}
+
+/* ─── Acciones inline en tabla ──────────────────────────────────────────────── */
+.action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: .85rem;
+  transition: background-color .15s;
+}
+
+.action-btn-success {
+  background: #dcfce7;
+  color: #15803d;
+}
+.action-btn-success:hover { background: #bbf7d0; }
+
+.action-btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.action-btn-danger:hover { background: #fecaca; }
+
+/* ─── Utilidades de grid para dashboard ─────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
