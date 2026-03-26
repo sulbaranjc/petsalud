@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Drawio temporales ###
+docs/.*.bkp
+docs/.*.dtmp
