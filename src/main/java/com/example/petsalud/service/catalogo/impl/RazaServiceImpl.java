@@ -27,6 +27,12 @@ public class RazaServiceImpl implements RazaService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Raza> search(String nombre, Integer idEspecie, Boolean activo) {
+        return razaRepository.search(nombre, idEspecie, activo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Raza findById(Integer id) {
         return razaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Raza no encontrada con id: " + id));

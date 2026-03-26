@@ -9,6 +9,8 @@ public interface RazaRepository {
 
     List<Raza> findAllByOrderByNombreAsc();
 
+    List<Raza> search(String nombre, Integer idEspecie, Boolean activo);
+
     Optional<Raza> findById(Integer id);
 
     void save(Raza raza);

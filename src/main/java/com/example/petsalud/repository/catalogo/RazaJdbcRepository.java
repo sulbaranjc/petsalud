@@ -45,6 +45,37 @@ public class RazaJdbcRepository implements RazaRepository {
     }
 
     @Override
+    public List<Raza> search(String nombre, Integer idEspecie, Boolean activo) {
+        StringBuilder sql = new StringBuilder("""
+                SELECT r.id,
+                       r.nombre,
+                       r.id_especie,
+                       r.activo,
+                       e.nombre AS nombre_especie
+                  FROM raza r
+                  JOIN especie e ON e.id = r.id_especie
+                 WHERE 1=1
+                """);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND r.nombre LIKE :nombre");
+            params.addValue("nombre", "%" + nombre.trim() + "%");
+        }
+        if (idEspecie != null) {
+            sql.append(" AND r.id_especie = :idEspecie");
+            params.addValue("idEspecie", idEspecie);
+        }
+        if (activo != null) {
+            sql.append(" AND r.activo = :activo");
+            params.addValue("activo", activo);
+        }
+
+        sql.append(" ORDER BY r.nombre ASC");
+        return jdbc.query(sql.toString(), params, ROW_MAPPER);
+    }
+
+    @Override
     public Optional<Raza> findById(Integer id) {
         String sql = """
                 SELECT r.id,

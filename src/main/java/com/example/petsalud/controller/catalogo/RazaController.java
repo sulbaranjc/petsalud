@@ -10,6 +10,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/catalogos/razas")
 public class RazaController {
@@ -23,8 +25,18 @@ public class RazaController {
     }
 
     @GetMapping
-    public String lista(Model model) {
-        model.addAttribute("razas", razaService.findAll());
+    public String lista(@RequestParam(required = false) String q,
+                        @RequestParam(required = false) Integer idEspecie,
+                        @RequestParam(required = false) String activo,
+                        Model model) {
+        Boolean activoBool = "1".equals(activo) ? Boolean.TRUE
+                           : "0".equals(activo) ? Boolean.FALSE
+                           : null;
+        model.addAttribute("razas",         razaService.search(q, idEspecie, activoBool));
+        model.addAttribute("especies",      especieService.findAll());
+        model.addAttribute("q",             Objects.toString(q, ""));
+        model.addAttribute("idEspecieFiltro", idEspecie);
+        model.addAttribute("activoFiltro",  Objects.toString(activo, ""));
         return "catalogos/razas/lista";
     }
 

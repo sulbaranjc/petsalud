@@ -8,6 +8,8 @@ public interface RazaService {
 
     List<Raza> findAll();
 
+    List<Raza> search(String nombre, Integer idEspecie, Boolean activo);
+
     Raza findById(Integer id);
 
     void save(Raza raza);

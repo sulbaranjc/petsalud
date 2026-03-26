@@ -20,6 +20,42 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
+  <form th:action="@{/catalogos/razas}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar raza..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select name="idEspecie" class="filter-select">
+            <option value="">Todas las especies</option>
+            <option th:each="especie : ${especies}"
+                    th:value="${especie.id}"
+                    th:text="${especie.nombre}"
+                    th:selected="${especie.id == idEspecieFiltro}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="activo" class="filter-select">
+            <option value="">Estado</option>
+            <option value="1" th:selected="${activoFiltro == '1'}">Activo</option>
+            <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/catalogos/razas}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
   <div class="ps-card">
     <table class="ps-table">
       <thead>
