@@ -1,0 +1,109 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Vacunas', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-vacunas'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Vacunas</h1>
+      <p class="page-subtitle">Catálogo de vacunas aplicables a las mascotas</p>
+    </div>
+    <button class="btn-ps-primary"><i class="bi bi-plus-lg"></i> Nueva Vacuna</button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por nombre, laboratorio...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Estado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end ms-auto">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Laboratorio</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">1</td>
+          <td><strong>Antirrábica</strong></td>
+          <td>Merial</td>
+          <td>Prevención de la rabia en perros y gatos</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">2</td>
+          <td><strong>Parvovirus</strong></td>
+          <td>Zoetis</td>
+          <td>Prevención del parvovirus canino</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">3</td>
+          <td><strong>Triple Canina</strong></td>
+          <td>Nobivac</td>
+          <td>Moquillo, hepatitis infecciosa, parvovirus</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">4</td>
+          <td><strong>Triple Felina</strong></td>
+          <td>Boehringer</td>
+          <td>Herpesvirus, calicivirus, panleucopenia</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">5</td>
+          <td><strong>Leptospirosis</strong></td>
+          <td>Virbac</td>
+          <td>Prevención de leptospira en caninos</td>
+          <td><span class="ps-badge badge-neutral">Inactivo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-success" title="Activar"><i class="bi bi-toggle-off"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>

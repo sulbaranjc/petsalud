@@ -1,0 +1,156 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Mascotas', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='mascotas'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Mascotas</h1>
+      <p class="page-subtitle">Pacientes registrados en la clínica</p>
+    </div>
+    <button class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Mascota
+    </button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-4">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por nombre, propietario...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Todas las especies</option>
+          <option>Perro</option>
+          <option>Gato</option>
+          <option>Ave</option>
+          <option>Conejo</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Todos los sexos</option>
+          <option>Macho</option>
+          <option>Hembra</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Estado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Especie / Raza</th>
+          <th>Sexo</th>
+          <th>Propietario</th>
+          <th>Nacimiento</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">001</td>
+          <td><strong>Luna</strong></td>
+          <td>Gato <small class="text-muted d-block">Siamés</small></td>
+          <td>Hembra</td>
+          <td>Ana Torres</td>
+          <td>12/05/2020</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">002</td>
+          <td><strong>Max</strong></td>
+          <td>Perro <small class="text-muted d-block">Labrador</small></td>
+          <td>Macho</td>
+          <td>Carlos Díaz</td>
+          <td>03/11/2019</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">003</td>
+          <td><strong>Pipa</strong></td>
+          <td>Conejo <small class="text-muted d-block">Mestizo</small></td>
+          <td>Hembra</td>
+          <td>María López</td>
+          <td>20/08/2022</td>
+          <td><span class="ps-badge badge-warning">En tratamiento</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">004</td>
+          <td><strong>Rocky</strong></td>
+          <td>Perro <small class="text-muted d-block">Golden Retriever</small></td>
+          <td>Macho</td>
+          <td>Pedro Ruiz</td>
+          <td>15/02/2018</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">005</td>
+          <td><strong>Kiwi</strong></td>
+          <td>Ave <small class="text-muted d-block">Loro</small></td>
+          <td>Desconocido</td>
+          <td>Laura Vega</td>
+          <td>—</td>
+          <td><span class="ps-badge badge-danger">Crítico</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver historial"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–5 de 230 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-btn">46</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

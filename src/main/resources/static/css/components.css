@@ -234,6 +234,150 @@
 }
 .action-btn-danger:hover { background: #fecaca; }
 
+.action-btn-edit {
+  background: #fef3c7;
+  color: #b45309;
+}
+.action-btn-edit:hover { background: #fde68a; }
+
+.action-btn-info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.action-btn-info:hover { background: #bae6fd; }
+
+/* Agrupador de botones de acción en tabla */
+.table-actions {
+  display: flex;
+  gap: .3rem;
+  align-items: center;
+}
+
+/* ─── Barra de filtros (sobre tablas) ───────────────────────────────────────── */
+.filter-bar {
+  padding: .75rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.filter-search-wrap {
+  position: relative;
+}
+
+.filter-search-wrap i {
+  position: absolute;
+  left: .75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ps-text-muted);
+  font-size: .9rem;
+  pointer-events: none;
+}
+
+.filter-input {
+  width: 100%;
+  padding: .42rem .75rem .42rem 2.1rem;
+  border: 1px solid var(--ps-border);
+  border-radius: var(--radius-sm);
+  font-size: .85rem;
+  color: var(--ps-text);
+  background: var(--ps-body-bg);
+  outline: none;
+  transition: border-color .18s;
+}
+
+.filter-input:focus {
+  border-color: var(--ps-primary);
+  background: #fff;
+}
+
+.filter-select {
+  width: 100%;
+  padding: .42rem .75rem;
+  border: 1px solid var(--ps-border);
+  border-radius: var(--radius-sm);
+  font-size: .85rem;
+  color: var(--ps-text);
+  background: var(--ps-body-bg);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .18s;
+}
+
+.filter-select:focus {
+  border-color: var(--ps-primary);
+  background: #fff;
+}
+
+/* ─── Paginación ────────────────────────────────────────────────────────────── */
+.ps-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem .5rem 0;
+  margin-top: .5rem;
+  border-top: 1px solid var(--ps-border);
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.pagination-info {
+  font-size: .8rem;
+  color: var(--ps-text-muted);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.page-btn {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 .4rem;
+  border: 1px solid var(--ps-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ps-text);
+  font-size: .8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .15s, color .15s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: var(--ps-primary-light);
+  color: var(--ps-primary);
+  border-color: var(--ps-primary);
+}
+
+.page-btn.active {
+  background: var(--ps-primary);
+  color: #fff;
+  border-color: var(--ps-primary);
+}
+
+.page-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.page-ellipsis {
+  font-size: .8rem;
+  color: var(--ps-text-muted);
+  padding: 0 .2rem;
+}
+
+/* ─── Badge variante purple (para catálogos) ─────────────────────────────── */
+.badge-purple {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+/* ─── Sidebar: submenú catálogos ────────────────────────────────────────────── */
+
 /* ─── Utilidades de grid para dashboard ─────────────────────────────────────── */
 .stats-grid {
   display: grid;

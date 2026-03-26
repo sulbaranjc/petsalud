@@ -1,0 +1,121 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Medicamentos', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-medicamentos'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Medicamentos</h1>
+      <p class="page-subtitle">Catálogo de medicamentos disponibles para prescripción</p>
+    </div>
+    <button class="btn-ps-primary"><i class="bi bi-plus-lg"></i> Nuevo Medicamento</button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por nombre, presentación...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Estado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end ms-auto">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Presentación</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">1</td>
+          <td><strong>Amoxicilina</strong></td>
+          <td>Tableta 500 mg</td>
+          <td>Antibiótico de amplio espectro</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">2</td>
+          <td><strong>Meloxicam</strong></td>
+          <td>Solución inyectable 5 mg/ml</td>
+          <td>Antiinflamatorio no esteroideo</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">3</td>
+          <td><strong>Metronidazol</strong></td>
+          <td>Tableta 250 mg</td>
+          <td>Antiparasitario y antibacteriano</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">4</td>
+          <td><strong>Ivermectina</strong></td>
+          <td>Solución oral 1%</td>
+          <td>Antiparasitario externo e interno</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">5</td>
+          <td><strong>Cefalexina</strong></td>
+          <td>Cápsula 250 mg</td>
+          <td>Antibiótico cefalosporina 1ª gen.</td>
+          <td><span class="ps-badge badge-neutral">Inactivo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-success" title="Activar"><i class="bi bi-toggle-off"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–5 de 64 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-btn">13</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

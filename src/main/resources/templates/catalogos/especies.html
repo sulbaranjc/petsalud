@@ -1,0 +1,109 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Especies', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-especies'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Especies</h1>
+      <p class="page-subtitle">Catálogo de especies animales atendidas</p>
+    </div>
+    <button class="btn-ps-primary"><i class="bi bi-plus-lg"></i> Nueva Especie</button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar especie...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Estado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end ms-auto">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Razas</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">1</td>
+          <td><strong>Perro</strong></td>
+          <td>Canis lupus familiaris</td>
+          <td><span class="ps-badge badge-primary">48</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">2</td>
+          <td><strong>Gato</strong></td>
+          <td>Felis catus</td>
+          <td><span class="ps-badge badge-primary">32</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">3</td>
+          <td><strong>Ave</strong></td>
+          <td>Diversas especies de aves domésticas</td>
+          <td><span class="ps-badge badge-primary">15</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">4</td>
+          <td><strong>Conejo</strong></td>
+          <td>Oryctolagus cuniculus</td>
+          <td><span class="ps-badge badge-primary">8</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Desactivar"><i class="bi bi-toggle-on"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">5</td>
+          <td><strong>Reptil</strong></td>
+          <td>Reptiles domésticos</td>
+          <td><span class="ps-badge badge-primary">5</span></td>
+          <td><span class="ps-badge badge-neutral">Inactivo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-success" title="Activar"><i class="bi bi-toggle-off"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>

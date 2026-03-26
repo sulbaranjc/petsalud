@@ -1,0 +1,136 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Vacunaciones', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='vacunaciones'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Vacunaciones</h1>
+      <p class="page-subtitle">Historial de vacunas aplicadas a las mascotas</p>
+    </div>
+    <button class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Registrar Vacunación
+    </button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-4">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por mascota, vacuna...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Todas las vacunas</option>
+          <option>Rabia</option>
+          <option>Parvovirus</option>
+          <option>Moquillo</option>
+          <option>Triple felina</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Próxima dosis</option>
+          <option>Esta semana</option>
+          <option>Este mes</option>
+          <option>Vencidas</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end ms-auto">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Mascota</th>
+          <th>Vacuna</th>
+          <th>Veterinario</th>
+          <th>Fecha aplicación</th>
+          <th>Próxima dosis</th>
+          <th>Lote</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">001</td>
+          <td><strong>Luna</strong> <small class="text-muted d-block">Gato</small></td>
+          <td>Triple felina</td>
+          <td>Dra. Laura Vega</td>
+          <td>10/01/2026</td>
+          <td><span class="ps-badge badge-success">10/01/2027</span></td>
+          <td>LT-2025-A</td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">002</td>
+          <td><strong>Max</strong> <small class="text-muted d-block">Perro</small></td>
+          <td>Rabia</td>
+          <td>Dr. Carlos Méndez</td>
+          <td>15/02/2026</td>
+          <td><span class="ps-badge badge-warning">15/02/2027</span></td>
+          <td>RB-2026-C</td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">003</td>
+          <td><strong>Max</strong> <small class="text-muted d-block">Perro</small></td>
+          <td>Parvovirus</td>
+          <td>Dr. Carlos Méndez</td>
+          <td>15/02/2026</td>
+          <td><span class="ps-badge badge-success">15/02/2027</span></td>
+          <td>PV-2026-B</td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">004</td>
+          <td><strong>Rocky</strong> <small class="text-muted d-block">Perro</small></td>
+          <td>Rabia</td>
+          <td>Dra. Laura Vega</td>
+          <td>05/01/2025</td>
+          <td><span class="ps-badge badge-danger">05/01/2026 ⚠</span></td>
+          <td>RB-2025-A</td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–4 de 89 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-btn">18</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

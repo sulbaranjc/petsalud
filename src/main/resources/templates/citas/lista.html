@@ -1,0 +1,155 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Citas', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='citas'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Citas</h1>
+      <p class="page-subtitle">Gestión de citas médicas agendadas</p>
+    </div>
+    <button class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Cita
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-4">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por mascota, veterinario...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Todos los estados</option>
+          <option>Pendiente</option>
+          <option>Confirmada</option>
+          <option>En curso</option>
+          <option>Completada</option>
+          <option>Cancelada</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input type="date" class="filter-select">
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Todos los veterinarios</option>
+          <option>Dr. Carlos Méndez</option>
+          <option>Dra. Laura Vega</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Mascota</th>
+          <th>Propietario</th>
+          <th>Veterinario</th>
+          <th>Fecha y Hora</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">001</td>
+          <td><strong>Luna</strong> <small class="text-muted d-block">Gato</small></td>
+          <td>Ana Torres</td>
+          <td>Dra. Laura Vega</td>
+          <td>26/03/2026 09:00</td>
+          <td>Medicina Interna</td>
+          <td><span class="ps-badge badge-success">Confirmada</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">002</td>
+          <td><strong>Max</strong> <small class="text-muted d-block">Perro</small></td>
+          <td>Carlos Díaz</td>
+          <td>Dr. Carlos Méndez</td>
+          <td>26/03/2026 10:30</td>
+          <td>Cirugía programada</td>
+          <td><span class="ps-badge badge-warning">Pendiente</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">003</td>
+          <td><strong>Pipa</strong> <small class="text-muted d-block">Conejo</small></td>
+          <td>María López</td>
+          <td>Dra. Laura Vega</td>
+          <td>26/03/2026 12:00</td>
+          <td>Dermatología</td>
+          <td><span class="ps-badge badge-primary">En curso</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">004</td>
+          <td><strong>Rocky</strong> <small class="text-muted d-block">Perro</small></td>
+          <td>Pedro Ruiz</td>
+          <td>Dr. Carlos Méndez</td>
+          <td>26/03/2026 15:00</td>
+          <td>Vacunación anual</td>
+          <td><span class="ps-badge badge-neutral">Programada</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">005</td>
+          <td><strong>Kiwi</strong> <small class="text-muted d-block">Ave</small></td>
+          <td>Laura Vega</td>
+          <td>Dr. Carlos Méndez</td>
+          <td>27/03/2026 09:30</td>
+          <td>Control general</td>
+          <td><span class="ps-badge badge-danger">Cancelada</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–5 de 45 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-btn">9</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

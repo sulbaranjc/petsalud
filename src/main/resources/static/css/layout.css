@@ -115,6 +115,43 @@
   box-shadow: 0 4px 12px rgba(37,99,235,.35);
 }
 
+/* Botón colapsable del sidebar (catálogos) */
+.sidebar-collapse-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+
+.collapse-chevron {
+  margin-left: auto;
+  font-size: .7rem;
+  transition: transform .2s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-collapse-btn[aria-expanded="true"] .collapse-chevron {
+  transform: rotate(180deg);
+}
+
+/* Submenú de catálogos */
+.sidebar-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  padding-left: .75rem;
+  margin-top: .1rem;
+}
+
+.sidebar-submenu .sidebar-link {
+  padding: .5rem .875rem;
+  font-size: .82rem;
+}
+
+.sidebar-submenu .sidebar-link i {
+  font-size: .95rem;
+}
+
 /* Footer del sidebar */
 .sidebar-footer {
   padding: .75rem;

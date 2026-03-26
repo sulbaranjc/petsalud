@@ -1,0 +1,133 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Veterinarios', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='veterinarios'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Veterinarios</h1>
+      <p class="page-subtitle">Personal médico activo de la clínica</p>
+    </div>
+    <button class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nuevo Veterinario
+    </button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-4">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por nombre, matrícula...">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="filter-select">
+          <option value="">Todas las especialidades</option>
+          <option>Medicina Interna</option>
+          <option>Cirugía</option>
+          <option>Dermatología</option>
+          <option>Odontología</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Estado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end ms-auto">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre completo</th>
+          <th>Matrícula</th>
+          <th>Especialidad</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">001</td>
+          <td><strong>Dr. Carlos Méndez</strong></td>
+          <td>VET-00123</td>
+          <td><span class="ps-badge badge-info">Medicina Interna</span></td>
+          <td>+51 987 111 222</td>
+          <td>c.mendez@petsalud.com</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">002</td>
+          <td><strong>Dra. Laura Vega</strong></td>
+          <td>VET-00456</td>
+          <td><span class="ps-badge badge-info">Cirugía</span></td>
+          <td>+51 987 333 444</td>
+          <td>l.vega@petsalud.com</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">003</td>
+          <td><strong>Dr. Andrés Mora</strong></td>
+          <td>VET-00789</td>
+          <td><span class="ps-badge badge-info">Dermatología</span></td>
+          <td>+51 987 555 666</td>
+          <td>a.mora@petsalud.com</td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">004</td>
+          <td><strong>Dra. Sofía Paredes</strong></td>
+          <td>VET-01012</td>
+          <td><span class="ps-badge badge-info">Odontología</span></td>
+          <td>+51 987 777 888</td>
+          <td>s.paredes@petsalud.com</td>
+          <td><span class="ps-badge badge-neutral">Inactivo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–4 de 12 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Propietarios', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='propietarios'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Propietarios</h1>
+      <p class="page-subtitle">Tutores y dueños de mascotas registrados</p>
+    </div>
+    <button class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nuevo Propietario
+    </button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por nombre, documento, email...">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="filter-select">
+          <option value="">Estado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end ms-auto">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre completo</th>
+          <th>Documento</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Mascotas</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">001</td>
+          <td><strong>Torres, Ana</strong></td>
+          <td>12345678</td>
+          <td>+51 987 654 321</td>
+          <td>ana.torres@email.com</td>
+          <td><span class="ps-badge badge-primary">2</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver mascotas"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">002</td>
+          <td><strong>Díaz, Carlos</strong></td>
+          <td>87654321</td>
+          <td>+51 956 789 012</td>
+          <td>carlos.diaz@email.com</td>
+          <td><span class="ps-badge badge-primary">1</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver mascotas"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">003</td>
+          <td><strong>López, María</strong></td>
+          <td>11223344</td>
+          <td>+51 912 345 678</td>
+          <td>maria.lopez@email.com</td>
+          <td><span class="ps-badge badge-primary">3</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver mascotas"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">004</td>
+          <td><strong>Ruiz, Pedro</strong></td>
+          <td>44332211</td>
+          <td>+51 934 567 890</td>
+          <td>pedro.ruiz@email.com</td>
+          <td><span class="ps-badge badge-primary">1</span></td>
+          <td><span class="ps-badge badge-success">Activo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver mascotas"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">005</td>
+          <td><strong>Vega, Laura</strong></td>
+          <td>55667788</td>
+          <td>+51 965 432 109</td>
+          <td>—</td>
+          <td><span class="ps-badge badge-primary">1</span></td>
+          <td><span class="ps-badge badge-neutral">Inactivo</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver mascotas"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–5 de 184 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-btn">37</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

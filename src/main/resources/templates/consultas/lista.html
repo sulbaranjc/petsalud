@@ -1,0 +1,132 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Consultas', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='consultas'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Consultas</h1>
+      <p class="page-subtitle">Historial clínico de consultas realizadas</p>
+    </div>
+    <button class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Consulta
+    </button>
+  </div>
+
+  <div class="ps-card filter-bar">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-4">
+        <div class="filter-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="filter-input" placeholder="Buscar por mascota, diagnóstico...">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <input type="date" class="filter-select" title="Desde">
+      </div>
+      <div class="col-md-2">
+        <input type="date" class="filter-select" title="Hasta">
+      </div>
+      <div class="col-md-2">
+        <select class="filter-select">
+          <option value="">Veterinario</option>
+          <option>Dr. Carlos Méndez</option>
+          <option>Dra. Laura Vega</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end">
+        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Mascota</th>
+          <th>Veterinario</th>
+          <th>Fecha</th>
+          <th>Peso</th>
+          <th>Diagnóstico</th>
+          <th>Tratamiento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-muted">001</td>
+          <td><strong>Luna</strong> <small class="text-muted d-block">Gato · Ana Torres</small></td>
+          <td>Dra. Laura Vega</td>
+          <td>20/03/2026</td>
+          <td>4.2 kg</td>
+          <td>Dermatitis alérgica</td>
+          <td><span class="ps-badge badge-warning">Con tratamiento</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver ficha completa"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">002</td>
+          <td><strong>Max</strong> <small class="text-muted d-block">Perro · Carlos Díaz</small></td>
+          <td>Dr. Carlos Méndez</td>
+          <td>18/03/2026</td>
+          <td>28.5 kg</td>
+          <td>Otitis externa bilateral</td>
+          <td><span class="ps-badge badge-success">Completado</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver ficha completa"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">003</td>
+          <td><strong>Kiwi</strong> <small class="text-muted d-block">Ave · Laura Vega</small></td>
+          <td>Dr. Carlos Méndez</td>
+          <td>15/03/2026</td>
+          <td>0.4 kg</td>
+          <td>Infección respiratoria</td>
+          <td><span class="ps-badge badge-warning">Con tratamiento</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver ficha completa"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+        <tr>
+          <td class="text-muted">004</td>
+          <td><strong>Rocky</strong> <small class="text-muted d-block">Perro · Pedro Ruiz</small></td>
+          <td>Dra. Laura Vega</td>
+          <td>10/03/2026</td>
+          <td>32.1 kg</td>
+          <td>Control post-operatorio</td>
+          <td><span class="ps-badge badge-success">Completado</span></td>
+          <td><div class="table-actions">
+            <button class="action-btn action-btn-info"  title="Ver ficha completa"><i class="bi bi-eye-fill"></i></button>
+            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
+            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+          </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ps-pagination">
+      <span class="pagination-info">Mostrando 1–4 de 312 registros</span>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-btn">63</button>
+        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

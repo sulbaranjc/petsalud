@@ -6,8 +6,6 @@
 
   <!-- Marca / Logo -->
   <div class="sidebar-brand">
-
-    <!-- Logo SVG inline: pata + cruz médica -->
     <svg class="brand-logo"
          xmlns="http://www.w3.org/2000/svg"
          viewBox="0 0 40 40"
@@ -20,72 +18,131 @@
           <stop offset="100%" stop-color="#1a3a8f"/>
         </linearGradient>
       </defs>
-
-      <!-- Fondo redondeado con gradiente -->
       <rect width="40" height="40" rx="9" fill="url(#ps-grad)"/>
-
-      <!-- Cuatro almohadillas de dedos en arco -->
       <ellipse cx="9.5"  cy="20"   rx="4.2" ry="3.3" fill="white" opacity=".92" transform="rotate(28  9.5 20)"/>
       <ellipse cx="16"   cy="13"   rx="3.6" ry="2.8" fill="white" opacity=".92" transform="rotate(10  16 13)"/>
       <ellipse cx="24"   cy="13"   rx="3.6" ry="2.8" fill="white" opacity=".92" transform="rotate(-10 24 13)"/>
       <ellipse cx="30.5" cy="20"   rx="4.2" ry="3.3" fill="white" opacity=".92" transform="rotate(-28 30.5 20)"/>
-
-      <!-- Almohadilla central (metacarpiana) -->
       <ellipse cx="20" cy="29" rx="8" ry="6.5" fill="white" opacity=".92"/>
-
-      <!-- Cruz médica: relieve azul oscuro sobre la almohadilla blanca -->
       <rect x="18.2" y="24.5" width="3.6" height="9"   rx="1.4" fill="#1a3a8f"/>
       <rect x="15.5" y="27.2" width="9"   height="3.6" rx="1.4" fill="#1a3a8f"/>
     </svg>
-
-    <!-- Nombre de la app -->
     <span class="brand-name">
       <span class="brand-pet">Pet</span><span class="brand-salud">Salud</span>
     </span>
-
   </div>
 
-  <!-- Navegación principal -->
+  <!-- Navegación -->
   <nav class="sidebar-nav">
 
+    <!-- Principal -->
     <span class="nav-section-label">Principal</span>
 
     <a th:href="@{/}" class="sidebar-link"
-       th:classappend="${activePage == 'dashboard'} ? 'active'">
+       th:classappend="${activePage == 'dashboard'} ? ' active'">
       <i class="bi bi-grid-1x2-fill"></i>
       <span>Dashboard</span>
     </a>
 
+    <!-- Operativo -->
+    <span class="nav-section-label">Operativo</span>
+
     <a th:href="@{/citas}" class="sidebar-link"
-       th:classappend="${activePage == 'citas'} ? 'active'">
+       th:classappend="${activePage == 'citas'} ? ' active'">
       <i class="bi bi-calendar2-check-fill"></i>
       <span>Citas</span>
     </a>
 
-    <span class="nav-section-label">Gestión</span>
+    <a th:href="@{/consultas}" class="sidebar-link"
+       th:classappend="${activePage == 'consultas'} ? ' active'">
+      <i class="bi bi-clipboard2-pulse-fill"></i>
+      <span>Consultas</span>
+    </a>
+
+    <!-- Pacientes -->
+    <span class="nav-section-label">Pacientes</span>
 
     <a th:href="@{/mascotas}" class="sidebar-link"
-       th:classappend="${activePage == 'mascotas'} ? 'active'">
+       th:classappend="${activePage == 'mascotas'} ? ' active'">
       <i class="bi bi-patch-heart-fill"></i>
       <span>Mascotas</span>
     </a>
 
     <a th:href="@{/propietarios}" class="sidebar-link"
-       th:classappend="${activePage == 'propietarios'} ? 'active'">
+       th:classappend="${activePage == 'propietarios'} ? ' active'">
       <i class="bi bi-people-fill"></i>
       <span>Propietarios</span>
     </a>
 
+    <a th:href="@{/vacunaciones}" class="sidebar-link"
+       th:classappend="${activePage == 'vacunaciones'} ? ' active'">
+      <i class="bi bi-shield-fill-plus"></i>
+      <span>Vacunaciones</span>
+    </a>
+
+    <!-- Personal -->
+    <span class="nav-section-label">Personal</span>
+
     <a th:href="@{/veterinarios}" class="sidebar-link"
-       th:classappend="${activePage == 'veterinarios'} ? 'active'">
+       th:classappend="${activePage == 'veterinarios'} ? ' active'">
       <i class="bi bi-person-badge-fill"></i>
       <span>Veterinarios</span>
     </a>
 
+    <!-- Catálogos (colapsable) -->
+    <span class="nav-section-label">Catálogos</span>
+
+    <button class="sidebar-link sidebar-collapse-btn"
+            data-bs-toggle="collapse"
+            data-bs-target="#menu-catalogos"
+            th:attr="aria-expanded=${activePage != null and activePage.startsWith('cat-')} ? 'true' : 'false'"
+            th:classappend="${activePage != null and activePage.startsWith('cat-')} ? ' active'">
+      <i class="bi bi-collection-fill"></i>
+      <span>Catálogos</span>
+      <i class="bi bi-chevron-down collapse-chevron"></i>
+    </button>
+
+    <div class="collapse sidebar-submenu"
+         id="menu-catalogos"
+         th:classappend="${activePage != null and activePage.startsWith('cat-')} ? ' show'">
+
+      <a th:href="@{/catalogos/especies}" class="sidebar-link"
+         th:classappend="${activePage == 'cat-especies'} ? ' active'">
+        <i class="bi bi-diagram-3-fill"></i>
+        <span>Especies</span>
+      </a>
+
+      <a th:href="@{/catalogos/razas}" class="sidebar-link"
+         th:classappend="${activePage == 'cat-razas'} ? ' active'">
+        <i class="bi bi-tags-fill"></i>
+        <span>Razas</span>
+      </a>
+
+      <a th:href="@{/catalogos/especialidades}" class="sidebar-link"
+         th:classappend="${activePage == 'cat-especialidades'} ? ' active'">
+        <i class="bi bi-award-fill"></i>
+        <span>Especialidades</span>
+      </a>
+
+      <a th:href="@{/catalogos/medicamentos}" class="sidebar-link"
+         th:classappend="${activePage == 'cat-medicamentos'} ? ' active'">
+        <i class="bi bi-capsule-pill"></i>
+        <span>Medicamentos</span>
+      </a>
+
+      <a th:href="@{/catalogos/vacunas}" class="sidebar-link"
+         th:classappend="${activePage == 'cat-vacunas'} ? ' active'">
+        <i class="bi bi-droplet-fill"></i>
+        <span>Vacunas</span>
+      </a>
+
+    </div>
+
+    <!-- Sistema -->
     <span class="nav-section-label">Sistema</span>
 
     <a th:href="@{/configuracion}" class="sidebar-link"
-       th:classappend="${activePage == 'configuracion'} ? 'active'">
+       th:classappend="${activePage == 'configuracion'} ? ' active'">
       <i class="bi bi-gear-fill"></i>
       <span>Configuración</span>
     </a>
