@@ -115,10 +115,10 @@
 
     <!-- Paginación -->
     <div th:if="${pagina.totalPages > 1}" class="ps-pagination">
-      <a th:if="${pagina.hasPreviousPage}"
+      <a th:if="${pagina.hasPrevious()}"
          th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
          class="page-btn"><i class="bi bi-chevron-left"></i></a>
-      <span th:unless="${pagina.hasPreviousPage}" class="page-btn page-btn-disabled"><i class="bi bi-chevron-left"></i></span>
+      <span th:unless="${pagina.hasPrevious()}" class="page-btn page-btn-disabled"><i class="bi bi-chevron-left"></i></span>
 
       <th:block th:each="p : ${ventanaPaginas}">
         <span th:if="${p == -1}" class="page-btn page-btn-disabled">…</span>
@@ -128,10 +128,10 @@
            th:class="${p == pagina.pageNumber} ? 'page-btn page-btn-active' : 'page-btn'"></a>
       </th:block>
 
-      <a th:if="${pagina.hasNextPage}"
+      <a th:if="${pagina.hasNext()}"
          th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
          class="page-btn"><i class="bi bi-chevron-right"></i></a>
-      <span th:unless="${pagina.hasNextPage}" class="page-btn page-btn-disabled"><i class="bi bi-chevron-right"></i></span>
+      <span th:unless="${pagina.hasNext()}" class="page-btn page-btn-disabled"><i class="bi bi-chevron-right"></i></span>
     </div>
   </div>
 
