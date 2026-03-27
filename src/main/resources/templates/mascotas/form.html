@@ -109,22 +109,22 @@
           </div>
         </div>
 
-        <!-- Raza (agrupada por especie) -->
+        <!-- Raza (filtrada por especie vía JS) -->
         <div class="col-md-6">
-          <label for="idRaza" class="form-label fw-semibold">Raza <small class="text-muted">(opcional)</small></label>
+          <label for="idRaza" class="form-label fw-semibold">
+            Raza <small class="text-muted">(opcional)</small>
+          </label>
           <select id="idRaza"
                   th:field="*{idRaza}"
                   class="form-select">
-            <option value="">Mestizo / Sin raza definida</option>
-            <optgroup th:each="especie : ${especies}"
-                      th:label="${especie.nombre}">
-              <option th:each="raza : ${razas}"
-                      th:if="${raza.idEspecie == especie.id}"
-                      th:value="${raza.id}"
-                      th:text="${raza.nombre}">
-              </option>
-            </optgroup>
+            <option value="">Sin raza / Mestizo</option>
+            <option th:each="raza : ${razas}"
+                    th:value="${raza.id}"
+                    th:text="${raza.nombre}"
+                    th:attr="data-id-especie=${raza.idEspecie}">
+            </option>
           </select>
+          <small class="text-muted">Seleccione primero una especie para ver sus razas.</small>
         </div>
 
         <!-- URL foto -->
@@ -159,6 +159,38 @@
 
     </form>
   </div>
+
+  <script>
+    (function () {
+      const especieSelect = document.getElementById('idEspecie');
+      const razaSelect    = document.getElementById('idRaza');
+
+      // Todas las opciones de raza excepto la primera (Sin raza / Mestizo)
+      const razaOpciones = Array.from(razaSelect.options).slice(1);
+
+      function filtrarRazas() {
+        const idEspecieSeleccionada = especieSelect.value;
+
+        razaOpciones.forEach(function (opt) {
+          const coincide = opt.dataset.idEspecie === idEspecieSeleccionada;
+          opt.hidden   = !coincide;
+          opt.disabled = !coincide;
+        });
+
+        // Si la raza actualmente seleccionada no pertenece a la especie nueva, limpiar
+        const razaActual = razaSelect.options[razaSelect.selectedIndex];
+        if (razaActual && razaActual.dataset.idEspecie &&
+            razaActual.dataset.idEspecie !== idEspecieSeleccionada) {
+          razaSelect.value = '';
+        }
+      }
+
+      especieSelect.addEventListener('change', filtrarRazas);
+
+      // Aplicar al cargar la página (modo edición: ya tiene especie seleccionada)
+      filtrarRazas();
+    })();
+  </script>
 
 </main>
 </body>
