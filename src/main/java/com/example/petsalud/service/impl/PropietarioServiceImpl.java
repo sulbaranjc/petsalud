@@ -1,5 +1,6 @@
 package com.example.petsalud.service.impl;
 
+import com.example.petsalud.model.Page;
 import com.example.petsalud.model.Propietario;
 import com.example.petsalud.repository.PropietarioRepository;
 import com.example.petsalud.service.PropietarioService;
@@ -27,8 +28,8 @@ public class PropietarioServiceImpl implements PropietarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Propietario> search(String q, Boolean activo) {
-        return propietarioRepository.search(q, activo);
+    public Page<Propietario> search(String q, Boolean activo, int page, int pageSize) {
+        return propietarioRepository.search(q, activo, page, pageSize);
     }
 
     @Override

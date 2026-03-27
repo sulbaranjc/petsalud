@@ -1,5 +1,6 @@
 package com.example.petsalud.repository;
 
+import com.example.petsalud.model.Page;
 import com.example.petsalud.model.Propietario;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -53,26 +54,42 @@ public class PropietarioJdbcRepository implements PropietarioRepository {
     }
 
     @Override
-    public List<Propietario> search(String q, Boolean activo) {
-        StringBuilder sql = new StringBuilder(BASE_SELECT).append(" WHERE 1=1");
+    public Page<Propietario> search(String q, Boolean activo, int page, int pageSize) {
+        StringBuilder where  = new StringBuilder(" WHERE 1=1");
         MapSqlParameterSource params = new MapSqlParameterSource();
+        aplicarFiltros(where, params, q, activo);
 
+        // 1. Total de registros que cumplen los filtros
+        String countSql = "SELECT COUNT(*) FROM propietario p" + where;
+        Long total = jdbc.queryForObject(countSql, params, Long.class);
+
+        // 2. Página de datos con LIMIT/OFFSET
+        int offset = (page - 1) * pageSize;
+        params.addValue("pageSize", pageSize)
+              .addValue("offset",   offset);
+        String dataSql = BASE_SELECT + where
+                + " ORDER BY p.apellido ASC, p.nombre ASC LIMIT :pageSize OFFSET :offset";
+        List<Propietario> content = jdbc.query(dataSql, params, ROW_MAPPER);
+
+        return new Page<>(content, page, pageSize, total != null ? total : 0L);
+    }
+
+    /**
+     * Construye las cláusulas WHERE dinámicas y registra los parámetros.
+     * Se reutiliza en la query de COUNT y en la query de datos para garantizar
+     * que ambas apliquen exactamente los mismos filtros.
+     */
+    private void aplicarFiltros(StringBuilder where, MapSqlParameterSource params,
+                                 String q, Boolean activo) {
         if (q != null && !q.isBlank()) {
-            sql.append("""
-                    \s AND (p.nombre    LIKE :q
-                            OR p.apellido  LIKE :q
-                            OR p.documento LIKE :q
-                            OR p.email     LIKE :q)
-                    """);
+            where.append(" AND (p.nombre LIKE :q OR p.apellido LIKE :q"
+                       + " OR p.documento LIKE :q OR p.email LIKE :q)");
             params.addValue("q", "%" + q.trim() + "%");
         }
         if (activo != null) {
-            sql.append(" AND p.activo = :activo");
+            where.append(" AND p.activo = :activo");
             params.addValue("activo", activo);
         }
-
-        sql.append(" ORDER BY p.apellido ASC, p.nombre ASC");
-        return jdbc.query(sql.toString(), params, ROW_MAPPER);
     }
 
     @Override
