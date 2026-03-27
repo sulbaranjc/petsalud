@@ -1,12 +1,12 @@
 package com.example.petsalud.service.impl;
 
 import com.example.petsalud.model.Mascota;
+import com.example.petsalud.model.Page;
 import com.example.petsalud.repository.MascotaRepository;
 import com.example.petsalud.service.MascotaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -21,8 +21,9 @@ public class MascotaServiceImpl implements MascotaService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo) {
-        return mascotaRepository.search(q, idEspecie, sexo, activo);
+    public Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
+                                int page, int pageSize) {
+        return mascotaRepository.search(q, idEspecie, sexo, activo, page, pageSize);
     }
 
     @Override

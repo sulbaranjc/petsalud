@@ -1,6 +1,7 @@
 package com.example.petsalud.repository;
 
 import com.example.petsalud.model.Mascota;
+import com.example.petsalud.model.Page;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -68,35 +69,66 @@ public class MascotaJdbcRepository implements MascotaRepository {
          LEFT JOIN raza        r ON r.id = m.id_raza
             """;
 
-    @Override
-    public List<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo) {
-        StringBuilder sql = new StringBuilder(BASE_SELECT).append(" WHERE 1=1");
-        MapSqlParameterSource params = new MapSqlParameterSource();
+    // ── Paginación ────────────────────────────────────────────────────────────
 
+    @Override
+    public Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
+                                int page, int pageSize) {
+        StringBuilder where  = new StringBuilder(" WHERE 1=1");
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        aplicarFiltros(where, params, q, idEspecie, sexo, activo);
+
+        // 1. Contar el total de registros que cumplen los filtros
+        String countSql = """
+                SELECT COUNT(*)
+                  FROM mascota m
+                  JOIN especie     e ON e.id = m.id_especie
+                  JOIN propietario p ON p.id = m.id_propietario
+                 LEFT JOIN raza    r ON r.id = m.id_raza
+                """ + where;
+        Long total = jdbc.queryForObject(countSql, params, Long.class);
+
+        // 2. Traer solo la página solicitada con LIMIT/OFFSET
+        int offset = (page - 1) * pageSize;
+        params.addValue("pageSize", pageSize)
+              .addValue("offset",   offset);
+        String dataSql = BASE_SELECT + where
+                + " ORDER BY m.nombre ASC LIMIT :pageSize OFFSET :offset";
+        List<Mascota> content = jdbc.query(dataSql, params, ROW_MAPPER);
+
+        return new Page<>(content, page, pageSize, total != null ? total : 0L);
+    }
+
+    /**
+     * Agrega cláusulas WHERE dinámicas al StringBuilder y registra los
+     * parámetros correspondientes. Se reutiliza para la query de COUNT
+     * y para la query de datos, garantizando que ambas usen los mismos filtros.
+     */
+    private void aplicarFiltros(StringBuilder where, MapSqlParameterSource params,
+                                 String q, Integer idEspecie, String sexo, Boolean activo) {
         if (q != null && !q.isBlank()) {
-            sql.append("""
-                    \s AND (m.nombre LIKE :q
-                            OR p.nombre  LIKE :q
-                            OR p.apellido LIKE :q)
+            where.append("""
+                    \s AND (m.nombre    LIKE :q
+                            OR p.nombre    LIKE :q
+                            OR p.apellido  LIKE :q)
                     """);
             params.addValue("q", "%" + q.trim() + "%");
         }
         if (idEspecie != null) {
-            sql.append(" AND m.id_especie = :idEspecie");
+            where.append(" AND m.id_especie = :idEspecie");
             params.addValue("idEspecie", idEspecie);
         }
         if (sexo != null && !sexo.isBlank()) {
-            sql.append(" AND m.sexo = :sexo");
+            where.append(" AND m.sexo = :sexo");
             params.addValue("sexo", sexo);
         }
         if (activo != null) {
-            sql.append(" AND m.activo = :activo");
+            where.append(" AND m.activo = :activo");
             params.addValue("activo", activo);
         }
-
-        sql.append(" ORDER BY m.nombre ASC");
-        return jdbc.query(sql.toString(), params, ROW_MAPPER);
     }
+
+    // ── Operaciones individuales ──────────────────────────────────────────────
 
     @Override
     public Optional<Mascota> findById(Integer id) {
