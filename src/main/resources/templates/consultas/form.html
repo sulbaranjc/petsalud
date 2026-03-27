@@ -1,0 +1,392 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Nueva Consulta', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='consultas'">
+
+  <!-- Cabecera -->
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Registrar Consulta</h1>
+      <p class="page-subtitle">Complete los datos clínicos de la consulta</p>
+    </div>
+    <a th:href="@{/citas}" class="btn-ps-outline">
+      <i class="bi bi-arrow-left"></i> Volver a Citas
+    </a>
+  </div>
+
+  <form th:action="@{/consultas}"
+        th:object="${consultaForm}"
+        method="post"
+        novalidate>
+
+    <input type="hidden" th:field="*{idCita}">
+
+    <!-- ── SECCIÓN: Signos Vitales ─────────────────────────────────────────── -->
+    <div class="ps-card mb-3">
+      <div class="ps-card-header">
+        <h2 class="ps-card-title"><i class="bi bi-heart-pulse-fill me-2 text-danger"></i>Signos Vitales</h2>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-md-3">
+          <label for="pesoKg" class="form-label fw-semibold">Peso (kg)</label>
+          <input type="number" id="pesoKg" th:field="*{pesoKg}"
+                 class="form-control" step="0.01" min="0" placeholder="Ej: 4.20">
+        </div>
+        <div class="col-md-3">
+          <label for="temperaturaC" class="form-label fw-semibold">Temperatura (°C)</label>
+          <input type="number" id="temperaturaC" th:field="*{temperaturaC}"
+                 class="form-control" step="0.1" min="30" max="45" placeholder="Ej: 38.5">
+        </div>
+        <div class="col-md-3">
+          <label for="frecuenciaCardiaca" class="form-label fw-semibold">Frec. Cardíaca (lpm)</label>
+          <input type="number" id="frecuenciaCardiaca" th:field="*{frecuenciaCardiaca}"
+                 class="form-control" min="0" placeholder="Ej: 80">
+        </div>
+        <div class="col-md-3">
+          <label for="frecuenciaResp" class="form-label fw-semibold">Frec. Respiratoria (rpm)</label>
+          <input type="number" id="frecuenciaResp" th:field="*{frecuenciaResp}"
+                 class="form-control" min="0" placeholder="Ej: 20">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECCIÓN: Anamnesis y Examen Físico ─────────────────────────────── -->
+    <div class="ps-card mb-3">
+      <div class="ps-card-header">
+        <h2 class="ps-card-title"><i class="bi bi-clipboard2-pulse-fill me-2" style="color:var(--ps-primary)"></i>Historia Clínica</h2>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label for="anamnesis" class="form-label fw-semibold">Anamnesis</label>
+          <textarea id="anamnesis" th:field="*{anamnesis}" class="form-control" rows="4"
+                    placeholder="Historia relatada por el propietario, síntomas previos, duración..."></textarea>
+        </div>
+        <div class="col-md-6">
+          <label for="examenFisico" class="form-label fw-semibold">Examen Físico</label>
+          <textarea id="examenFisico" th:field="*{examenFisico}" class="form-control" rows="4"
+                    placeholder="Hallazgos del examen físico, auscultación, palpación..."></textarea>
+        </div>
+        <div class="col-md-6">
+          <label for="diagnostico" class="form-label fw-semibold">Diagnóstico</label>
+          <textarea id="diagnostico" th:field="*{diagnostico}" class="form-control" rows="3"
+                    placeholder="Diagnóstico o impresión diagnóstica..."></textarea>
+        </div>
+        <div class="col-md-6">
+          <label for="observaciones" class="form-label fw-semibold">Observaciones Generales</label>
+          <textarea id="observaciones" th:field="*{observaciones}" class="form-control" rows="3"
+                    placeholder="Recomendaciones, próximas citas, seguimiento..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECCIÓN: Tratamientos ──────────────────────────────────────────── -->
+    <div class="ps-card mb-3">
+      <div class="ps-card-header">
+        <h2 class="ps-card-title"><i class="bi bi-bandaid-fill me-2" style="color:var(--ps-warning)"></i>Tratamientos</h2>
+        <button type="button" class="btn-ps-outline btn-sm" onclick="agregarFila('tratamientos')">
+          <i class="bi bi-plus-lg"></i> Agregar
+        </button>
+      </div>
+      <div id="tratamientos-container" class="mt-2">
+        <!-- Filas existentes (binding en edición) -->
+        <div th:each="t, stat : *{tratamientos}"
+             th:id="'tratamiento-row-' + ${stat.index}"
+             class="dynamic-row row g-2 align-items-end mb-2">
+          <div class="col-md-5">
+            <label class="form-label fw-semibold small">Descripción</label>
+            <input type="text"
+                   th:name="'tratamientos[' + ${stat.index} + '].descripcion'"
+                   th:value="${t.descripcion}"
+                   class="form-control form-control-sm"
+                   placeholder="Descripción del tratamiento indicado">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Fecha inicio</label>
+            <input type="date"
+                   th:name="'tratamientos[' + ${stat.index} + '].fechaInicio'"
+                   th:value="${t.fechaInicio}"
+                   class="form-control form-control-sm">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Fecha fin</label>
+            <input type="date"
+                   th:name="'tratamientos[' + ${stat.index} + '].fechaFin'"
+                   th:value="${t.fechaFin}"
+                   class="form-control form-control-sm">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Observaciones</label>
+            <input type="text"
+                   th:name="'tratamientos[' + ${stat.index} + '].observaciones'"
+                   th:value="${t.observaciones}"
+                   class="form-control form-control-sm">
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                    onclick="eliminarFila(this)"><i class="bi bi-x-lg"></i></button>
+          </div>
+        </div>
+      </div>
+      <p class="text-muted small mt-2 fst-italic" id="tratamientos-empty"
+         th:if="${#lists.isEmpty(consultaForm.tratamientos)}">
+        Sin tratamientos registrados.
+      </p>
+    </div>
+
+    <!-- ── SECCIÓN: Medicamentos Administrados ────────────────────────────── -->
+    <div class="ps-card mb-3">
+      <div class="ps-card-header">
+        <h2 class="ps-card-title"><i class="bi bi-capsule-pill me-2" style="color:var(--ps-info)"></i>Medicamentos Administrados</h2>
+        <button type="button" class="btn-ps-outline btn-sm" onclick="agregarFila('medicamentos')">
+          <i class="bi bi-plus-lg"></i> Agregar
+        </button>
+      </div>
+      <div id="medicamentos-container" class="mt-2">
+        <div th:each="m, stat : *{medicamentos}"
+             th:id="'medicamento-row-' + ${stat.index}"
+             class="dynamic-row row g-2 align-items-end mb-2">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Medicamento</label>
+            <select th:name="'medicamentos[' + ${stat.index} + '].idMedicamento'"
+                    class="form-select form-select-sm">
+              <option value="">— Seleccione —</option>
+              <option th:each="med : ${medicamentos}"
+                      th:value="${med.id}"
+                      th:text="${med.nombre}"
+                      th:selected="${med.id == m.idMedicamento}">
+              </option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Dosis</label>
+            <input type="text"
+                   th:name="'medicamentos[' + ${stat.index} + '].dosis'"
+                   th:value="${m.dosis}"
+                   class="form-control form-control-sm"
+                   placeholder="Ej: 5ml">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold small">Frecuencia</label>
+            <input type="text"
+                   th:name="'medicamentos[' + ${stat.index} + '].frecuencia'"
+                   th:value="${m.frecuencia}"
+                   class="form-control form-control-sm"
+                   placeholder="Ej: cada 8h por 5 días">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Observaciones</label>
+            <input type="text"
+                   th:name="'medicamentos[' + ${stat.index} + '].observaciones'"
+                   th:value="${m.observaciones}"
+                   class="form-control form-control-sm">
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                    onclick="eliminarFila(this)"><i class="bi bi-x-lg"></i></button>
+          </div>
+        </div>
+      </div>
+      <p class="text-muted small mt-2 fst-italic" id="medicamentos-empty"
+         th:if="${#lists.isEmpty(consultaForm.medicamentos)}">
+        Sin medicamentos registrados.
+      </p>
+    </div>
+
+    <!-- ── SECCIÓN: Vacunas Aplicadas ─────────────────────────────────────── -->
+    <div class="ps-card mb-3">
+      <div class="ps-card-header">
+        <h2 class="ps-card-title"><i class="bi bi-shield-fill-check me-2" style="color:var(--ps-success)"></i>Vacunas Aplicadas</h2>
+        <button type="button" class="btn-ps-outline btn-sm" onclick="agregarFila('vacunas')">
+          <i class="bi bi-plus-lg"></i> Agregar
+        </button>
+      </div>
+      <div id="vacunas-container" class="mt-2">
+        <div th:each="v, stat : *{vacunas}"
+             th:id="'vacuna-row-' + ${stat.index}"
+             class="dynamic-row row g-2 align-items-end mb-2">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Vacuna</label>
+            <select th:name="'vacunas[' + ${stat.index} + '].idVacuna'"
+                    class="form-select form-select-sm">
+              <option value="">— Seleccione —</option>
+              <option th:each="vac : ${vacunas}"
+                      th:value="${vac.id}"
+                      th:text="${vac.nombre}"
+                      th:selected="${vac.id == v.idVacuna}">
+              </option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Próxima dosis</label>
+            <input type="date"
+                   th:name="'vacunas[' + ${stat.index} + '].proximaDosis'"
+                   th:value="${v.proximaDosis}"
+                   class="form-control form-control-sm">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold small">Lote</label>
+            <input type="text"
+                   th:name="'vacunas[' + ${stat.index} + '].lote'"
+                   th:value="${v.lote}"
+                   class="form-control form-control-sm"
+                   placeholder="Nro. de lote">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold small">Observaciones</label>
+            <input type="text"
+                   th:name="'vacunas[' + ${stat.index} + '].observaciones'"
+                   th:value="${v.observaciones}"
+                   class="form-control form-control-sm">
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                    onclick="eliminarFila(this)"><i class="bi bi-x-lg"></i></button>
+          </div>
+        </div>
+      </div>
+      <p class="text-muted small mt-2 fst-italic" id="vacunas-empty"
+         th:if="${#lists.isEmpty(consultaForm.vacunas)}">
+        Sin vacunas aplicadas.
+      </p>
+    </div>
+
+    <!-- ── Acciones ────────────────────────────────────────────────────────── -->
+    <div class="ps-card">
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn-ps-primary">
+          <i class="bi bi-floppy-fill"></i> Guardar y Completar Cita
+        </button>
+        <a th:href="@{/citas}" class="btn-ps-outline">Cancelar</a>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       PLANTILLAS OCULTAS — usadas por JavaScript para clonar filas nuevas
+       ════════════════════════════════════════════════════════════════════════ -->
+
+  <!-- Plantilla: tratamiento -->
+  <template id="tpl-tratamiento">
+    <div class="dynamic-row row g-2 align-items-end mb-2">
+      <div class="col-md-5">
+        <label class="form-label fw-semibold small">Descripción</label>
+        <input type="text" name="tratamientos[__IDX__].descripcion"
+               class="form-control form-control-sm"
+               placeholder="Descripción del tratamiento indicado">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Fecha inicio</label>
+        <input type="date" name="tratamientos[__IDX__].fechaInicio"
+               class="form-control form-control-sm">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Fecha fin</label>
+        <input type="date" name="tratamientos[__IDX__].fechaFin"
+               class="form-control form-control-sm">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Observaciones</label>
+        <input type="text" name="tratamientos[__IDX__].observaciones"
+               class="form-control form-control-sm">
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                onclick="eliminarFila(this)"><i class="bi bi-x-lg"></i></button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Plantilla: medicamento — se inyectan las opciones desde Thymeleaf -->
+  <template id="tpl-medicamento">
+    <div class="dynamic-row row g-2 align-items-end mb-2">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold small">Medicamento</label>
+        <select name="medicamentos[__IDX__].idMedicamento" class="form-select form-select-sm">
+          <option value="">— Seleccione —</option>
+          <option th:each="med : ${medicamentos}" th:value="${med.id}" th:text="${med.nombre}"></option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Dosis</label>
+        <input type="text" name="medicamentos[__IDX__].dosis"
+               class="form-control form-control-sm" placeholder="Ej: 5ml">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Frecuencia</label>
+        <input type="text" name="medicamentos[__IDX__].frecuencia"
+               class="form-control form-control-sm" placeholder="Ej: cada 8h por 5 días">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Observaciones</label>
+        <input type="text" name="medicamentos[__IDX__].observaciones"
+               class="form-control form-control-sm">
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                onclick="eliminarFila(this)"><i class="bi bi-x-lg"></i></button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Plantilla: vacuna -->
+  <template id="tpl-vacuna">
+    <div class="dynamic-row row g-2 align-items-end mb-2">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold small">Vacuna</label>
+        <select name="vacunas[__IDX__].idVacuna" class="form-select form-select-sm">
+          <option value="">— Seleccione —</option>
+          <option th:each="vac : ${vacunas}" th:value="${vac.id}" th:text="${vac.nombre}"></option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Próxima dosis</label>
+        <input type="date" name="vacunas[__IDX__].proximaDosis"
+               class="form-control form-control-sm">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Lote</label>
+        <input type="text" name="vacunas[__IDX__].lote"
+               class="form-control form-control-sm" placeholder="Nro. de lote">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Observaciones</label>
+        <input type="text" name="vacunas[__IDX__].observaciones"
+               class="form-control form-control-sm">
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                onclick="eliminarFila(this)"><i class="bi bi-x-lg"></i></button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    // Contadores de índice por sección
+    const counters = {
+      tratamientos: document.querySelectorAll('#tratamientos-container .dynamic-row').length,
+      medicamentos: document.querySelectorAll('#medicamentos-container .dynamic-row').length,
+      vacunas:      document.querySelectorAll('#vacunas-container .dynamic-row').length
+    };
+
+    function agregarFila(seccion) {
+      const tplId    = { tratamientos: 'tpl-tratamiento', medicamentos: 'tpl-medicamento', vacunas: 'tpl-vacuna' }[seccion];
+      const tpl      = document.getElementById(tplId);
+      const idx      = counters[seccion]++;
+      const html     = tpl.innerHTML.replaceAll('__IDX__', idx);
+      const wrapper  = document.createElement('div');
+      wrapper.innerHTML = html;
+      const fila     = wrapper.firstElementChild;
+
+      document.getElementById(seccion + '-container').appendChild(fila);
+      document.getElementById(seccion + '-empty')?.remove();
+    }
+
+    function eliminarFila(btn) {
+      btn.closest('.dynamic-row').remove();
+    }
+  </script>
+
+</main>
+</body>
+</html>

@@ -44,16 +44,20 @@ public class CitaJdbcRepository implements CitaRepository {
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) c.setCreatedAt(createdAt.toLocalDateTime());
 
+        int idConsulta = rs.getInt("id_consulta");
+        if (!rs.wasNull()) c.setIdConsulta(idConsulta);
+
         return c;
     };
 
     private static final String BASE_FROM = """
               FROM cita c
-              JOIN mascota     m  ON m.id  = c.id_mascota
-              JOIN especie     e  ON e.id  = m.id_especie
-              JOIN propietario p  ON p.id  = m.id_propietario
-              JOIN veterinario v  ON v.id  = c.id_veterinario
-              JOIN estado_cita ec ON ec.id = c.id_estado_cita
+              JOIN mascota     m   ON m.id  = c.id_mascota
+              JOIN especie     e   ON e.id  = m.id_especie
+              JOIN propietario p   ON p.id  = m.id_propietario
+              JOIN veterinario v   ON v.id  = c.id_veterinario
+              JOIN estado_cita ec  ON ec.id = c.id_estado_cita
+         LEFT JOIN consulta    con ON con.id_cita = c.id
             """;
 
     private static final String BASE_SELECT = """
@@ -65,6 +69,7 @@ public class CitaJdbcRepository implements CitaRepository {
                    c.motivo,
                    c.observaciones,
                    c.created_at,
+                   con.id                                AS id_consulta,
                    m.nombre                              AS nombre_mascota,
                    e.nombre                              AS nombre_especie,
                    CONCAT(p.apellido, ', ', p.nombre)    AS nombre_propietario,

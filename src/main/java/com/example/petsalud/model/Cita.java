@@ -34,6 +34,9 @@ public class Cita {
 
     // ── Campos de solo lectura (populados desde JOINs) ────────────────────────
 
+    /** ID de la consulta asociada; null si la cita aún no fue atendida. */
+    private Integer idConsulta;
+
     private String nombreMascota;
     private String nombreEspecie;
     private String nombrePropietario;
@@ -62,6 +65,9 @@ public class Cita {
 
     public String getObservaciones()                   { return observaciones; }
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+
+    public Integer getIdConsulta()                         { return idConsulta; }
+    public void setIdConsulta(Integer idConsulta)          { this.idConsulta = idConsulta; }
 
     public LocalDateTime getCreatedAt()                { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt)  { this.createdAt = createdAt; }

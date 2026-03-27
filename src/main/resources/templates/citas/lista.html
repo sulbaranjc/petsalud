@@ -127,13 +127,33 @@
           </td>
           <td>
             <div class="table-actions">
-              <a th:href="@{/citas/{id}/editar(id=${cita.id})}"
+              <!-- Atender: estados atendibles (aún sin consulta) -->
+              <a th:if="${cita.idConsulta == null
+                          and cita.nombreEstadoCita != 'Cancelada'
+                          and cita.nombreEstadoCita != 'Completada'
+                          and cita.nombreEstadoCita != 'No asistió'}"
+                 th:href="@{/consultas/nueva(idCita=${cita.id})}"
+                 class="action-btn action-btn-success" title="Atender cita">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+              </a>
+              <!-- Ver consulta: ya completada -->
+              <a th:if="${cita.idConsulta != null}"
+                 th:href="@{/consultas/{id}(id=${cita.idConsulta})}"
+                 class="action-btn action-btn-info" title="Ver consulta">
+                <i class="bi bi-eye-fill"></i>
+              </a>
+              <!-- Editar cita (solo si no está completada) -->
+              <a th:if="${cita.nombreEstadoCita != 'Completada'}"
+                 th:href="@{/citas/{id}/editar(id=${cita.id})}"
                  class="action-btn action-btn-edit" title="Editar">
                 <i class="bi bi-pencil-fill"></i>
               </a>
+              <!-- Cancelar -->
               <form th:action="@{/citas/{id}/cancelar(id=${cita.id})}"
                     method="post" style="display:inline;"
-                    th:if="${cita.nombreEstadoCita != 'Cancelada' and cita.nombreEstadoCita != 'Completada'}">
+                    th:if="${cita.nombreEstadoCita != 'Cancelada'
+                             and cita.nombreEstadoCita != 'Completada'
+                             and cita.nombreEstadoCita != 'No asistió'}">
                 <button type="submit" class="action-btn action-btn-danger" title="Cancelar cita"
                         onclick="return confirm('¿Confirmar cancelación de esta cita?')">
                   <i class="bi bi-x-lg"></i>

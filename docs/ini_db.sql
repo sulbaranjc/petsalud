@@ -313,6 +313,54 @@ CREATE TABLE historial_vacunacion (
 
 
 -- =============================================================================
+-- TABLAS DE RELACIÓN CONSULTA ↔ INSUMOS APLICADOS EN CLÍNICA
+-- =============================================================================
+
+CREATE TABLE consulta_medicamento (
+  id              INT          NOT NULL AUTO_INCREMENT COMMENT 'Identificador único',
+  id_consulta     INT          NOT NULL                COMMENT 'Consulta en la que se administró el medicamento',
+  id_medicamento  INT          NOT NULL                COMMENT 'Medicamento administrado',
+  dosis           VARCHAR(100)     NULL                COMMENT 'Dosis administrada (ej: 5ml, 1 tableta)',
+  frecuencia      VARCHAR(100)     NULL                COMMENT 'Frecuencia si aplica (ej: cada 8h por 3 días)',
+  observaciones   VARCHAR(255)     NULL                COMMENT 'Observaciones adicionales',
+  PRIMARY KEY (id),
+  INDEX idx_cm_consulta    (id_consulta),
+  INDEX idx_cm_medicamento (id_medicamento),
+  CONSTRAINT fk_cm_consulta
+    FOREIGN KEY (id_consulta)    REFERENCES consulta    (id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_cm_medicamento
+    FOREIGN KEY (id_medicamento) REFERENCES medicamento (id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_spanish_ci
+  COMMENT='Medicamentos administrados durante una consulta en clínica';
+
+
+CREATE TABLE consulta_vacuna (
+  id            INT          NOT NULL AUTO_INCREMENT COMMENT 'Identificador único',
+  id_consulta   INT          NOT NULL                COMMENT 'Consulta en la que se aplicó la vacuna',
+  id_vacuna     INT          NOT NULL                COMMENT 'Vacuna aplicada',
+  proxima_dosis DATE             NULL                COMMENT 'Fecha sugerida para la próxima dosis o refuerzo',
+  lote          VARCHAR(50)      NULL                COMMENT 'Número de lote del vial',
+  observaciones VARCHAR(255)     NULL                COMMENT 'Observaciones adicionales',
+  PRIMARY KEY (id),
+  INDEX idx_cv_consulta (id_consulta),
+  INDEX idx_cv_vacuna   (id_vacuna),
+  CONSTRAINT fk_cv_consulta
+    FOREIGN KEY (id_consulta) REFERENCES consulta (id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_cv_vacuna
+    FOREIGN KEY (id_vacuna)   REFERENCES vacuna   (id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_spanish_ci
+  COMMENT='Vacunas aplicadas durante una consulta en clínica';
+
+
+-- =============================================================================
 -- USUARIO DE BASE DE DATOS
 -- =============================================================================
 
