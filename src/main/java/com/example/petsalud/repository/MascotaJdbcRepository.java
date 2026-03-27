@@ -94,6 +94,11 @@ public class MascotaJdbcRepository implements MascotaRepository {
                 .collect(Collectors.joining(", "));
     }
 
+    @Override
+    public List<Mascota> findAllActivas() {
+        return jdbc.query(BASE_SELECT + " WHERE m.activo = 1 ORDER BY m.nombre ASC", ROW_MAPPER);
+    }
+
     // ── Paginación ────────────────────────────────────────────────────────────
 
     @Override

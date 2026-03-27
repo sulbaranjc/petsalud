@@ -7,6 +7,7 @@ import com.example.petsalud.service.MascotaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -17,6 +18,12 @@ public class MascotaServiceImpl implements MascotaService {
 
     public MascotaServiceImpl(MascotaRepository mascotaRepository) {
         this.mascotaRepository = mascotaRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Mascota> findAllActivas() {
+        return mascotaRepository.findAllActivas();
     }
 
     @Override

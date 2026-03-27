@@ -1,0 +1,150 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Vacunas', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-vacunas'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Vacunas</h1>
+      <p class="page-subtitle">Catálogo de vacunas disponibles para aplicación</p>
+    </div>
+    <a th:href="@{/catalogos/vacunas/nueva}" class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Vacuna
+    </a>
+  </div>
+
+  <!-- Mensaje flash -->
+  <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${mensajeExito}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <!-- Filtros -->
+  <form th:action="@{/catalogos/vacunas}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-6">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por nombre, laboratorio, descripción..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select name="activo" class="filter-select">
+            <option value="">Estado</option>
+            <option value="1" th:selected="${activoFiltro == '1'}">Activo</option>
+            <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/catalogos/vacunas}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tabla -->
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/vacunas(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='laboratorio', nextDir=${sortBy == 'laboratorio' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/vacunas(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Laboratorio
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="vac : ${vacunas}">
+          <td><strong th:text="${vac.nombre}"></strong></td>
+          <td>
+            <span th:if="${vac.laboratorio}" class="ps-badge badge-info" th:text="${vac.laboratorio}"></span>
+            <span th:unless="${vac.laboratorio}" class="text-muted fst-italic">—</span>
+          </td>
+          <td>
+            <span th:if="${vac.descripcion}"    th:text="${vac.descripcion}"   class="text-muted small"></span>
+            <span th:unless="${vac.descripcion}" class="text-muted fst-italic">—</span>
+          </td>
+          <td>
+            <span th:if="${vac.activo}"    class="ps-badge badge-success">Activo</span>
+            <span th:unless="${vac.activo}" class="ps-badge badge-neutral">Inactivo</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a th:href="@{/catalogos/vacunas/{id}/editar(id=${vac.id})}"
+                 class="action-btn action-btn-edit" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <form th:action="@{/catalogos/vacunas/{id}/toggle(id=${vac.id})}"
+                    method="post" style="display:inline;">
+                <button type="submit"
+                        th:class="${vac.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
+                        th:title="${vac.activo} ? 'Desactivar' : 'Activar'">
+                  <i th:class="${vac.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(vacunas)}">
+          <td colspan="5" class="text-center text-muted py-4">No hay vacunas registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="ps-pagination">
+      <span class="pagination-info"
+            th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
+                     + ' de ' + ${pagina.totalElements} + ' registros'">
+      </span>
+      <div class="pagination-controls">
+
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/catalogos/vacunas(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+           class="page-btn"><i class="bi bi-chevron-left"></i></a>
+        <span th:unless="${pagina.hasPrevious()}" class="page-btn disabled">
+          <i class="bi bi-chevron-left"></i></span>
+
+        <th:block th:each="p : ${ventanaPaginas}">
+          <span th:if="${p == -1}" class="page-ellipsis">…</span>
+          <a th:unless="${p == -1}"
+             th:href="@{/catalogos/vacunas(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+             th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
+             th:text="${p}"></a>
+        </th:block>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/catalogos/vacunas(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+           class="page-btn"><i class="bi bi-chevron-right"></i></a>
+        <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
+          <i class="bi bi-chevron-right"></i></span>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

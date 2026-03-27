@@ -1,0 +1,153 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout(${cita.id == null} ? 'Nueva Cita' : 'Editar Cita', ~{::main})}"
+      lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='citas'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title" th:text="${cita.id == null} ? 'Nueva Cita' : 'Editar Cita'"></h1>
+      <p class="page-subtitle">Gestión de citas médicas agendadas</p>
+    </div>
+    <a th:href="@{/citas}" class="btn-ps-outline">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+  </div>
+
+  <div class="ps-card" style="max-width: 720px;">
+    <form th:action="${cita.id == null}
+                      ? @{/citas}
+                      : @{/citas/{id}/editar(id=${cita.id})}"
+          th:object="${cita}"
+          method="post"
+          novalidate>
+
+      <div class="row g-3">
+
+        <!-- Mascota -->
+        <div class="col-md-6">
+          <label for="idMascota" class="form-label fw-semibold">
+            Mascota <span class="text-danger">*</span>
+          </label>
+          <select id="idMascota"
+                  th:field="*{idMascota}"
+                  th:classappend="${#fields.hasErrors('idMascota')} ? 'is-invalid'"
+                  class="form-select">
+            <option value="">— Seleccione una mascota —</option>
+            <option th:each="m : ${mascotas}"
+                    th:value="${m.id}"
+                    th:text="${m.nombre + ' (' + m.nombreEspecie + ') – ' + m.nombrePropietario}"
+                    th:selected="${m.id == cita.idMascota}">
+            </option>
+          </select>
+          <div th:if="${#fields.hasErrors('idMascota')}" class="invalid-feedback">
+            <span th:errors="*{idMascota}"></span>
+          </div>
+        </div>
+
+        <!-- Veterinario -->
+        <div class="col-md-6">
+          <label for="idVeterinario" class="form-label fw-semibold">
+            Veterinario <span class="text-danger">*</span>
+          </label>
+          <select id="idVeterinario"
+                  th:field="*{idVeterinario}"
+                  th:classappend="${#fields.hasErrors('idVeterinario')} ? 'is-invalid'"
+                  class="form-select">
+            <option value="">— Seleccione un veterinario —</option>
+            <option th:each="v : ${veterinarios}"
+                    th:value="${v.id}"
+                    th:text="${v.nombreCompleto + (v.nombreEspecialidad != null ? ' · ' + v.nombreEspecialidad : '')}"
+                    th:selected="${v.id == cita.idVeterinario}">
+            </option>
+          </select>
+          <div th:if="${#fields.hasErrors('idVeterinario')}" class="invalid-feedback">
+            <span th:errors="*{idVeterinario}"></span>
+          </div>
+        </div>
+
+        <!-- Fecha y Hora -->
+        <div class="col-md-6">
+          <label for="fechaHora" class="form-label fw-semibold">
+            Fecha y Hora <span class="text-danger">*</span>
+          </label>
+          <input type="datetime-local"
+                 id="fechaHora"
+                 name="fechaHora"
+                 th:value="${cita.fechaHora != null ? #temporals.format(cita.fechaHora, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                 th:classappend="${#fields.hasErrors('fechaHora')} ? 'is-invalid'"
+                 class="form-control">
+          <div th:if="${#fields.hasErrors('fechaHora')}" class="invalid-feedback">
+            <span th:errors="*{fechaHora}"></span>
+          </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="col-md-6">
+          <label for="idEstadoCita" class="form-label fw-semibold">
+            Estado <span class="text-danger">*</span>
+          </label>
+          <select id="idEstadoCita"
+                  th:field="*{idEstadoCita}"
+                  th:classappend="${#fields.hasErrors('idEstadoCita')} ? 'is-invalid'"
+                  class="form-select">
+            <option value="">— Seleccione un estado —</option>
+            <option th:each="est : ${estados}"
+                    th:value="${est.id}"
+                    th:text="${est.nombre}"
+                    th:selected="${est.id == cita.idEstadoCita}">
+            </option>
+          </select>
+          <div th:if="${#fields.hasErrors('idEstadoCita')}" class="invalid-feedback">
+            <span th:errors="*{idEstadoCita}"></span>
+          </div>
+        </div>
+
+        <!-- Motivo -->
+        <div class="col-12">
+          <label for="motivo" class="form-label fw-semibold">
+            Motivo <span class="text-danger">*</span>
+          </label>
+          <input type="text"
+                 id="motivo"
+                 th:field="*{motivo}"
+                 th:classappend="${#fields.hasErrors('motivo')} ? 'is-invalid'"
+                 class="form-control"
+                 placeholder="Ej: Control anual, Vacunación, Revisión post-operatoria"
+                 maxlength="255">
+          <div th:if="${#fields.hasErrors('motivo')}" class="invalid-feedback">
+            <span th:errors="*{motivo}"></span>
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="col-12">
+          <label for="observaciones" class="form-label fw-semibold">Observaciones</label>
+          <textarea id="observaciones"
+                    th:field="*{observaciones}"
+                    th:classappend="${#fields.hasErrors('observaciones')} ? 'is-invalid'"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Notas adicionales para el agendamiento, síntomas previos, etc."></textarea>
+          <div th:if="${#fields.hasErrors('observaciones')}" class="invalid-feedback">
+            <span th:errors="*{observaciones}"></span>
+          </div>
+        </div>
+
+      </div><!-- /row -->
+
+      <!-- Acciones -->
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn-ps-primary">
+          <i class="bi bi-floppy-fill"></i>
+          <span th:text="${cita.id == null} ? 'Guardar' : 'Actualizar'"></span>
+        </button>
+        <a th:href="@{/citas}" class="btn-ps-outline">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+</body>
+</html>

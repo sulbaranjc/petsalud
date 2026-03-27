@@ -8,138 +8,174 @@
       <h1 class="page-title">Citas</h1>
       <p class="page-subtitle">Gestión de citas médicas agendadas</p>
     </div>
-    <button class="btn-ps-primary">
+    <a th:href="@{/citas/nueva}" class="btn-ps-primary">
       <i class="bi bi-plus-lg"></i> Nueva Cita
-    </button>
+    </a>
+  </div>
+
+  <!-- Mensaje flash -->
+  <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${mensajeExito}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
   <!-- Filtros -->
-  <div class="ps-card filter-bar">
-    <div class="row g-2 align-items-center">
-      <div class="col-md-4">
-        <div class="filter-search-wrap">
-          <i class="bi bi-search"></i>
-          <input type="text" class="filter-input" placeholder="Buscar por mascota, veterinario...">
+  <form th:action="@{/citas}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por mascota, propietario, veterinario, motivo..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select name="idEstadoCita" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option th:each="est : ${estados}"
+                    th:value="${est.id}"
+                    th:text="${est.nombre}"
+                    th:selected="${est.id == idEstadoFiltro}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="date" name="fecha" class="filter-select" th:value="${fechaFiltro}">
+        </div>
+        <div class="col-md-2">
+          <select name="idVeterinario" class="filter-select">
+            <option value="">Todos los veterinarios</option>
+            <option th:each="vet : ${veterinarios}"
+                    th:value="${vet.id}"
+                    th:text="${vet.nombreCompleto}"
+                    th:selected="${vet.id == idVeterinarioFiltro}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/citas}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
         </div>
       </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Todos los estados</option>
-          <option>Pendiente</option>
-          <option>Confirmada</option>
-          <option>En curso</option>
-          <option>Completada</option>
-          <option>Cancelada</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <input type="date" class="filter-select">
-      </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Todos los veterinarios</option>
-          <option>Dr. Carlos Méndez</option>
-          <option>Dra. Laura Vega</option>
-        </select>
-      </div>
-      <div class="col-md-2 text-end">
-        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
-      </div>
     </div>
-  </div>
+  </form>
 
   <!-- Tabla -->
   <div class="ps-card">
     <table class="ps-table">
       <thead>
         <tr>
-          <th>Mascota</th>
+          <th th:with="col='mascota', nextDir=${sortBy == 'mascota' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/citas(q=${q}, idEstadoCita=${idEstadoFiltro}, idVeterinario=${idVeterinarioFiltro}, fecha=${fechaFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Mascota
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Propietario</th>
-          <th>Veterinario</th>
-          <th>Fecha y Hora</th>
+          <th th:with="col='veterinario', nextDir=${sortBy == 'veterinario' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/citas(q=${q}, idEstadoCita=${idEstadoFiltro}, idVeterinario=${idVeterinarioFiltro}, fecha=${fechaFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Veterinario
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='fecha_hora', nextDir=${sortBy == 'fecha_hora' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'desc'}">
+            <a th:href="@{/citas(q=${q}, idEstadoCita=${idEstadoFiltro}, idVeterinario=${idVeterinarioFiltro}, fecha=${fechaFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Fecha y Hora
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Motivo</th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><strong>Luna</strong> <small class="text-muted d-block">Gato</small></td>
-          <td>Ana Torres</td>
-          <td>Dra. Laura Vega</td>
-          <td>26/03/2026 09:00</td>
-          <td>Medicina Interna</td>
-          <td><span class="ps-badge badge-success">Confirmada</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
-          </div></td>
+        <tr th:each="cita : ${citas}">
+          <td>
+            <strong th:text="${cita.nombreMascota}"></strong>
+            <small class="text-muted d-block" th:text="${cita.nombreEspecie}"></small>
+          </td>
+          <td th:text="${cita.nombrePropietario}"></td>
+          <td th:text="${cita.nombreVeterinario}"></td>
+          <td th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+          <td>
+            <span th:if="${cita.motivo}" th:text="${cita.motivo}" class="small"></span>
+          </td>
+          <td>
+            <th:block th:switch="${cita.nombreEstadoCita}">
+              <span th:case="'Confirmada'"      class="ps-badge badge-success"  th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="'En curso'"        class="ps-badge badge-primary"  th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="'En consulta'"     class="ps-badge badge-primary"  th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="'En sala de espera'" class="ps-badge badge-info"   th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="'Completada'"      class="ps-badge badge-neutral"  th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="'Cancelada'"       class="ps-badge badge-danger"   th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="'No asistió'"      class="ps-badge badge-danger"   th:text="${cita.nombreEstadoCita}"></span>
+              <span th:case="*"                 class="ps-badge badge-warning"  th:text="${cita.nombreEstadoCita}"></span>
+            </th:block>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a th:href="@{/citas/{id}/editar(id=${cita.id})}"
+                 class="action-btn action-btn-edit" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <form th:action="@{/citas/{id}/cancelar(id=${cita.id})}"
+                    method="post" style="display:inline;"
+                    th:if="${cita.nombreEstadoCita != 'Cancelada' and cita.nombreEstadoCita != 'Completada'}">
+                <button type="submit" class="action-btn action-btn-danger" title="Cancelar cita"
+                        onclick="return confirm('¿Confirmar cancelación de esta cita?')">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </form>
+            </div>
+          </td>
         </tr>
-        <tr>
-          <td><strong>Max</strong> <small class="text-muted d-block">Perro</small></td>
-          <td>Carlos Díaz</td>
-          <td>Dr. Carlos Méndez</td>
-          <td>26/03/2026 10:30</td>
-          <td>Cirugía programada</td>
-          <td><span class="ps-badge badge-warning">Pendiente</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Pipa</strong> <small class="text-muted d-block">Conejo</small></td>
-          <td>María López</td>
-          <td>Dra. Laura Vega</td>
-          <td>26/03/2026 12:00</td>
-          <td>Dermatología</td>
-          <td><span class="ps-badge badge-primary">En curso</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Rocky</strong> <small class="text-muted d-block">Perro</small></td>
-          <td>Pedro Ruiz</td>
-          <td>Dr. Carlos Méndez</td>
-          <td>26/03/2026 15:00</td>
-          <td>Vacunación anual</td>
-          <td><span class="ps-badge badge-neutral">Programada</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Kiwi</strong> <small class="text-muted d-block">Ave</small></td>
-          <td>Laura Vega</td>
-          <td>Dr. Carlos Méndez</td>
-          <td>27/03/2026 09:30</td>
-          <td>Control general</td>
-          <td><span class="ps-badge badge-danger">Cancelada</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
-          </div></td>
+        <tr th:if="${#lists.isEmpty(citas)}">
+          <td colspan="7" class="text-center text-muted py-4">No hay citas registradas.</td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
     <div class="ps-pagination">
-      <span class="pagination-info">Mostrando 1–5 de 45 registros</span>
+      <span class="pagination-info"
+            th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
+                     + ' de ' + ${pagina.totalElements} + ' registros'">
+      </span>
       <div class="pagination-controls">
-        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <span class="page-ellipsis">…</span>
-        <button class="page-btn">9</button>
-        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/citas(q=${q}, idEstadoCita=${idEstadoFiltro}, idVeterinario=${idVeterinarioFiltro}, fecha=${fechaFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+           class="page-btn"><i class="bi bi-chevron-left"></i></a>
+        <span th:unless="${pagina.hasPrevious()}" class="page-btn disabled">
+          <i class="bi bi-chevron-left"></i></span>
+
+        <th:block th:each="p : ${ventanaPaginas}">
+          <span th:if="${p == -1}" class="page-ellipsis">…</span>
+          <a th:unless="${p == -1}"
+             th:href="@{/citas(q=${q}, idEstadoCita=${idEstadoFiltro}, idVeterinario=${idVeterinarioFiltro}, fecha=${fechaFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+             th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
+             th:text="${p}"></a>
+        </th:block>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/citas(q=${q}, idEstadoCita=${idEstadoFiltro}, idVeterinario=${idVeterinarioFiltro}, fecha=${fechaFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+           class="page-btn"><i class="bi bi-chevron-right"></i></a>
+        <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
+          <i class="bi bi-chevron-right"></i></span>
+
       </div>
     </div>
   </div>
