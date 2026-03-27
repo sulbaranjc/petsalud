@@ -27,6 +27,12 @@ public class PropietarioServiceImpl implements PropietarioService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Propietario> search(String q, Boolean activo) {
+        return propietarioRepository.search(q, activo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Propietario findById(Integer id) {
         return propietarioRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Propietario no encontrado con id: " + id));

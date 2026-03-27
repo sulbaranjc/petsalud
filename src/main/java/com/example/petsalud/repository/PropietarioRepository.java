@@ -9,6 +9,8 @@ public interface PropietarioRepository {
 
     List<Propietario> findAllByOrderByApellidoNombreAsc();
 
+    List<Propietario> search(String q, Boolean activo);
+
     Optional<Propietario> findById(Integer id);
 
     void save(Propietario propietario);

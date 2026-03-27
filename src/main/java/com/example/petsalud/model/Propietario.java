@@ -30,6 +30,9 @@ public class Propietario {
 
     private boolean activo = true;
 
+    /** Solo lectura — poblado desde subquery COUNT en la lista. */
+    private int totalMascotas;
+
     public Propietario() {}
 
     public Integer getId() { return id; }
@@ -55,6 +58,9 @@ public class Propietario {
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
+
+    public int getTotalMascotas() { return totalMascotas; }
+    public void setTotalMascotas(int totalMascotas) { this.totalMascotas = totalMascotas; }
 
     /** Nombre completo para mostrar en dropdowns y listas. */
     public String getNombreCompleto() {

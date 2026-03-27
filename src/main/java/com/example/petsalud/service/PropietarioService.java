@@ -8,6 +8,8 @@ public interface PropietarioService {
 
     List<Propietario> findAll();
 
+    List<Propietario> search(String q, Boolean activo);
+
     Propietario findById(Integer id);
 
     void save(Propietario propietario);
