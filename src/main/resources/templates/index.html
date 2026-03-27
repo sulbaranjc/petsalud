@@ -5,7 +5,7 @@
 <body>
 <main th:with="activePage='dashboard'">
 
-  <!-- Encabezado de página -->
+  <!-- Encabezado -->
   <div class="page-header">
     <h1 class="page-title">Dashboard</h1>
     <p class="page-subtitle">Resumen general de la clínica</p>
@@ -16,8 +16,8 @@
 
     <div class="stat-card">
       <div class="stat-card-body">
-        <span class="stat-card-value">45</span>
-        <span class="stat-card-label">Nuevas citas hoy</span>
+        <span class="stat-card-value" th:text="${stats.citasHoy}">0</span>
+        <span class="stat-card-label">Citas de hoy</span>
       </div>
       <div class="stat-card-icon icon-blue">
         <i class="bi bi-calendar2-check-fill"></i>
@@ -26,7 +26,7 @@
 
     <div class="stat-card">
       <div class="stat-card-body">
-        <span class="stat-card-value">12</span>
+        <span class="stat-card-value" th:text="${stats.veterinariosActivos}">0</span>
         <span class="stat-card-label">Veterinarios activos</span>
       </div>
       <div class="stat-card-icon icon-teal">
@@ -36,7 +36,7 @@
 
     <div class="stat-card">
       <div class="stat-card-body">
-        <span class="stat-card-value">230</span>
+        <span class="stat-card-value" th:text="${stats.mascotasRegistradas}">0</span>
         <span class="stat-card-label">Mascotas registradas</span>
       </div>
       <div class="stat-card-icon icon-purple">
@@ -46,7 +46,7 @@
 
     <div class="stat-card">
       <div class="stat-card-body">
-        <span class="stat-card-value">184</span>
+        <span class="stat-card-value" th:text="${stats.propietarios}">0</span>
         <span class="stat-card-label">Propietarios</span>
       </div>
       <div class="stat-card-icon icon-orange">
@@ -56,14 +56,15 @@
 
   </div>
 
-  <!-- Grid inferior: tabla de citas + mascotas recientes -->
+  <!-- Grid inferior -->
   <div class="dashboard-grid">
 
     <!-- Citas del día -->
     <div class="ps-card">
       <div class="ps-card-header">
         <h2 class="ps-card-title">Citas de hoy</h2>
-        <a href="#" class="link-see-all">Ver todas</a>
+        <a th:href="@{/citas(fecha=${#temporals.format(today, 'yyyy-MM-dd')})}"
+           class="link-see-all">Ver todas</a>
       </div>
       <table class="ps-table">
         <thead>
@@ -76,95 +77,82 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>Luna</strong><br><small class="text-muted">Gato · Medicina Interna</small></td>
-            <td>Ana Torres</td>
-            <td>09:00 AM</td>
-            <td><span class="ps-badge badge-success">Confirmada</span></td>
-            <td class="d-flex gap-1">
-              <button class="action-btn action-btn-success" title="Aprobar"><i class="bi bi-check-lg"></i></button>
-              <button class="action-btn action-btn-danger"  title="Cancelar"><i class="bi bi-x-lg"></i></button>
+          <tr th:each="cita : ${citasHoy}">
+            <td>
+              <strong th:text="${cita.nombreMascota}"></strong>
+              <small class="text-muted d-block" th:text="${cita.nombreEspecie}"></small>
+            </td>
+            <td th:text="${cita.nombrePropietario}"></td>
+            <td th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}"></td>
+            <td>
+              <th:block th:switch="${cita.nombreEstadoCita}">
+                <span th:case="'Confirmada'"          class="ps-badge badge-success"  th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="'En curso'"            class="ps-badge badge-primary"  th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="'En consulta'"         class="ps-badge badge-primary"  th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="'En sala de espera'"   class="ps-badge badge-info"     th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="'Completada'"          class="ps-badge badge-neutral"  th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="'Cancelada'"           class="ps-badge badge-danger"   th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="'No asistió'"          class="ps-badge badge-danger"   th:text="${cita.nombreEstadoCita}"></span>
+                <span th:case="*"                     class="ps-badge badge-warning"  th:text="${cita.nombreEstadoCita}"></span>
+              </th:block>
+            </td>
+            <td>
+              <div class="table-actions">
+                <a th:if="${cita.idConsulta == null
+                             and cita.nombreEstadoCita != 'Cancelada'
+                             and cita.nombreEstadoCita != 'Completada'
+                             and cita.nombreEstadoCita != 'No asistió'}"
+                   th:href="@{/consultas/nueva(idCita=${cita.id})}"
+                   class="action-btn action-btn-success" title="Atender cita">
+                  <i class="bi bi-clipboard2-pulse-fill"></i>
+                </a>
+                <a th:if="${cita.idConsulta != null}"
+                   th:href="@{/consultas/{id}(id=${cita.idConsulta})}"
+                   class="action-btn action-btn-info" title="Ver consulta">
+                  <i class="bi bi-eye-fill"></i>
+                </a>
+              </div>
             </td>
           </tr>
-          <tr>
-            <td><strong>Max</strong><br><small class="text-muted">Perro · Cirugía</small></td>
-            <td>Carlos Díaz</td>
-            <td>10:30 AM</td>
-            <td><span class="ps-badge badge-warning">Pendiente</span></td>
-            <td class="d-flex gap-1">
-              <button class="action-btn action-btn-success" title="Aprobar"><i class="bi bi-check-lg"></i></button>
-              <button class="action-btn action-btn-danger"  title="Cancelar"><i class="bi bi-x-lg"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>Pipa</strong><br><small class="text-muted">Conejo · Dermatología</small></td>
-            <td>María López</td>
-            <td>12:00 PM</td>
-            <td><span class="ps-badge badge-primary">En curso</span></td>
-            <td class="d-flex gap-1">
-              <button class="action-btn action-btn-success" title="Aprobar"><i class="bi bi-check-lg"></i></button>
-              <button class="action-btn action-btn-danger"  title="Cancelar"><i class="bi bi-x-lg"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>Rocky</strong><br><small class="text-muted">Perro · Vacunación</small></td>
-            <td>Pedro Ruiz</td>
-            <td>03:00 PM</td>
-            <td><span class="ps-badge badge-neutral">Programada</span></td>
-            <td class="d-flex gap-1">
-              <button class="action-btn action-btn-success" title="Aprobar"><i class="bi bi-check-lg"></i></button>
-              <button class="action-btn action-btn-danger"  title="Cancelar"><i class="bi bi-x-lg"></i></button>
-            </td>
+          <tr th:if="${#lists.isEmpty(citasHoy)}">
+            <td colspan="5" class="text-center text-muted py-4">No hay citas programadas para hoy.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Mascotas recientes -->
+    <!-- Consultas recientes -->
     <div class="ps-card">
       <div class="ps-card-header">
-        <h2 class="ps-card-title">Mascotas recientes</h2>
-        <a href="#" class="link-see-all">Ver todas</a>
+        <h2 class="ps-card-title">Consultas recientes</h2>
+        <a th:href="@{/consultas}" class="link-see-all">Ver todas</a>
       </div>
       <table class="ps-table">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Especie</th>
-            <th>Propietario</th>
-            <th>Estado</th>
+            <th>Mascota</th>
+            <th>Veterinario</th>
+            <th>Fecha</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>Luna</strong></td>
-            <td>Gato</td>
-            <td>Ana Torres</td>
-            <td><span class="ps-badge badge-success">Alta</span></td>
+          <tr th:each="con : ${consultasRecientes}">
+            <td>
+              <strong th:text="${con.nombreMascota}"></strong>
+              <small class="text-muted d-block" th:text="${con.nombreEspecie}"></small>
+            </td>
+            <td th:text="${con.nombreVeterinario}"></td>
+            <td th:text="${#temporals.format(con.fechaHora, 'dd/MM/yyyy')}"></td>
+            <td>
+              <a th:href="@{/consultas/{id}(id=${con.id})}"
+                 class="action-btn action-btn-info" title="Ver consulta">
+                <i class="bi bi-eye-fill"></i>
+              </a>
+            </td>
           </tr>
-          <tr>
-            <td><strong>Max</strong></td>
-            <td>Perro</td>
-            <td>Carlos Díaz</td>
-            <td><span class="ps-badge badge-warning">En tratamiento</span></td>
-          </tr>
-          <tr>
-            <td><strong>Pipa</strong></td>
-            <td>Conejo</td>
-            <td>María López</td>
-            <td><span class="ps-badge badge-info">Observación</span></td>
-          </tr>
-          <tr>
-            <td><strong>Rocky</strong></td>
-            <td>Perro</td>
-            <td>Pedro Ruiz</td>
-            <td><span class="ps-badge badge-success">Alta</span></td>
-          </tr>
-          <tr>
-            <td><strong>Kiwi</strong></td>
-            <td>Ave</td>
-            <td>Laura Vega</td>
-            <td><span class="ps-badge badge-danger">Crítico</span></td>
+          <tr th:if="${#lists.isEmpty(consultasRecientes)}">
+            <td colspan="4" class="text-center text-muted py-4">No hay consultas registradas.</td>
           </tr>
         </tbody>
       </table>
