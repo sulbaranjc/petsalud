@@ -1,127 +1,154 @@
 <!doctype html>
-<html th:replace="~{layout/base :: layout('Vacunaciones', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{layout/base :: layout('Vacunaciones', ~{::main})}"
+      lang="es"
+      xmlns:th="http://www.thymeleaf.org">
 <body>
 <main th:with="activePage='vacunaciones'">
 
-  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
-    <div>
-      <h1 class="page-title">Vacunaciones</h1>
-      <p class="page-subtitle">Historial de vacunas aplicadas a las mascotas</p>
-    </div>
-    <button class="btn-ps-primary">
-      <i class="bi bi-plus-lg"></i> Registrar Vacunación
-    </button>
+  <div class="page-header">
+    <h1 class="page-title">Historial de Vacunaciones</h1>
+    <p class="page-subtitle">Vacunas aplicadas durante consultas médicas</p>
   </div>
 
-  <div class="ps-card filter-bar">
-    <div class="row g-2 align-items-center">
-      <div class="col-md-4">
-        <div class="filter-search-wrap">
-          <i class="bi bi-search"></i>
-          <input type="text" class="filter-input" placeholder="Buscar por mascota, vacuna...">
+  <!-- Filtros -->
+  <form th:action="@{/vacunaciones}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por mascota, propietario, vacuna..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select name="idVacuna" class="filter-select">
+            <option value="">Todas las vacunas</option>
+            <option th:each="vac : ${vacunas}"
+                    th:value="${vac.id}"
+                    th:text="${vac.nombre}"
+                    th:selected="${vac.id == idVacunaFiltro}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="proximaDosis" class="filter-select">
+            <option value="">Próxima dosis: todas</option>
+            <option value="vencida"    th:selected="${proximaDosisFiltro == 'vencida'}">Vencidas</option>
+            <option value="proximos30" th:selected="${proximaDosisFiltro == 'proximos30'}">Próximos 30 días</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/vacunaciones}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
         </div>
       </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Todas las vacunas</option>
-          <option>Rabia</option>
-          <option>Parvovirus</option>
-          <option>Moquillo</option>
-          <option>Triple felina</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Próxima dosis</option>
-          <option>Esta semana</option>
-          <option>Este mes</option>
-          <option>Vencidas</option>
-        </select>
-      </div>
-      <div class="col-md-2 text-end ms-auto">
-        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
-      </div>
     </div>
-  </div>
+  </form>
 
+  <!-- Tabla -->
   <div class="ps-card">
     <table class="ps-table">
       <thead>
         <tr>
-          <th>Mascota</th>
+          <th th:with="col='mascota', nextDir=${sortBy == 'mascota' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/vacunaciones(q=${q}, idVacuna=${idVacunaFiltro}, proximaDosis=${proximaDosisFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Mascota
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th>Propietario</th>
           <th>Vacuna</th>
           <th>Veterinario</th>
-          <th>Fecha aplicación</th>
-          <th>Próxima dosis</th>
+          <th th:with="col='fecha_consulta', nextDir=${sortBy == 'fecha_consulta' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'desc'}">
+            <a th:href="@{/vacunaciones(q=${q}, idVacuna=${idVacunaFiltro}, proximaDosis=${proximaDosisFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Fecha consulta
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='proxima_dosis', nextDir=${sortBy == 'proxima_dosis' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/vacunaciones(q=${q}, idVacuna=${idVacunaFiltro}, proximaDosis=${proximaDosisFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Próxima dosis
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Lote</th>
-          <th>Acciones</th>
+          <th>Consulta</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><strong>Luna</strong> <small class="text-muted d-block">Gato</small></td>
-          <td>Triple felina</td>
-          <td>Dra. Laura Vega</td>
-          <td>10/01/2026</td>
-          <td><span class="ps-badge badge-success">10/01/2027</span></td>
-          <td>LT-2025-A</td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
+        <tr th:each="vac : ${vacunaciones}">
+          <td>
+            <strong th:text="${vac.nombreMascota}"></strong>
+            <small class="text-muted d-block" th:text="${vac.nombreEspecie}"></small>
+          </td>
+          <td th:text="${vac.nombrePropietario}"></td>
+          <td th:text="${vac.nombreVacuna}"></td>
+          <td th:text="${vac.nombreVeterinario}"></td>
+          <td th:text="${#temporals.format(vac.fechaConsulta, 'dd/MM/yyyy HH:mm')}"></td>
+          <td>
+            <th:block th:switch="${vac.estadoProximaDosis}">
+              <span th:case="'vencida'"   class="ps-badge badge-danger"
+                    th:text="${#temporals.format(vac.proximaDosis, 'dd/MM/yyyy')}"></span>
+              <span th:case="'proxima'"   class="ps-badge badge-warning"
+                    th:text="${#temporals.format(vac.proximaDosis, 'dd/MM/yyyy')}"></span>
+              <span th:case="'vigente'"   class="ps-badge badge-success"
+                    th:text="${#temporals.format(vac.proximaDosis, 'dd/MM/yyyy')}"></span>
+              <span th:case="*"           class="text-muted small">—</span>
+            </th:block>
+          </td>
+          <td th:text="${vac.lote != null ? vac.lote : '—'}"></td>
+          <td>
+            <a th:href="@{/consultas/{id}(id=${vac.idConsulta})}"
+               class="action-btn action-btn-info" title="Ver consulta">
+              <i class="bi bi-eye-fill"></i>
+            </a>
+          </td>
         </tr>
-        <tr>
-          <td><strong>Max</strong> <small class="text-muted d-block">Perro</small></td>
-          <td>Rabia</td>
-          <td>Dr. Carlos Méndez</td>
-          <td>15/02/2026</td>
-          <td><span class="ps-badge badge-warning">15/02/2027</span></td>
-          <td>RB-2026-C</td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Max</strong> <small class="text-muted d-block">Perro</small></td>
-          <td>Parvovirus</td>
-          <td>Dr. Carlos Méndez</td>
-          <td>15/02/2026</td>
-          <td><span class="ps-badge badge-success">15/02/2027</span></td>
-          <td>PV-2026-B</td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Rocky</strong> <small class="text-muted d-block">Perro</small></td>
-          <td>Rabia</td>
-          <td>Dra. Laura Vega</td>
-          <td>05/01/2025</td>
-          <td><span class="ps-badge badge-danger">05/01/2026 ⚠</span></td>
-          <td>RB-2025-A</td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver detalle"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
+        <tr th:if="${#lists.isEmpty(vacunaciones)}">
+          <td colspan="8" class="text-center text-muted py-4">No hay vacunaciones registradas.</td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
     <div class="ps-pagination">
-      <span class="pagination-info">Mostrando 1–4 de 89 registros</span>
+      <span class="pagination-info"
+            th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
+                     + ' de ' + ${pagina.totalElements} + ' registros'">
+      </span>
       <div class="pagination-controls">
-        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <span class="page-ellipsis">…</span>
-        <button class="page-btn">18</button>
-        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/vacunaciones(q=${q}, idVacuna=${idVacunaFiltro}, proximaDosis=${proximaDosisFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+           class="page-btn"><i class="bi bi-chevron-left"></i></a>
+        <span th:unless="${pagina.hasPrevious()}" class="page-btn disabled">
+          <i class="bi bi-chevron-left"></i></span>
+
+        <th:block th:each="p : ${ventanaPaginas}">
+          <span th:if="${p == -1}" class="page-ellipsis">…</span>
+          <a th:unless="${p == -1}"
+             th:href="@{/vacunaciones(q=${q}, idVacuna=${idVacunaFiltro}, proximaDosis=${proximaDosisFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+             th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
+             th:text="${p}"></a>
+        </th:block>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/vacunaciones(q=${q}, idVacuna=${idVacunaFiltro}, proximaDosis=${proximaDosisFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+           class="page-btn"><i class="bi bi-chevron-right"></i></a>
+        <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
+          <i class="bi bi-chevron-right"></i></span>
+
       </div>
     </div>
   </div>
