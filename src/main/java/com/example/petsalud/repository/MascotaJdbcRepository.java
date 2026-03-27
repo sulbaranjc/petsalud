@@ -9,9 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class MascotaJdbcRepository implements MascotaRepository {
@@ -69,11 +71,34 @@ public class MascotaJdbcRepository implements MascotaRepository {
          LEFT JOIN raza        r ON r.id = m.id_raza
             """;
 
+    /**
+     * Whitelist de columnas ordenables: clave URL → expresiones SQL reales.
+     * "especie" ordena por especie y raza como criterio secundario.
+     * "propietario" usa apellido + nombre para un orden natural completo.
+     * fecha_nacimiento ordena cronológicamente (NULL queda al final con ASC).
+     */
+    private static final Map<String, String[]> SORT_COLUMNS = Map.of(
+            "nombre",       new String[]{"m.nombre"},
+            "especie",      new String[]{"e.nombre", "r.nombre"},
+            "sexo",         new String[]{"m.sexo"},
+            "propietario",  new String[]{"p.apellido", "p.nombre"},
+            "nacimiento",   new String[]{"m.fecha_nacimiento"}
+    );
+    private static final String DEFAULT_SORT = "nombre";
+
+    private String buildOrderBy(String sortBy, String sortDir) {
+        String[] cols = SORT_COLUMNS.getOrDefault(sortBy, SORT_COLUMNS.get(DEFAULT_SORT));
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        return " ORDER BY " + Arrays.stream(cols)
+                .map(c -> c + " " + dir)
+                .collect(Collectors.joining(", "));
+    }
+
     // ── Paginación ────────────────────────────────────────────────────────────
 
     @Override
     public Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
-                                int page, int pageSize) {
+                                int page, int pageSize, String sortBy, String sortDir) {
         StringBuilder where  = new StringBuilder(" WHERE 1=1");
         MapSqlParameterSource params = new MapSqlParameterSource();
         aplicarFiltros(where, params, q, idEspecie, sexo, activo);
@@ -88,12 +113,13 @@ public class MascotaJdbcRepository implements MascotaRepository {
                 """ + where;
         Long total = jdbc.queryForObject(countSql, params, Long.class);
 
-        // 2. Traer solo la página solicitada con LIMIT/OFFSET
+        // 2. Traer solo la página solicitada con ORDER BY dinámico + LIMIT/OFFSET
         int offset = (page - 1) * pageSize;
         params.addValue("pageSize", pageSize)
               .addValue("offset",   offset);
         String dataSql = BASE_SELECT + where
-                + " ORDER BY m.nombre ASC LIMIT :pageSize OFFSET :offset";
+                + buildOrderBy(sortBy, sortDir)
+                + " LIMIT :pageSize OFFSET :offset";
         List<Mascota> content = jdbc.query(dataSql, params, ROW_MAPPER);
 
         return new Page<>(content, page, pageSize, total != null ? total : 0L);

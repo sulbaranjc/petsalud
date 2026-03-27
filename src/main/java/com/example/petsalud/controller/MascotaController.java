@@ -23,6 +23,9 @@ public class MascotaController {
 
     private static final int PAGE_SIZE = 10;
 
+    private static final java.util.Set<String> SORT_COLS =
+            java.util.Set.of("nombre", "especie", "sexo", "propietario", "nacimiento");
+
     private final MascotaService     mascotaService;
     private final EspecieService     especieService;
     private final RazaService        razaService;
@@ -45,6 +48,8 @@ public class MascotaController {
                         @RequestParam(required = false) Integer idEspecie,
                         @RequestParam(required = false) String sexo,
                         @RequestParam(required = false) String activo,
+                        @RequestParam(defaultValue = "nombre") String sortBy,
+                        @RequestParam(defaultValue = "asc")    String sortDir,
                         @RequestParam(defaultValue = "1") int page,
                         Model model) {
 
@@ -52,14 +57,17 @@ public class MascotaController {
                            : "0".equals(activo) ? Boolean.FALSE
                            : null;
 
-        // Normalizar filtros: null cuando están vacíos para que Thymeleaf
-        // los omita en las URLs de los botones de paginación
-        String qNorm      = (q      != null && !q.isBlank())    ? q.trim() : null;
-        String sexoNorm   = (sexo   != null && !sexo.isBlank()) ? sexo     : null;
-        String activoNorm = (activo != null && !activo.isBlank()) ? activo  : null;
+        // Normalizar filtros a null cuando vacíos para URLs de paginación limpias
+        String qNorm      = (q      != null && !q.isBlank())      ? q.trim() : null;
+        String sexoNorm   = (sexo   != null && !sexo.isBlank())   ? sexo     : null;
+        String activoNorm = (activo != null && !activo.isBlank()) ? activo   : null;
+
+        // Validar sortBy y sortDir contra lista cerrada
+        String sortByNorm  = SORT_COLS.contains(sortBy)          ? sortBy  : "nombre";
+        String sortDirNorm = "desc".equalsIgnoreCase(sortDir)    ? "desc"  : "asc";
 
         Page<Mascota> pagina = mascotaService.search(qNorm, idEspecie, sexoNorm, activoBool,
-                                                     page, PAGE_SIZE);
+                                                     page, PAGE_SIZE, sortByNorm, sortDirNorm);
 
         model.addAttribute("pagina",          pagina);
         model.addAttribute("mascotas",        pagina.getContent());
@@ -70,6 +78,8 @@ public class MascotaController {
         model.addAttribute("idEspecieFiltro", idEspecie);
         model.addAttribute("sexoFiltro",      sexoNorm);
         model.addAttribute("activoFiltro",    activoNorm);
+        model.addAttribute("sortBy",          sortByNorm);
+        model.addAttribute("sortDir",         sortDirNorm);
         return "mascotas/lista";
     }
 

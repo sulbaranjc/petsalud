@@ -70,11 +70,51 @@
     <table class="ps-table">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Especie / Raza</th>
-          <th>Sexo</th>
-          <th>Propietario</th>
-          <th>Nacimiento</th>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='especie', nextDir=${sortBy == 'especie' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Especie / Raza
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='sexo', nextDir=${sortBy == 'sexo' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Sexo
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='propietario', nextDir=${sortBy == 'propietario' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Propietario
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='nacimiento', nextDir=${sortBy == 'nacimiento' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nacimiento
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -136,7 +176,8 @@
         <!-- Botón anterior -->
         <a th:if="${pagina.hasPrevious()}"
            th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro},
-                               activo=${activoFiltro}, page=${pagina.pageNumber - 1})}"
+                               activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir},
+                               page=${pagina.pageNumber - 1})}"
            class="page-btn">
           <i class="bi bi-chevron-left"></i>
         </a>
@@ -149,7 +190,8 @@
           <span th:if="${p == -1}" class="page-ellipsis">…</span>
           <a th:unless="${p == -1}"
              th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro},
-                                 activo=${activoFiltro}, page=${p})}"
+                                 activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir},
+                                 page=${p})}"
              th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
              th:text="${p}">
           </a>
@@ -158,7 +200,8 @@
         <!-- Botón siguiente -->
         <a th:if="${pagina.hasNext()}"
            th:href="@{/mascotas(q=${q}, idEspecie=${idEspecieFiltro}, sexo=${sexoFiltro},
-                               activo=${activoFiltro}, page=${pagina.pageNumber + 1})}"
+                               activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir},
+                               page=${pagina.pageNumber + 1})}"
            class="page-btn">
           <i class="bi bi-chevron-right"></i>
         </a>
