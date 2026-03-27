@@ -7,9 +7,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class PropietarioJdbcRepository implements PropietarioRepository {
@@ -35,6 +37,30 @@ public class PropietarioJdbcRepository implements PropietarioRepository {
         return p;
     };
 
+    /**
+     * Mapa de columnas ordenables: clave usada en la URL → expresiones SQL reales.
+     * Al ser un mapa cerrado (whitelist), no existe riesgo de inyección SQL:
+     * cualquier valor no reconocido cae en la clave por defecto.
+     * Las columnas compuestas (apellido+nombre) se aplican en bloque con la
+     * misma dirección para mantener coherencia.
+     */
+    private static final Map<String, String[]> SORT_COLUMNS = Map.of(
+            "nombre",    new String[]{"p.apellido", "p.nombre"},
+            "documento", new String[]{"p.documento"},
+            "telefono",  new String[]{"p.telefono"},
+            "email",     new String[]{"p.email"},
+            "mascotas",  new String[]{"total_mascotas"}
+    );
+    private static final String DEFAULT_SORT = "nombre";
+
+    private String buildOrderBy(String sortBy, String sortDir) {
+        String[] cols = SORT_COLUMNS.getOrDefault(sortBy, SORT_COLUMNS.get(DEFAULT_SORT));
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        return " ORDER BY " + Arrays.stream(cols)
+                .map(c -> c + " " + dir)
+                .collect(Collectors.joining(", "));
+    }
+
     private static final String BASE_SELECT = """
             SELECT p.id,
                    p.nombre,
@@ -54,7 +80,8 @@ public class PropietarioJdbcRepository implements PropietarioRepository {
     }
 
     @Override
-    public Page<Propietario> search(String q, Boolean activo, int page, int pageSize) {
+    public Page<Propietario> search(String q, Boolean activo, int page, int pageSize,
+                                    String sortBy, String sortDir) {
         StringBuilder where  = new StringBuilder(" WHERE 1=1");
         MapSqlParameterSource params = new MapSqlParameterSource();
         aplicarFiltros(where, params, q, activo);
@@ -63,12 +90,13 @@ public class PropietarioJdbcRepository implements PropietarioRepository {
         String countSql = "SELECT COUNT(*) FROM propietario p" + where;
         Long total = jdbc.queryForObject(countSql, params, Long.class);
 
-        // 2. Página de datos con LIMIT/OFFSET
+        // 2. Página de datos con ORDER BY dinámico + LIMIT/OFFSET
         int offset = (page - 1) * pageSize;
         params.addValue("pageSize", pageSize)
               .addValue("offset",   offset);
         String dataSql = BASE_SELECT + where
-                + " ORDER BY p.apellido ASC, p.nombre ASC LIMIT :pageSize OFFSET :offset";
+                + buildOrderBy(sortBy, sortDir)
+                + " LIMIT :pageSize OFFSET :offset";
         List<Propietario> content = jdbc.query(dataSql, params, ROW_MAPPER);
 
         return new Page<>(content, page, pageSize, total != null ? total : 0L);

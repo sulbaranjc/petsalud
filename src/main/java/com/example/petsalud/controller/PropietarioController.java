@@ -26,20 +26,31 @@ public class PropietarioController {
         this.propietarioService = propietarioService;
     }
 
+    // Columnas válidas para ordenamiento — debe coincidir con la whitelist del repositorio
+    private static final java.util.Set<String> SORT_COLS =
+            java.util.Set.of("nombre", "documento", "telefono", "email", "mascotas");
+
     @GetMapping
     public String lista(@RequestParam(required = false) String q,
                         @RequestParam(required = false) String activo,
+                        @RequestParam(defaultValue = "nombre") String sortBy,
+                        @RequestParam(defaultValue = "asc")    String sortDir,
                         @RequestParam(defaultValue = "1") int page,
                         Model model) {
         Boolean activoBool = "1".equals(activo) ? Boolean.TRUE
                            : "0".equals(activo) ? Boolean.FALSE
                            : null;
 
-        // Normalizar a null cuando vacíos para que Thymeleaf los omita en las URLs de paginación
+        // Normalizar a null cuando vacíos para que Thymeleaf los omita en las URLs
         String qNorm      = (q      != null && !q.isBlank())      ? q.trim() : null;
         String activoNorm = (activo != null && !activo.isBlank()) ? activo   : null;
 
-        Page<Propietario> pagina = propietarioService.search(qNorm, activoBool, page, PAGE_SIZE);
+        // Validar sortBy y sortDir contra lista cerrada (seguridad adicional)
+        String sortByNorm  = SORT_COLS.contains(sortBy)                    ? sortBy  : "nombre";
+        String sortDirNorm = "desc".equalsIgnoreCase(sortDir)              ? "desc"  : "asc";
+
+        Page<Propietario> pagina = propietarioService.search(
+                qNorm, activoBool, page, PAGE_SIZE, sortByNorm, sortDirNorm);
 
         model.addAttribute("pagina",         pagina);
         model.addAttribute("propietarios",   pagina.getContent());
@@ -47,6 +58,8 @@ public class PropietarioController {
                                                              pagina.getTotalPages()));
         model.addAttribute("q",              qNorm);
         model.addAttribute("activoFiltro",   activoNorm);
+        model.addAttribute("sortBy",         sortByNorm);
+        model.addAttribute("sortDir",        sortDirNorm);
         return "propietarios/lista";
     }
 

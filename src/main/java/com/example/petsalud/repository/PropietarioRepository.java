@@ -10,7 +10,8 @@ public interface PropietarioRepository {
 
     List<Propietario> findAllByOrderByApellidoNombreAsc();
 
-    Page<Propietario> search(String q, Boolean activo, int page, int pageSize);
+    Page<Propietario> search(String q, Boolean activo, int page, int pageSize,
+                             String sortBy, String sortDir);
 
     Optional<Propietario> findById(Integer id);
 

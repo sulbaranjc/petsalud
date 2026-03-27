@@ -120,6 +120,50 @@
   white-space: nowrap;
 }
 
+/* ─── Cabeceras ordenables ───────────────────────────────────────────────────── */
+/*
+ * Un <th> que contiene un .sort-link se convierte en clickeable.
+ * El enlace hereda el estilo de la cabecera (mayúsculas, color muted) para
+ * que parezca parte del header, no un hipervínculo convencional.
+ * Al activarse muestra el color primario y el icono de dirección.
+ */
+.sort-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .15s;
+}
+
+.sort-link:hover {
+  color: var(--ps-primary);
+}
+
+.sort-icon {
+  font-size: .7rem;
+  opacity: .35;
+  transition: opacity .15s;
+}
+
+.sort-link:hover .sort-icon {
+  opacity: .7;
+}
+
+.sort-link-active {
+  color: var(--ps-primary-dark);
+}
+
+.sort-link-active .sort-icon {
+  opacity: 1;
+  color: var(--ps-primary);
+}
+
+.ps-table thead th:has(.sort-link-active) {
+  border-bottom-color: var(--ps-primary);
+}
+
 .ps-table tbody tr {
   border-bottom: 1px solid var(--ps-border);
   transition: background-color .15s;

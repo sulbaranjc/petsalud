@@ -9,7 +9,8 @@ public interface PropietarioService {
 
     List<Propietario> findAll();
 
-    Page<Propietario> search(String q, Boolean activo, int page, int pageSize);
+    Page<Propietario> search(String q, Boolean activo, int page, int pageSize,
+                             String sortBy, String sortDir);
 
     Propietario findById(Integer id);
 

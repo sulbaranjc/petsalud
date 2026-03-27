@@ -51,12 +51,59 @@
   <div class="ps-card">
     <table class="ps-table">
       <thead>
+        <!--
+          Cada <th> sorteable usa th:with para calcular, sin lógica en el controlador:
+            · nextDir  → si la columna YA está activa, invierte la dirección; si no, empieza en asc
+            · isActive → determina la clase CSS y qué icono mostrar
+          Los parámetros de filtro (q, activo) se preservan en cada enlace de ordenamiento.
+          Al cambiar columna siempre se vuelve a page=1 para no quedar fuera de rango.
+        -->
         <tr>
-          <th>Nombre completo</th>
-          <th>Documento</th>
-          <th>Teléfono</th>
-          <th>Email</th>
-          <th>Mascotas</th>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre completo
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='documento', nextDir=${sortBy == 'documento' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Documento
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='telefono', nextDir=${sortBy == 'telefono' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Teléfono
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='email', nextDir=${sortBy == 'email' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Email
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='mascotas', nextDir=${sortBy == 'mascotas' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Mascotas
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -111,7 +158,7 @@
 
         <!-- Botón anterior -->
         <a th:if="${pagina.hasPrevious()}"
-           th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, page=${pagina.pageNumber - 1})}"
+           th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
            class="page-btn">
           <i class="bi bi-chevron-left"></i>
         </a>
@@ -123,7 +170,7 @@
         <th:block th:each="p : ${ventanaPaginas}">
           <span th:if="${p == -1}" class="page-ellipsis">…</span>
           <a th:unless="${p == -1}"
-             th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, page=${p})}"
+             th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
              th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
              th:text="${p}">
           </a>
@@ -131,7 +178,7 @@
 
         <!-- Botón siguiente -->
         <a th:if="${pagina.hasNext()}"
-           th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, page=${pagina.pageNumber + 1})}"
+           th:href="@{/propietarios(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
            class="page-btn">
           <i class="bi bi-chevron-right"></i>
         </a>

@@ -28,8 +28,9 @@ public class PropietarioServiceImpl implements PropietarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Propietario> search(String q, Boolean activo, int page, int pageSize) {
-        return propietarioRepository.search(q, activo, page, pageSize);
+    public Page<Propietario> search(String q, Boolean activo, int page, int pageSize,
+                                    String sortBy, String sortDir) {
+        return propietarioRepository.search(q, activo, page, pageSize, sortBy, sortDir);
     }
 
     @Override
