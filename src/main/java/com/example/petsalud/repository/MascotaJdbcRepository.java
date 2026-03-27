@@ -136,7 +136,9 @@ public class MascotaJdbcRepository implements MascotaRepository {
             where.append("""
                     \s AND (m.nombre    LIKE :q
                             OR p.nombre    LIKE :q
-                            OR p.apellido  LIKE :q)
+                            OR p.apellido  LIKE :q
+                            OR e.nombre    LIKE :q
+                            OR r.nombre    LIKE :q)
                     """);
             params.addValue("q", "%" + q.trim() + "%");
         }
