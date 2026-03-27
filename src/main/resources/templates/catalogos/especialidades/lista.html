@@ -1,0 +1,151 @@
+<!doctype html>
+<html th:replace="~{layout/base :: layout('Especialidades', ~{::main})}" lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:with="activePage='cat-especialidades'">
+
+  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">Especialidades</h1>
+      <p class="page-subtitle">Especialidades médicas veterinarias del catálogo</p>
+    </div>
+    <a th:href="@{/catalogos/especialidades/nueva}" class="btn-ps-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Especialidad
+    </a>
+  </div>
+
+  <!-- Mensaje flash -->
+  <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${mensajeExito}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <!-- Filtros -->
+  <form th:action="@{/catalogos/especialidades}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-6">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por nombre o descripción..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select name="activo" class="filter-select">
+            <option value="">Estado</option>
+            <option value="1" th:selected="${activoFiltro == '1'}">Activo</option>
+            <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/catalogos/especialidades}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tabla -->
+  <div class="ps-card">
+    <table class="ps-table">
+      <thead>
+        <tr>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/especialidades(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th>Descripción</th>
+          <th th:with="col='veterinarios', nextDir=${sortBy == 'veterinarios' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/especialidades(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Veterinarios
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="esp : ${especialidades}">
+          <td><strong th:text="${esp.nombre}"></strong></td>
+          <td th:text="${esp.descripcion ?: '—'}"></td>
+          <td>
+            <!-- Badge clickeable que filtra veterinarios por esta especialidad -->
+            <a th:href="@{/veterinarios(idEspecialidad=${esp.id})}"
+               th:class="${esp.totalVeterinarios > 0} ? 'ps-badge badge-info text-decoration-none' : 'ps-badge badge-neutral text-decoration-none'"
+               th:text="${esp.totalVeterinarios}"
+               title="Ver veterinarios con esta especialidad">
+            </a>
+          </td>
+          <td>
+            <span th:if="${esp.activo}"    class="ps-badge badge-success">Activo</span>
+            <span th:unless="${esp.activo}" class="ps-badge badge-neutral">Inactivo</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a th:href="@{/catalogos/especialidades/{id}/editar(id=${esp.id})}"
+                 class="action-btn action-btn-edit" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <form th:action="@{/catalogos/especialidades/{id}/toggle(id=${esp.id})}"
+                    method="post" style="display:inline;">
+                <button type="submit"
+                        th:class="${esp.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
+                        th:title="${esp.activo} ? 'Desactivar' : 'Activar'">
+                  <i th:class="${esp.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(especialidades)}">
+          <td colspan="5" class="text-center text-muted py-4">No hay especialidades registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="ps-pagination">
+      <span class="pagination-info"
+            th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
+                     + ' de ' + ${pagina.totalElements} + ' registros'">
+      </span>
+      <div class="pagination-controls">
+
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/catalogos/especialidades(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+           class="page-btn"><i class="bi bi-chevron-left"></i></a>
+        <span th:unless="${pagina.hasPrevious()}" class="page-btn disabled">
+          <i class="bi bi-chevron-left"></i></span>
+
+        <th:block th:each="p : ${ventanaPaginas}">
+          <span th:if="${p == -1}" class="page-ellipsis">…</span>
+          <a th:unless="${p == -1}"
+             th:href="@{/catalogos/especialidades(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+             th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
+             th:text="${p}"></a>
+        </th:block>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/catalogos/especialidades(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+           class="page-btn"><i class="bi bi-chevron-right"></i></a>
+        <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
+          <i class="bi bi-chevron-right"></i></span>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

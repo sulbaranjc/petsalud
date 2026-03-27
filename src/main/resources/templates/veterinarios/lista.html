@@ -6,119 +6,179 @@
   <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
       <h1 class="page-title">Veterinarios</h1>
-      <p class="page-subtitle">Personal médico activo de la clínica</p>
+      <p class="page-subtitle">Personal médico de la clínica</p>
     </div>
-    <button class="btn-ps-primary">
+    <a th:href="@{/veterinarios/nuevo}" class="btn-ps-primary">
       <i class="bi bi-plus-lg"></i> Nuevo Veterinario
-    </button>
+    </a>
   </div>
 
-  <div class="ps-card filter-bar">
-    <div class="row g-2 align-items-center">
-      <div class="col-md-4">
-        <div class="filter-search-wrap">
-          <i class="bi bi-search"></i>
-          <input type="text" class="filter-input" placeholder="Buscar por nombre, matrícula...">
+  <!-- Mensaje flash -->
+  <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${mensajeExito}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <!-- Filtros -->
+  <form th:action="@{/veterinarios}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por nombre, matrícula, email..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select name="idEspecialidad" class="filter-select">
+            <option value="">Todas las especialidades</option>
+            <option th:each="esp : ${especialidades}"
+                    th:value="${esp.id}"
+                    th:text="${esp.nombre}"
+                    th:selected="${esp.id == idEspecialidadFiltro}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="activo" class="filter-select">
+            <option value="">Estado</option>
+            <option value="1" th:selected="${activoFiltro == '1'}">Activo</option>
+            <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/veterinarios}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
         </div>
       </div>
-      <div class="col-md-3">
-        <select class="filter-select">
-          <option value="">Todas las especialidades</option>
-          <option>Medicina Interna</option>
-          <option>Cirugía</option>
-          <option>Dermatología</option>
-          <option>Odontología</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="filter-select">
-          <option value="">Estado</option>
-          <option>Activo</option>
-          <option>Inactivo</option>
-        </select>
-      </div>
-      <div class="col-md-2 text-end ms-auto">
-        <button class="btn-ps-outline w-100"><i class="bi bi-funnel"></i> Filtrar</button>
-      </div>
     </div>
-  </div>
+  </form>
 
+  <!-- Tabla -->
   <div class="ps-card">
     <table class="ps-table">
       <thead>
         <tr>
-          <th>Nombre completo</th>
-          <th>Matrícula</th>
-          <th>Especialidad</th>
-          <th>Teléfono</th>
-          <th>Email</th>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre completo
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='matricula', nextDir=${sortBy == 'matricula' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Matrícula
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='especialidad', nextDir=${sortBy == 'especialidad' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Especialidad
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='telefono', nextDir=${sortBy == 'telefono' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Teléfono
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='email', nextDir=${sortBy == 'email' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Email
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><strong>Dr. Carlos Méndez</strong></td>
-          <td>VET-00123</td>
-          <td><span class="ps-badge badge-info">Medicina Interna</span></td>
-          <td>+51 987 111 222</td>
-          <td>c.mendez@petsalud.com</td>
-          <td><span class="ps-badge badge-success">Activo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
+        <tr th:each="vet : ${veterinarios}">
+          <td><strong th:text="${vet.nombreCompleto}"></strong></td>
+          <td th:text="${vet.matricula}"></td>
+          <td>
+            <span th:if="${vet.nombreEspecialidad != null}"
+                  class="ps-badge badge-info"
+                  th:text="${vet.nombreEspecialidad}"></span>
+            <span th:unless="${vet.nombreEspecialidad != null}"
+                  class="ps-badge badge-neutral">General</span>
+          </td>
+          <td th:text="${vet.telefono ?: '—'}"></td>
+          <td th:text="${vet.email ?: '—'}"></td>
+          <td>
+            <span th:if="${vet.activo}"    class="ps-badge badge-success">Activo</span>
+            <span th:unless="${vet.activo}" class="ps-badge badge-neutral">Inactivo</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a th:href="@{/veterinarios/{id}/editar(id=${vet.id})}"
+                 class="action-btn action-btn-edit" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <form th:action="@{/veterinarios/{id}/toggle(id=${vet.id})}"
+                    method="post" style="display:inline;">
+                <button type="submit"
+                        th:class="${vet.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
+                        th:title="${vet.activo} ? 'Desactivar' : 'Activar'">
+                  <i th:class="${vet.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+                </button>
+              </form>
+            </div>
+          </td>
         </tr>
-        <tr>
-          <td><strong>Dra. Laura Vega</strong></td>
-          <td>VET-00456</td>
-          <td><span class="ps-badge badge-info">Cirugía</span></td>
-          <td>+51 987 333 444</td>
-          <td>l.vega@petsalud.com</td>
-          <td><span class="ps-badge badge-success">Activo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Dr. Andrés Mora</strong></td>
-          <td>VET-00789</td>
-          <td><span class="ps-badge badge-info">Dermatología</span></td>
-          <td>+51 987 555 666</td>
-          <td>a.mora@petsalud.com</td>
-          <td><span class="ps-badge badge-success">Activo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
-        </tr>
-        <tr>
-          <td><strong>Dra. Sofía Paredes</strong></td>
-          <td>VET-01012</td>
-          <td><span class="ps-badge badge-info">Odontología</span></td>
-          <td>+51 987 777 888</td>
-          <td>s.paredes@petsalud.com</td>
-          <td><span class="ps-badge badge-neutral">Inactivo</span></td>
-          <td><div class="table-actions">
-            <button class="action-btn action-btn-info"  title="Ver agenda"><i class="bi bi-eye-fill"></i></button>
-            <button class="action-btn action-btn-edit"  title="Editar"><i class="bi bi-pencil-fill"></i></button>
-            <button class="action-btn action-btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-          </div></td>
+        <tr th:if="${#lists.isEmpty(veterinarios)}">
+          <td colspan="7" class="text-center text-muted py-4">No hay veterinarios registrados.</td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
     <div class="ps-pagination">
-      <span class="pagination-info">Mostrando 1–4 de 12 registros</span>
+      <span class="pagination-info"
+            th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
+                     + ' de ' + ${pagina.totalElements} + ' registros'">
+      </span>
       <div class="pagination-controls">
-        <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+           class="page-btn"><i class="bi bi-chevron-left"></i></a>
+        <span th:unless="${pagina.hasPrevious()}" class="page-btn disabled">
+          <i class="bi bi-chevron-left"></i></span>
+
+        <th:block th:each="p : ${ventanaPaginas}">
+          <span th:if="${p == -1}" class="page-ellipsis">…</span>
+          <a th:unless="${p == -1}"
+             th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+             th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
+             th:text="${p}"></a>
+        </th:block>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/veterinarios(q=${q}, idEspecialidad=${idEspecialidadFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+           class="page-btn"><i class="bi bi-chevron-right"></i></a>
+        <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
+          <i class="bi bi-chevron-right"></i></span>
+
       </div>
     </div>
   </div>
