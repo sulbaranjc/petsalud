@@ -243,31 +243,24 @@ INSERT INTO tratamiento (id, id_consulta, descripcion, fecha_inicio, fecha_fin, 
   (9,  8,  'Cuidados post-exodoncia: evitar croquetas duras por 10 días',             '2026-03-05', '2026-03-15', 'Revisar cicatrización en próximo control'),
   (10, 9,  'Vitamina B12 inyectable semanal durante 4 semanas',                       '2026-03-12', '2026-04-09', 'Administrar en clínica; no en casa');
 
--- receta (10 registros distribuidos entre consultas)
-INSERT INTO receta (id, id_consulta, id_medicamento, dosis, frecuencia, duracion, indicaciones) VALUES
-  (1,  2,  1, '1 cápsula (500 mg)',       'Cada 12 horas', '5 días',    'Administrar con alimento. No suspender antes de terminar.'),
-  (2,  3,  4, '1 mg/kg',                  'Cada 24 horas', '5 días',    'Reducir a 0.5 mg/kg los últimos 2 días; no suspender bruscamente.'),
-  (3,  4,  2, '15 mg/kg',                 'Cada 12 horas', '5 días',    'Mezclar con la comida. Puede causar náuseas transitorias.'),
-  (4,  4,  7, '0.5 mg/kg',                'Cada 24 horas', '7 días',    'En ayunas, 30 minutos antes del alimento.'),
-  (5,  6,  7, '0.5 mg/kg',                'Cada 24 horas', '5 días',    'En ayunas, 30 minutos antes de ofrecer alimento.'),
-  (6,  6,  2, '15 mg/kg',                 'Cada 12 horas', '5 días',    'Con comida para minimizar irritación gástrica.'),
-  (7,  7,  6, '1 mg/kg',                  'Cada 24 horas', '21 días',   'Administrar preferiblemente en la noche.'),
-  (8,  8,  1, '1 cápsula (500 mg)',        'Cada 8 horas',  '7 días',    'Iniciar después de la cirugía. Completar el esquema completo.'),
-  (9,  9,  10,'0.5 ml',                   'Cada 7 días',   '4 semanas', 'Vía subcutánea. Administrar en clínica.'),
-  (10, 10, 5, '10 mg/kg',                 'Cada 12 horas', '7 días',    'Mezclar en agua o alimento blando. Mantener al ave en ambiente cálido.');
+-- consulta_medicamento (medicamentos administrados en clínica durante la consulta)
+INSERT INTO consulta_medicamento (id, id_consulta, id_medicamento, dosis, frecuencia, observaciones) VALUES
+  (1,  2,  1, '1 cápsula (500 mg)',  'Cada 12 horas', '5 días. Administrar con alimento.'),
+  (2,  3,  4, '1 mg/kg',             'Cada 24 horas', '5 días. Reducir dosis progresivamente; no suspender bruscamente.'),
+  (3,  4,  2, '15 mg/kg',            'Cada 12 horas', '5 días. Mezclar con la comida.'),
+  (4,  4,  7, '0.5 mg/kg',           'Cada 24 horas', '7 días. En ayunas, 30 min antes del alimento.'),
+  (5,  6,  7, '0.5 mg/kg',           'Cada 24 horas', '5 días. En ayunas, 30 min antes de ofrecer alimento.'),
+  (6,  6,  2, '15 mg/kg',            'Cada 12 horas', '5 días. Con comida para minimizar irritación gástrica.'),
+  (7,  7,  6, '1 mg/kg',             'Cada 24 horas', '21 días. Administrar preferiblemente en la noche.'),
+  (8,  8,  1, '1 cápsula (500 mg)',  'Cada 8 horas',  '7 días. Iniciar después de la cirugía.'),
+  (9,  9,  10,'0.5 ml',              'Cada 7 días',   '4 semanas. Vía subcutánea. Administrar en clínica.'),
+  (10, 10, 5, '10 mg/kg',            'Cada 12 horas', '7 días. Mezclar en alimento blando. Mantener al ave en ambiente cálido.');
 
--- historial_vacunacion (10 registros)
-INSERT INTO historial_vacunacion (id, id_mascota, id_vacuna, id_veterinario, fecha_aplicacion, proxima_dosis, lote, observaciones) VALUES
-  (1,  1,  1, 1, '2026-01-10', '2027-01-10', 'ZOE-2025-A1', 'Sin reacción adversa. Próxima dosis enero 2027.'),
-  (2,  1,  2, 1, '2026-01-10', '2027-01-10', 'MSD-2025-B3', 'DHPPi aplicada junto con antirrábica en misma visita.'),
-  (3,  2,  1, 2, '2025-06-20', '2026-06-20', 'ZOE-2024-C2', 'Historial previo registrado; traído por propietario.'),
-  (4,  3,  6, 3, '2025-11-15', '2026-11-15', 'ZOE-2025-F1', 'Felocell 4 aplicada sin incidencias.'),
-  (5,  4,  6, 8, '2025-09-10', '2026-09-10', 'ZOE-2024-F2', 'Primer refuerzo anual de triple felina.'),
-  (6,  5,  2, 1, '2025-12-05', '2026-12-05', 'MSD-2025-B5', 'Cachorro en esquema de primoinfección. Serie completa.'),
-  (7,  5,  3, 1, '2025-12-05', '2026-01-02', 'MSD-2025-L2', 'Leptospira L4 primera dosis. Refuerzo a los 28 días.'),
-  (8,  6,  1, 9, '2025-08-22', '2026-08-22', 'ZOE-2024-A3', 'Sin reacción. Propietario informado de próxima fecha.'),
-  (9,  7,  8, 4, '2025-07-14', '2026-07-14', 'BIN-2024-R1', 'Antirrábica felina. Sin observaciones.'),
-  (10, 9,  7, 8, '2025-10-30', '2026-10-30', 'VIR-2025-L1', 'Leucofeligen primera dosis. Refuerzo al mes.');
+-- consulta_vacuna (vacunas aplicadas en clínica durante la consulta)
+INSERT INTO consulta_vacuna (id, id_consulta, id_vacuna, proxima_dosis, lote, observaciones) VALUES
+  (1, 1, 1, '2027-01-10', 'ZOE-2025-A1', 'Sin reacción adversa.'),
+  (2, 1, 2, '2027-01-10', 'MSD-2025-B3', 'DHPPi aplicada junto con antirrábica en misma visita.'),
+  (3, 5, 3, '2027-02-10', 'MSD-2025-L2', 'Refuerzo anual de Leptospira L4. Sin reacción.');
 
 -- Reactivar verificación de FK
 SET FOREIGN_KEY_CHECKS = 1;
