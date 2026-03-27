@@ -21,9 +21,9 @@ public class MascotaServiceImpl implements MascotaService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
+    public Page<Mascota> search(String q, Integer idEspecie, Integer idPropietario, String sexo, Boolean activo,
                                 int page, int pageSize, String sortBy, String sortDir) {
-        return mascotaRepository.search(q, idEspecie, sexo, activo, page, pageSize, sortBy, sortDir);
+        return mascotaRepository.search(q, idEspecie, idPropietario, sexo, activo, page, pageSize, sortBy, sortDir);
     }
 
     @Override

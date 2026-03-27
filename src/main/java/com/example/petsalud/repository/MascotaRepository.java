@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface MascotaRepository {
 
-    Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
+    Page<Mascota> search(String q, Integer idEspecie, Integer idPropietario, String sexo, Boolean activo,
                          int page, int pageSize, String sortBy, String sortDir);
 
     Optional<Mascota> findById(Integer id);

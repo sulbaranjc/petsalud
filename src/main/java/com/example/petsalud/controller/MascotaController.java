@@ -46,6 +46,7 @@ public class MascotaController {
     @GetMapping
     public String lista(@RequestParam(required = false) String q,
                         @RequestParam(required = false) Integer idEspecie,
+                        @RequestParam(required = false) Integer idPropietario,
                         @RequestParam(required = false) String sexo,
                         @RequestParam(required = false) String activo,
                         @RequestParam(defaultValue = "nombre") String sortBy,
@@ -63,23 +64,25 @@ public class MascotaController {
         String activoNorm = (activo != null && !activo.isBlank()) ? activo   : null;
 
         // Validar sortBy y sortDir contra lista cerrada
-        String sortByNorm  = SORT_COLS.contains(sortBy)          ? sortBy  : "nombre";
-        String sortDirNorm = "desc".equalsIgnoreCase(sortDir)    ? "desc"  : "asc";
+        String sortByNorm  = SORT_COLS.contains(sortBy)       ? sortBy : "nombre";
+        String sortDirNorm = "desc".equalsIgnoreCase(sortDir) ? "desc" : "asc";
 
-        Page<Mascota> pagina = mascotaService.search(qNorm, idEspecie, sexoNorm, activoBool,
+        Page<Mascota> pagina = mascotaService.search(qNorm, idEspecie, idPropietario,
+                                                     sexoNorm, activoBool,
                                                      page, PAGE_SIZE, sortByNorm, sortDirNorm);
 
-        model.addAttribute("pagina",          pagina);
-        model.addAttribute("mascotas",        pagina.getContent());
-        model.addAttribute("ventanaPaginas",  calcularVentana(pagina.getPageNumber(),
-                                                              pagina.getTotalPages()));
-        model.addAttribute("especies",        especieService.findAll());
-        model.addAttribute("q",               qNorm);
-        model.addAttribute("idEspecieFiltro", idEspecie);
-        model.addAttribute("sexoFiltro",      sexoNorm);
-        model.addAttribute("activoFiltro",    activoNorm);
-        model.addAttribute("sortBy",          sortByNorm);
-        model.addAttribute("sortDir",         sortDirNorm);
+        model.addAttribute("pagina",              pagina);
+        model.addAttribute("mascotas",            pagina.getContent());
+        model.addAttribute("ventanaPaginas",      calcularVentana(pagina.getPageNumber(),
+                                                                  pagina.getTotalPages()));
+        model.addAttribute("especies",            especieService.findAll());
+        model.addAttribute("q",                   qNorm);
+        model.addAttribute("idEspecieFiltro",     idEspecie);
+        model.addAttribute("idPropietarioFiltro", idPropietario);
+        model.addAttribute("sexoFiltro",          sexoNorm);
+        model.addAttribute("activoFiltro",        activoNorm);
+        model.addAttribute("sortBy",              sortByNorm);
+        model.addAttribute("sortDir",             sortDirNorm);
         return "mascotas/lista";
     }
 

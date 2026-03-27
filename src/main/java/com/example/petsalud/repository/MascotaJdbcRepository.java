@@ -97,11 +97,11 @@ public class MascotaJdbcRepository implements MascotaRepository {
     // ── Paginación ────────────────────────────────────────────────────────────
 
     @Override
-    public Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
+    public Page<Mascota> search(String q, Integer idEspecie, Integer idPropietario, String sexo, Boolean activo,
                                 int page, int pageSize, String sortBy, String sortDir) {
         StringBuilder where  = new StringBuilder(" WHERE 1=1");
         MapSqlParameterSource params = new MapSqlParameterSource();
-        aplicarFiltros(where, params, q, idEspecie, sexo, activo);
+        aplicarFiltros(where, params, q, idEspecie, idPropietario, sexo, activo);
 
         // 1. Contar el total de registros que cumplen los filtros
         String countSql = """
@@ -131,7 +131,8 @@ public class MascotaJdbcRepository implements MascotaRepository {
      * y para la query de datos, garantizando que ambas usen los mismos filtros.
      */
     private void aplicarFiltros(StringBuilder where, MapSqlParameterSource params,
-                                 String q, Integer idEspecie, String sexo, Boolean activo) {
+                                 String q, Integer idEspecie, Integer idPropietario,
+                                 String sexo, Boolean activo) {
         if (q != null && !q.isBlank()) {
             where.append("""
                     \s AND (m.nombre    LIKE :q
@@ -145,6 +146,10 @@ public class MascotaJdbcRepository implements MascotaRepository {
         if (idEspecie != null) {
             where.append(" AND m.id_especie = :idEspecie");
             params.addValue("idEspecie", idEspecie);
+        }
+        if (idPropietario != null) {
+            where.append(" AND m.id_propietario = :idPropietario");
+            params.addValue("idPropietario", idPropietario);
         }
         if (sexo != null && !sexo.isBlank()) {
             where.append(" AND m.sexo = :sexo");

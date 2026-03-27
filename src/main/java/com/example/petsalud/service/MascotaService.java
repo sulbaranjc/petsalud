@@ -5,7 +5,7 @@ import com.example.petsalud.model.Page;
 
 public interface MascotaService {
 
-    Page<Mascota> search(String q, Integer idEspecie, String sexo, Boolean activo,
+    Page<Mascota> search(String q, Integer idEspecie, Integer idPropietario, String sexo, Boolean activo,
                          int page, int pageSize, String sortBy, String sortDir);
 
     Mascota findById(Integer id);
