@@ -1,5 +1,6 @@
 package com.example.petsalud.service.catalogo.impl;
 
+import com.example.petsalud.model.Page;
 import com.example.petsalud.model.catalogo.Raza;
 import com.example.petsalud.repository.catalogo.RazaRepository;
 import com.example.petsalud.service.catalogo.RazaService;
@@ -27,8 +28,9 @@ public class RazaServiceImpl implements RazaService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Raza> search(String nombre, Integer idEspecie, Boolean activo) {
-        return razaRepository.search(nombre, idEspecie, activo);
+    public Page<Raza> search(String q, Integer idEspecie, Boolean activo,
+                              int page, int pageSize, String sortBy, String sortDir) {
+        return razaRepository.search(q, idEspecie, activo, page, pageSize, sortBy, sortDir);
     }
 
     @Override

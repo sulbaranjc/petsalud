@@ -60,8 +60,24 @@
     <table class="ps-table">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Especie</th>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
+          <th th:with="col='especie', nextDir=${sortBy == 'especie' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Especie
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -96,6 +112,27 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
+    <div th:if="${pagina.totalPages > 1}" class="ps-pagination">
+      <a th:if="${pagina.hasPreviousPage}"
+         th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+         class="page-btn"><i class="bi bi-chevron-left"></i></a>
+      <span th:unless="${pagina.hasPreviousPage}" class="page-btn page-btn-disabled"><i class="bi bi-chevron-left"></i></span>
+
+      <th:block th:each="p : ${ventanaPaginas}">
+        <span th:if="${p == -1}" class="page-btn page-btn-disabled">…</span>
+        <a th:unless="${p == -1}"
+           th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+           th:text="${p}"
+           th:class="${p == pagina.pageNumber} ? 'page-btn page-btn-active' : 'page-btn'"></a>
+      </th:block>
+
+      <a th:if="${pagina.hasNextPage}"
+         th:href="@{/catalogos/razas(q=${q}, idEspecie=${idEspecieFiltro}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+         class="page-btn"><i class="bi bi-chevron-right"></i></a>
+      <span th:unless="${pagina.hasNextPage}" class="page-btn page-btn-disabled"><i class="bi bi-chevron-right"></i></span>
+    </div>
   </div>
 
 </main>

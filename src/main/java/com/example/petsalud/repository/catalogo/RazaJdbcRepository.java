@@ -6,9 +6,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.petsalud.model.Page;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class RazaJdbcRepository implements RazaRepository {
@@ -29,65 +33,70 @@ public class RazaJdbcRepository implements RazaRepository {
         return r;
     };
 
-    @Override
-    public List<Raza> findAllByOrderByNombreAsc() {
-        String sql = """
-                SELECT r.id,
-                       r.nombre,
-                       r.id_especie,
-                       r.activo,
-                       e.nombre AS nombre_especie
-                  FROM raza r
-                  JOIN especie e ON e.id = r.id_especie
-                 ORDER BY r.nombre ASC
-                """;
-        return jdbc.query(sql, ROW_MAPPER);
+    private static final String BASE_SELECT = """
+            SELECT r.id,
+                   r.nombre,
+                   r.id_especie,
+                   r.activo,
+                   e.nombre AS nombre_especie
+              FROM raza r
+              JOIN especie e ON e.id = r.id_especie
+            """;
+
+    private static final Map<String, String[]> SORT_COLUMNS = Map.of(
+            "nombre",  new String[]{"r.nombre"},
+            "especie", new String[]{"e.nombre", "r.nombre"}
+    );
+    private static final String DEFAULT_SORT = "nombre";
+
+    private String buildOrderBy(String sortBy, String sortDir) {
+        String[] cols = SORT_COLUMNS.getOrDefault(sortBy, SORT_COLUMNS.get(DEFAULT_SORT));
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        return " ORDER BY " + Arrays.stream(cols)
+                .map(c -> c + " " + dir)
+                .collect(Collectors.joining(", "));
     }
 
     @Override
-    public List<Raza> search(String nombre, Integer idEspecie, Boolean activo) {
-        StringBuilder sql = new StringBuilder("""
-                SELECT r.id,
-                       r.nombre,
-                       r.id_especie,
-                       r.activo,
-                       e.nombre AS nombre_especie
-                  FROM raza r
-                  JOIN especie e ON e.id = r.id_especie
-                 WHERE 1=1
-                """);
+    public List<Raza> findAllByOrderByNombreAsc() {
+        return jdbc.query(BASE_SELECT + " ORDER BY r.nombre ASC", ROW_MAPPER);
+    }
+
+    @Override
+    public Page<Raza> search(String q, Integer idEspecie, Boolean activo,
+                              int page, int pageSize, String sortBy, String sortDir) {
+        StringBuilder where = new StringBuilder(" WHERE 1=1");
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        if (nombre != null && !nombre.isBlank()) {
-            sql.append(" AND r.nombre LIKE :nombre");
-            params.addValue("nombre", "%" + nombre.trim() + "%");
+        if (q != null && !q.isBlank()) {
+            where.append(" AND r.nombre LIKE :q");
+            params.addValue("q", "%" + q.trim() + "%");
         }
         if (idEspecie != null) {
-            sql.append(" AND r.id_especie = :idEspecie");
+            where.append(" AND r.id_especie = :idEspecie");
             params.addValue("idEspecie", idEspecie);
         }
         if (activo != null) {
-            sql.append(" AND r.activo = :activo");
+            where.append(" AND r.activo = :activo");
             params.addValue("activo", activo);
         }
 
-        sql.append(" ORDER BY r.nombre ASC");
-        return jdbc.query(sql.toString(), params, ROW_MAPPER);
+        String countSql = "SELECT COUNT(*) FROM raza r JOIN especie e ON e.id = r.id_especie" + where;
+        Long total = jdbc.queryForObject(countSql, params, Long.class);
+
+        int offset = (page - 1) * pageSize;
+        params.addValue("pageSize", pageSize).addValue("offset", offset);
+        List<Raza> content = jdbc.query(
+                BASE_SELECT + where + buildOrderBy(sortBy, sortDir)
+                        + " LIMIT :pageSize OFFSET :offset",
+                params, ROW_MAPPER);
+
+        return new Page<>(content, page, pageSize, total != null ? total : 0L);
     }
 
     @Override
     public Optional<Raza> findById(Integer id) {
-        String sql = """
-                SELECT r.id,
-                       r.nombre,
-                       r.id_especie,
-                       r.activo,
-                       e.nombre AS nombre_especie
-                  FROM raza r
-                  JOIN especie e ON e.id = r.id_especie
-                 WHERE r.id = :id
-                """;
-        return jdbc.query(sql, Map.of("id", id), ROW_MAPPER)
+        return jdbc.query(BASE_SELECT + " WHERE r.id = :id", Map.of("id", id), ROW_MAPPER)
                    .stream().findFirst();
     }
 
