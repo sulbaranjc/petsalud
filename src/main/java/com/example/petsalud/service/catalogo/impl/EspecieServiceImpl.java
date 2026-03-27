@@ -1,5 +1,6 @@
 package com.example.petsalud.service.catalogo.impl;
 
+import com.example.petsalud.model.Page;
 import com.example.petsalud.model.catalogo.Especie;
 import com.example.petsalud.repository.catalogo.EspecieRepository;
 import com.example.petsalud.service.catalogo.EspecieService;
@@ -23,6 +24,13 @@ public class EspecieServiceImpl implements EspecieService {
     @Transactional(readOnly = true)
     public List<Especie> findAll() {
         return especieRepository.findAllByOrderByNombreAsc();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Especie> search(String q, Boolean activo, int page, int pageSize,
+                                 String sortBy, String sortDir) {
+        return especieRepository.search(q, activo, page, pageSize, sortBy, sortDir);
     }
 
     @Override

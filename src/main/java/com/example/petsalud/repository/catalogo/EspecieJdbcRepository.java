@@ -6,9 +6,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.petsalud.model.Page;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class EspecieJdbcRepository implements EspecieRepository {
@@ -28,10 +32,53 @@ public class EspecieJdbcRepository implements EspecieRepository {
         return e;
     };
 
+    private static final String BASE_SELECT =
+            "SELECT id, nombre, descripcion, activo FROM especie";
+
+    private static final Map<String, String[]> SORT_COLUMNS = Map.of(
+            "nombre", new String[]{"nombre"}
+    );
+    private static final String DEFAULT_SORT = "nombre";
+
+    private String buildOrderBy(String sortBy, String sortDir) {
+        String[] cols = SORT_COLUMNS.getOrDefault(sortBy, SORT_COLUMNS.get(DEFAULT_SORT));
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        return " ORDER BY " + Arrays.stream(cols)
+                .map(c -> c + " " + dir)
+                .collect(Collectors.joining(", "));
+    }
+
     @Override
     public List<Especie> findAllByOrderByNombreAsc() {
-        String sql = "SELECT id, nombre, descripcion, activo FROM especie ORDER BY nombre ASC";
-        return jdbc.query(sql, ROW_MAPPER);
+        return jdbc.query(BASE_SELECT + " ORDER BY nombre ASC", ROW_MAPPER);
+    }
+
+    @Override
+    public Page<Especie> search(String q, Boolean activo, int page, int pageSize,
+                                 String sortBy, String sortDir) {
+        StringBuilder where = new StringBuilder(" WHERE 1=1");
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
+        if (q != null && !q.isBlank()) {
+            where.append(" AND (nombre LIKE :q OR descripcion LIKE :q)");
+            params.addValue("q", "%" + q.trim() + "%");
+        }
+        if (activo != null) {
+            where.append(" AND activo = :activo");
+            params.addValue("activo", activo);
+        }
+
+        Long total = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM especie" + where, params, Long.class);
+
+        int offset = (page - 1) * pageSize;
+        params.addValue("pageSize", pageSize).addValue("offset", offset);
+        List<Especie> content = jdbc.query(
+                BASE_SELECT + where + buildOrderBy(sortBy, sortDir)
+                        + " LIMIT :pageSize OFFSET :offset",
+                params, ROW_MAPPER);
+
+        return new Page<>(content, page, pageSize, total != null ? total : 0L);
     }
 
     @Override

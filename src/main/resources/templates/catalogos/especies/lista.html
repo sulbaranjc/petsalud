@@ -20,11 +20,47 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
+  <!-- Filtros -->
+  <form th:action="@{/catalogos/especies}" method="get">
+    <div class="ps-card filter-bar">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-6">
+          <div class="filter-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="filter-input"
+                   placeholder="Buscar por nombre o descripción..."
+                   th:value="${q}">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select name="activo" class="filter-select">
+            <option value="">Estado</option>
+            <option value="1" th:selected="${activoFiltro == '1'}">Activo</option>
+            <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
+          <a th:href="@{/catalogos/especies}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tabla -->
   <div class="ps-card">
     <table class="ps-table">
       <thead>
         <tr>
-          <th>Nombre</th>
+          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
+            <a th:href="@{/catalogos/especies(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
+               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
+              Nombre
+              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
+              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
+              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
+            </a>
+          </th>
           <th>Descripción</th>
           <th>Estado</th>
           <th>Acciones</th>
@@ -35,7 +71,7 @@
           <td><strong th:text="${especie.nombre}"></strong></td>
           <td th:text="${especie.descripcion ?: '—'}"></td>
           <td>
-            <span th:if="${especie.activo}"  class="ps-badge badge-success">Activo</span>
+            <span th:if="${especie.activo}"    class="ps-badge badge-success">Activo</span>
             <span th:unless="${especie.activo}" class="ps-badge badge-neutral">Inactivo</span>
           </td>
           <td>
@@ -60,6 +96,37 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- Paginación -->
+    <div class="ps-pagination">
+      <span class="pagination-info"
+            th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
+                     + ' de ' + ${pagina.totalElements} + ' registros'">
+      </span>
+      <div class="pagination-controls">
+
+        <a th:if="${pagina.hasPrevious()}"
+           th:href="@{/catalogos/especies(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
+           class="page-btn"><i class="bi bi-chevron-left"></i></a>
+        <span th:unless="${pagina.hasPrevious()}" class="page-btn disabled">
+          <i class="bi bi-chevron-left"></i></span>
+
+        <th:block th:each="p : ${ventanaPaginas}">
+          <span th:if="${p == -1}" class="page-ellipsis">…</span>
+          <a th:unless="${p == -1}"
+             th:href="@{/catalogos/especies(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${p})}"
+             th:class="${p == pagina.pageNumber} ? 'page-btn active' : 'page-btn'"
+             th:text="${p}"></a>
+        </th:block>
+
+        <a th:if="${pagina.hasNext()}"
+           th:href="@{/catalogos/especies(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber + 1})}"
+           class="page-btn"><i class="bi bi-chevron-right"></i></a>
+        <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
+          <i class="bi bi-chevron-right"></i></span>
+
+      </div>
+    </div>
   </div>
 
 </main>
