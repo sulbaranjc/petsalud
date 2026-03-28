@@ -7,6 +7,24 @@
   <div class="page-header" style="text-align:center;">
     <h1 class="page-title">Registrar Consulta</h1>
     <p class="page-subtitle">Complete los datos clínicos de la consulta</p>
+
+    <!-- Identificación de la mascota -->
+    <div th:if="${cita}" class="d-flex flex-column align-items-center gap-2 mt-3">
+      <img th:if="${cita.fotoUrlMascota != null and !#strings.isEmpty(cita.fotoUrlMascota)}"
+           th:src="${cita.fotoUrlMascota}"
+           th:alt="${cita.nombreMascota}"
+           style="width:96px; height:96px; border-radius:50%; object-fit:cover;
+                  border:3px solid var(--ps-primary); box-shadow:0 2px 12px rgba(37,99,235,.18);">
+      <div th:if="${cita.fotoUrlMascota == null or #strings.isEmpty(cita.fotoUrlMascota)}"
+           style="width:96px; height:96px; border-radius:50%; background:var(--ps-primary-light);
+                  border:3px solid var(--ps-primary); display:flex; align-items:center;
+                  justify-content:center; font-size:2.2rem; color:var(--ps-primary);">
+        <i class="bi bi-heart-fill"></i>
+      </div>
+      <span style="font-size:1.1rem; font-weight:700; color:var(--ps-text);"
+            th:text="${cita.nombreMascota}"></span>
+      <span class="text-muted small" th:text="${cita.nombreEspecie}"></span>
+    </div>
   </div>
 
   <form th:action="@{/consultas}"
