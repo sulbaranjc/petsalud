@@ -38,6 +38,7 @@ public class Cita {
     private Integer idConsulta;
 
     private String nombreMascota;
+    private String fotoUrlMascota;
     private String nombreEspecie;
     private String nombrePropietario;
     private String nombreVeterinario;
@@ -74,6 +75,9 @@ public class Cita {
 
     public String getNombreMascota()                         { return nombreMascota; }
     public void setNombreMascota(String nombreMascota)       { this.nombreMascota = nombreMascota; }
+
+    public String getFotoUrlMascota()                            { return fotoUrlMascota; }
+    public void setFotoUrlMascota(String fotoUrlMascota)         { this.fotoUrlMascota = fotoUrlMascota; }
 
     public String getNombreEspecie()                         { return nombreEspecie; }
     public void setNombreEspecie(String nombreEspecie)       { this.nombreEspecie = nombreEspecie; }
