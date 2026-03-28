@@ -28,6 +28,9 @@ public class Veterinario {
     /** FK nullable: NULL indica veterinario general sin especialidad asignada. */
     private Integer idEspecialidad;
 
+    @Size(max = 500)
+    private String fotoUrl;
+
     private boolean activo = true;
 
     /** Nombre de la especialidad; se popula con LEFT JOIN, no se persiste. */
@@ -66,4 +69,7 @@ public class Veterinario {
 
     public String getNombreEspecialidad() { return nombreEspecialidad; }
     public void setNombreEspecialidad(String nombreEspecialidad) { this.nombreEspecialidad = nombreEspecialidad; }
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 }

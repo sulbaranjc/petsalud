@@ -2,6 +2,7 @@ package com.example.petsalud.controller;
 
 import com.example.petsalud.model.Page;
 import com.example.petsalud.model.Veterinario;
+import com.example.petsalud.service.FileStorageService;
 import com.example.petsalud.service.VeterinarioService;
 import com.example.petsalud.service.catalogo.EspecialidadService;
 import jakarta.validation.Valid;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,11 +30,14 @@ public class VeterinarioController {
 
     private final VeterinarioService  veterinarioService;
     private final EspecialidadService especialidadService;
+    private final FileStorageService  fileStorageService;
 
     public VeterinarioController(VeterinarioService veterinarioService,
-                                  EspecialidadService especialidadService) {
+                                  EspecialidadService especialidadService,
+                                  FileStorageService fileStorageService) {
         this.veterinarioService  = veterinarioService;
         this.especialidadService = especialidadService;
+        this.fileStorageService  = fileStorageService;
     }
 
     // ── Lista con búsqueda, filtros, ordenamiento y paginación ────────────────
@@ -81,11 +87,21 @@ public class VeterinarioController {
     @PostMapping
     public String guardar(@Valid @ModelAttribute Veterinario veterinario,
                           BindingResult result,
+                          @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
                           Model model,
                           RedirectAttributes flash) {
         if (result.hasErrors()) {
             model.addAttribute("especialidades", especialidadService.findAllActivas());
             return "veterinarios/form";
+        }
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                veterinario.setFotoUrl(fileStorageService.store(fotoFile, "veterinarios"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la foto: " + e.getMessage());
+                model.addAttribute("especialidades", especialidadService.findAllActivas());
+                return "veterinarios/form";
+            }
         }
         veterinarioService.save(veterinario);
         flash.addFlashAttribute("mensajeExito", "Veterinario registrado correctamente.");
@@ -105,6 +121,7 @@ public class VeterinarioController {
     public String actualizar(@PathVariable Integer id,
                              @Valid @ModelAttribute Veterinario veterinario,
                              BindingResult result,
+                             @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
                              Model model,
                              RedirectAttributes flash) {
         if (result.hasErrors()) {
@@ -112,6 +129,16 @@ public class VeterinarioController {
             return "veterinarios/form";
         }
         veterinario.setId(id);
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                veterinario.setFotoUrl(fileStorageService.store(fotoFile, "veterinarios"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la foto: " + e.getMessage());
+                model.addAttribute("especialidades", especialidadService.findAllActivas());
+                return "veterinarios/form";
+            }
+        }
+        // Si no se subió archivo nuevo, veterinario.fotoUrl conserva el valor del hidden field
         veterinarioService.save(veterinario);
         flash.addFlashAttribute("mensajeExito", "Veterinario actualizado correctamente.");
         return "redirect:/veterinarios";

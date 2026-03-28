@@ -21,6 +21,7 @@
                       : @{/veterinarios/{id}/editar(id=${veterinario.id})}"
           th:object="${veterinario}"
           method="post"
+          enctype="multipart/form-data"
           novalidate>
 
       <div class="row g-3">
@@ -109,6 +110,36 @@
           </div>
         </div>
 
+        <!-- Foto -->
+        <div class="col-12">
+          <label class="form-label fw-semibold">Foto <small class="text-muted">(opcional · JPG, PNG, WEBP · máx. 5 MB)</small></label>
+
+          <!-- Foto actual (solo en edición) -->
+          <div th:if="${veterinario.fotoUrl != null and !#strings.isEmpty(veterinario.fotoUrl)}" class="mb-2">
+            <img th:src="${veterinario.fotoUrl}" alt="Foto actual"
+                 style="height:100px;width:100px;object-fit:cover;border-radius:8px;border:1px solid #dee2e6;">
+            <small class="d-block text-muted mt-1">Foto actual</small>
+          </div>
+
+          <!-- Guarda la URL existente al hacer submit sin subir nueva foto -->
+          <input type="hidden" th:field="*{fotoUrl}">
+
+          <input type="file"
+                 id="fotoFile"
+                 name="fotoFile"
+                 class="form-control"
+                 accept="image/*">
+
+          <!-- Vista previa antes de guardar -->
+          <div id="fotoPreview" class="mt-2" style="display:none;">
+            <img id="fotoPreviewImg" src="" alt="Vista previa"
+                 style="height:100px;width:100px;object-fit:cover;border-radius:8px;border:1px solid #dee2e6;">
+            <small class="d-block text-muted mt-1">Vista previa</small>
+          </div>
+
+          <div th:if="${errorFoto}" class="text-danger small mt-1" th:text="${errorFoto}"></div>
+        </div>
+
         <!-- Activo (solo en edición) -->
         <div class="col-12" th:if="${veterinario.id != null}">
           <div class="form-check form-switch">
@@ -129,6 +160,20 @@
 
     </form>
   </div>
+
+  <script>
+    document.getElementById('fotoFile').addEventListener('change', function () {
+      const preview = document.getElementById('fotoPreview');
+      const img     = document.getElementById('fotoPreviewImg');
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) { img.src = e.target.result; preview.style.display = 'block'; };
+        reader.readAsDataURL(this.files[0]);
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+  </script>
 
 </main>
 </body>

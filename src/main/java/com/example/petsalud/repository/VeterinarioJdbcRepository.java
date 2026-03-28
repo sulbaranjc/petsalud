@@ -31,6 +31,7 @@ public class VeterinarioJdbcRepository implements VeterinarioRepository {
         v.setTelefono(rs.getString("telefono"));
         v.setEmail(rs.getString("email"));
         v.setActivo(rs.getBoolean("activo"));
+        v.setFotoUrl(rs.getString("foto_url"));
         v.setNombreEspecialidad(rs.getString("nombre_especialidad")); // NULL si sin especialidad
 
         // id_especialidad es nullable
@@ -53,6 +54,7 @@ public class VeterinarioJdbcRepository implements VeterinarioRepository {
                    v.email,
                    v.id_especialidad,
                    v.activo,
+                   v.foto_url,
                    esp.nombre AS nombre_especialidad
               FROM veterinario v
          LEFT JOIN especialidad esp ON esp.id = v.id_especialidad
@@ -144,8 +146,8 @@ public class VeterinarioJdbcRepository implements VeterinarioRepository {
 
     private void insert(Veterinario v) {
         String sql = """
-                INSERT INTO veterinario (nombre, apellido, matricula, telefono, email, id_especialidad, activo)
-                VALUES (:nombre, :apellido, :matricula, :telefono, :email, :idEspecialidad, :activo)
+                INSERT INTO veterinario (nombre, apellido, matricula, telefono, email, id_especialidad, foto_url, activo)
+                VALUES (:nombre, :apellido, :matricula, :telefono, :email, :idEspecialidad, :fotoUrl, :activo)
                 """;
         jdbc.update(sql, toParams(v));
     }
@@ -159,6 +161,7 @@ public class VeterinarioJdbcRepository implements VeterinarioRepository {
                        telefono        = :telefono,
                        email           = :email,
                        id_especialidad = :idEspecialidad,
+                       foto_url        = :fotoUrl,
                        activo          = :activo
                  WHERE id = :id
                 """;
@@ -174,6 +177,7 @@ public class VeterinarioJdbcRepository implements VeterinarioRepository {
                 .addValue("telefono",        v.getTelefono())
                 .addValue("email",           v.getEmail())
                 .addValue("idEspecialidad",  v.getIdEspecialidad()) // puede ser null
+                .addValue("fotoUrl",         v.getFotoUrl())
                 .addValue("activo",          v.isActivo());
     }
 }

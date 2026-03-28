@@ -135,6 +135,7 @@ CREATE TABLE veterinario (
   telefono        VARCHAR(20)      NULL                COMMENT 'Teléfono de contacto',
   email           VARCHAR(150)     NULL                COMMENT 'Correo electrónico profesional',
   id_especialidad INT              NULL                COMMENT 'Especialidad principal del veterinario',
+  foto_url        VARCHAR(500)     NULL                COMMENT 'Ruta de la foto de perfil del veterinario',
   activo          TINYINT(1)   NOT NULL DEFAULT 1      COMMENT '1 = activo, 0 = dado de baja',
   created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de alta en el sistema',
   PRIMARY KEY (id),

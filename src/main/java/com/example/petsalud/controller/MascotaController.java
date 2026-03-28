@@ -2,6 +2,7 @@ package com.example.petsalud.controller;
 
 import com.example.petsalud.model.Mascota;
 import com.example.petsalud.model.Page;
+import com.example.petsalud.service.FileStorageService;
 import com.example.petsalud.service.MascotaService;
 import com.example.petsalud.service.PropietarioService;
 import com.example.petsalud.service.catalogo.EspecieService;
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,15 +33,18 @@ public class MascotaController {
     private final EspecieService     especieService;
     private final RazaService        razaService;
     private final PropietarioService propietarioService;
+    private final FileStorageService fileStorageService;
 
     public MascotaController(MascotaService mascotaService,
                              EspecieService especieService,
                              RazaService razaService,
-                             PropietarioService propietarioService) {
+                             PropietarioService propietarioService,
+                             FileStorageService fileStorageService) {
         this.mascotaService     = mascotaService;
         this.especieService     = especieService;
         this.razaService        = razaService;
         this.propietarioService = propietarioService;
+        this.fileStorageService = fileStorageService;
     }
 
     // ── Lista con búsqueda, filtros y paginación ──────────────────────────────
@@ -98,11 +104,21 @@ public class MascotaController {
     @PostMapping
     public String guardar(@Valid @ModelAttribute Mascota mascota,
                           BindingResult result,
+                          @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
                           Model model,
                           RedirectAttributes flash) {
         if (result.hasErrors()) {
             cargarReferencias(model);
             return "mascotas/form";
+        }
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                mascota.setFotoUrl(fileStorageService.store(fotoFile, "mascotas"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la foto: " + e.getMessage());
+                cargarReferencias(model);
+                return "mascotas/form";
+            }
         }
         mascotaService.save(mascota);
         flash.addFlashAttribute("mensajeExito", "Mascota registrada correctamente.");
@@ -122,6 +138,7 @@ public class MascotaController {
     public String actualizar(@PathVariable Integer id,
                              @Valid @ModelAttribute Mascota mascota,
                              BindingResult result,
+                             @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
                              Model model,
                              RedirectAttributes flash) {
         if (result.hasErrors()) {
@@ -129,6 +146,16 @@ public class MascotaController {
             return "mascotas/form";
         }
         mascota.setId(id);
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                mascota.setFotoUrl(fileStorageService.store(fotoFile, "mascotas"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la foto: " + e.getMessage());
+                cargarReferencias(model);
+                return "mascotas/form";
+            }
+        }
+        // Si no se subió archivo nuevo, mascota.fotoUrl conserva el valor del hidden field
         mascotaService.save(mascota);
         flash.addFlashAttribute("mensajeExito", "Mascota actualizada correctamente.");
         return "redirect:/mascotas";
