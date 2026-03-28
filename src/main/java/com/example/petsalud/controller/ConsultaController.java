@@ -3,6 +3,7 @@ package com.example.petsalud.controller;
 import com.example.petsalud.model.Consulta;
 import com.example.petsalud.model.ConsultaForm;
 import com.example.petsalud.model.Page;
+import com.example.petsalud.service.CitaService;
 import com.example.petsalud.service.ConsultaService;
 import com.example.petsalud.service.VeterinarioService;
 import com.example.petsalud.service.catalogo.MedicamentoService;
@@ -27,15 +28,18 @@ public class ConsultaController {
     private static final Set<String> SORT_COLS = Set.of("fecha", "mascota", "veterinario");
 
     private final ConsultaService    consultaService;
+    private final CitaService        citaService;
     private final VeterinarioService veterinarioService;
     private final MedicamentoService medicamentoService;
     private final VacunaService      vacunaService;
 
     public ConsultaController(ConsultaService consultaService,
+                               CitaService citaService,
                                VeterinarioService veterinarioService,
                                MedicamentoService medicamentoService,
                                VacunaService vacunaService) {
         this.consultaService    = consultaService;
+        this.citaService        = citaService;
         this.veterinarioService = veterinarioService;
         this.medicamentoService = medicamentoService;
         this.vacunaService      = vacunaService;
@@ -83,7 +87,7 @@ public class ConsultaController {
         }
         ConsultaForm form = new ConsultaForm();
         form.setIdCita(idCita);
-        cargarFormModel(model, form);
+        cargarFormModel(model, form, idCita);
         return "consultas/form";
     }
 
@@ -93,7 +97,7 @@ public class ConsultaController {
                           Model model,
                           RedirectAttributes flash) {
         if (result.hasErrors()) {
-            cargarFormModel(model, form);
+            cargarFormModel(model, form, form.getIdCita());
             return "consultas/form";
         }
         consultaService.guardar(form);
@@ -115,10 +119,13 @@ public class ConsultaController {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private void cargarFormModel(Model model, ConsultaForm form) {
+    private void cargarFormModel(Model model, ConsultaForm form, Integer idCita) {
         model.addAttribute("consultaForm",  form);
         model.addAttribute("medicamentos",  medicamentoService.findAllActivos());
         model.addAttribute("vacunas",       vacunaService.findAllActivas());
+        if (idCita != null) {
+            model.addAttribute("cita", citaService.findById(idCita));
+        }
     }
 
     private List<Integer> calcularVentana(int paginaActual, int totalPaginas) {
