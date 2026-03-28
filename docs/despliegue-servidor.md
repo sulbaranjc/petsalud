@@ -6,8 +6,9 @@
 2. [El enrutador central: nginx-proxy](#el-enrutador-central-nginx-proxy)
 3. [Proyectos desplegados actualmente](#proyectos-desplegados-actualmente)
 4. [Cómo incorporar un nuevo proyecto](#cómo-incorporar-un-nuevo-proyecto)
-5. [Estructura de directorios en el servidor](#estructura-de-directorios-en-el-servidor)
-6. [Referencia rápida de comandos](#referencia-rápida-de-comandos)
+5. [Configuración por proyecto en el servidor](#configuración-por-proyecto-en-el-servidor)
+6. [Estructura de directorios en el servidor](#estructura-de-directorios-en-el-servidor)
+7. [Referencia rápida de comandos](#referencia-rápida-de-comandos)
 
 ---
 
@@ -89,9 +90,54 @@ docker network create nginx-proxy
 
 Todos los proyectos que quieran ser enrutados deben unirse a ella declarándola como red externa en su `docker-compose.yml`.
 
-### Configuración manual existente
+### Configuración por vhost (vhost.d)
 
-Existe un `nginx.conf` en `~/nginx-proxy/nginx.conf` con una ruta configurada a mano para un proyecto antiguo. Las nuevas apps **no deben** editar ese archivo — deben usar el mecanismo de `VIRTUAL_HOST`.
+nginx-proxy soporta configuración nginx adicional por dominio. Si un archivo en
+`~/nginx-proxy/vhost.d/<dominio>` existe, su contenido se inyecta automáticamente
+dentro del bloque `server {}` de ese dominio.
+
+El directorio está montado como volumen en el contenedor:
+```
+~/nginx-proxy/vhost.d  →  /etc/nginx/vhost.d  (dentro de nginx-proxy)
+```
+
+**Configuraciones activas actualmente:**
+
+| Archivo | Contenido | Motivo |
+|---|---|---|
+| `petsalud.docker.sulbaranjc.com` | `client_max_body_size 10m;` | Permite subir fotos de hasta 10 MB |
+
+Para añadir configuración a un nuevo proyecto, crear el archivo correspondiente:
+```bash
+echo "client_max_body_size 10m;" > ~/nginx-proxy/vhost.d/mi-app.docker.sulbaranjc.com
+```
+No es necesario reiniciar nginx-proxy — detecta el cambio automáticamente.
+
+> **Importante:** estos archivos viven en el servidor, no en el repositorio del proyecto.
+> Si se reconstruye el servidor desde cero, hay que volver a crearlos.
+> Esta documentación es el registro de referencia.
+
+### Cómo fue lanzado nginx-proxy (estado actual)
+
+```bash
+docker run -d \
+  --name nginx-proxy \
+  --restart unless-stopped \
+  -p 80:80 \
+  --network nginx-proxy \
+  -v /var/run/docker.sock:/tmp/docker.sock:ro \
+  -v /home/sulbaranjc/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
+  nginxproxy/nginx-proxy
+```
+
+Si hay que recrearlo (por ejemplo al añadir el puerto 443 para SSL), usar exactamente
+este comando como base y añadir los parámetros necesarios.
+
+### Configuración manual heredada
+
+Existe un `nginx.conf` en `~/nginx-proxy/nginx.conf` con una ruta configurada a mano
+para un proyecto antiguo. **No está montado en el contenedor actual** y no tiene efecto.
+Las nuevas apps no deben editar ese archivo — deben usar el mecanismo de `VIRTUAL_HOST`.
 
 ---
 
@@ -222,6 +268,21 @@ docker compose up -d --build
 
 ---
 
+## Configuración por proyecto en el servidor
+
+Hay dos tipos de configuración para cada proyecto desplegado:
+
+| Tipo | Dónde vive | Está en git | Quién lo gestiona |
+|---|---|---|---|
+| `docker-compose.yml`, `Dockerfile` | Repositorio del proyecto | Sí | El desarrollador |
+| `.env` (credenciales reales) | `~/apps/<proyecto>/` en el servidor | No (en .gitignore) | Quien despliega |
+| Configuración nginx extra (`vhost.d`) | `~/nginx-proxy/vhost.d/` en el servidor | No | Quien administra el servidor |
+
+**Regla práctica:** si al desplegar un proyecto desde cero algo no funciona que sí funcionaba antes,
+revisar si falta algún archivo en `~/nginx-proxy/vhost.d/`. Esta documentación lista todos los que deben existir.
+
+---
+
 ## Estructura de directorios en el servidor
 
 ```
@@ -235,7 +296,9 @@ docker compose up -d --build
 │   ├── plantilla-base/
 │   └── ...
 └── nginx-proxy/
-    └── nginx.conf               ← configuración manual heredada (no modificar)
+    ├── nginx.conf               ← configuración manual heredada (no montada, no modificar)
+    └── vhost.d/                 ← configuración nginx por dominio (montada en nginx-proxy)
+        └── petsalud.docker.sulbaranjc.com
 ```
 
 ---
