@@ -27,18 +27,26 @@
         <div class="ps-card-header">
           <h2 class="ps-card-title"><i class="bi bi-patch-heart-fill me-2" style="color:var(--ps-primary)"></i>Paciente</h2>
         </div>
-        <dl class="row mt-2 mb-0">
-          <dt class="col-5 text-muted small">Mascota</dt>
-          <dd class="col-7 fw-semibold" th:text="${consulta.nombreMascota}"></dd>
-          <dt class="col-5 text-muted small">Especie</dt>
-          <dd class="col-7"               th:text="${consulta.nombreEspecie}"></dd>
-          <dt class="col-5 text-muted small">Propietario</dt>
-          <dd class="col-7"               th:text="${consulta.nombrePropietario}"></dd>
-          <dt class="col-5 text-muted small">Veterinario</dt>
-          <dd class="col-7"               th:text="${consulta.nombreVeterinario}"></dd>
-          <dt class="col-5 text-muted small">Fecha cita</dt>
-          <dd class="col-7"               th:text="${#temporals.format(consulta.fechaHoraCita, 'dd/MM/yyyy HH:mm')}"></dd>
-        </dl>
+        <div class="d-flex gap-3 mt-2 align-items-stretch">
+          <dl class="row mb-0 flex-grow-1 align-content-start">
+            <dt class="col-5 text-muted small">Mascota</dt>
+            <dd class="col-7 fw-semibold" th:text="${consulta.nombreMascota}"></dd>
+            <dt class="col-5 text-muted small">Especie</dt>
+            <dd class="col-7"               th:text="${consulta.nombreEspecie}"></dd>
+            <dt class="col-5 text-muted small">Propietario</dt>
+            <dd class="col-7"               th:text="${consulta.nombrePropietario}"></dd>
+            <dt class="col-5 text-muted small">Veterinario</dt>
+            <dd class="col-7"               th:text="${consulta.nombreVeterinario}"></dd>
+            <dt class="col-5 text-muted small">Fecha cita</dt>
+            <dd class="col-7"               th:text="${#temporals.format(consulta.fechaHoraCita, 'dd/MM/yyyy HH:mm')}"></dd>
+          </dl>
+          <div th:if="${consulta.fotoUrlMascota != null}"
+               style="flex:0 0 140px; min-width:140px;">
+            <img th:src="${consulta.fotoUrlMascota}"
+                 th:alt="${consulta.nombreMascota}"
+                 style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+          </div>
+        </div>
       </div>
     </div>
     <div class="col-md-6">

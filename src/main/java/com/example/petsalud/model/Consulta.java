@@ -24,6 +24,7 @@ public class Consulta {
     private String nombrePropietario;
     private String nombreVeterinario;
     private LocalDateTime fechaHoraCita;
+    private String fotoUrlMascota;
 
     public Consulta() {}
 
@@ -74,4 +75,7 @@ public class Consulta {
 
     public LocalDateTime getFechaHoraCita()                      { return fechaHoraCita; }
     public void setFechaHoraCita(LocalDateTime fechaHoraCita)    { this.fechaHoraCita = fechaHoraCita; }
+
+    public String getFotoUrlMascota()                            { return fotoUrlMascota; }
+    public void setFotoUrlMascota(String fotoUrlMascota)         { this.fotoUrlMascota = fotoUrlMascota; }
 }
