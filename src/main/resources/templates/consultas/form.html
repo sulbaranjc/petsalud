@@ -4,10 +4,7 @@
 <main th:with="activePage='consultas'">
 
   <!-- Cabecera -->
-  <div class="page-header" style="text-align:center;">
-    <h1 class="page-title">Registrar Consulta</h1>
-    <p class="page-subtitle">Complete los datos clínicos de la consulta</p>
-
+  <div class="page-header" style="text-align:center; padding-top:1.5rem;">
     <!-- Identificación de la mascota -->
     <div th:if="${cita}" class="d-flex flex-column align-items-center gap-2 mt-3">
       <img th:if="${cita.fotoUrlMascota != null and !#strings.isEmpty(cita.fotoUrlMascota)}"
@@ -23,8 +20,11 @@
       </div>
       <span style="font-size:1.1rem; font-weight:700; color:var(--ps-text);"
             th:text="${cita.nombreMascota}"></span>
-      <span class="text-muted small" th:text="${cita.nombreEspecie}"></span>
+      <span class="text-muted small"
+            th:text="${cita.nombreEspecie + (cita.nombreRaza != null ? ' · ' + cita.nombreRaza : '')}"></span>
     </div>
+    <h1 class="page-title">Registrar Consulta</h1>
+    <p class="page-subtitle">Complete los datos clínicos de la consulta</p>
   </div>
 
   <form th:action="@{/consultas}"
