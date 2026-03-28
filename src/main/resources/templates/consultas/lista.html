@@ -3,6 +3,28 @@
 <body>
 <main th:with="activePage='consultas'">
 
+  <style>
+    .mascota-list-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--ps-border); flex-shrink: 0;
+      transition: border-color .2s, transform .2s;
+    }
+    .mascota-list-avatar-placeholder {
+      width: 42px; height: 42px;
+      border-radius: 50%; background: var(--ps-primary-light);
+      border: 2px solid var(--ps-border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ps-primary); font-size: .95rem; opacity: .8;
+      transition: border-color .2s, transform .2s;
+    }
+    .ps-table tbody tr:hover .mascota-list-avatar,
+    .ps-table tbody tr:hover .mascota-list-avatar-placeholder {
+      border-color: var(--ps-primary); transform: scale(1.08);
+    }
+    .mascota-nombre-cell { display: flex; align-items: center; gap: .65rem; }
+  </style>
+
   <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
       <h1 class="page-title">Consultas</h1>
@@ -87,8 +109,21 @@
       <tbody>
         <tr th:each="con : ${consultas}">
           <td>
-            <strong th:text="${con.nombreMascota}"></strong>
-            <small class="text-muted d-block" th:text="${con.nombreEspecie}"></small>
+            <div class="mascota-nombre-cell">
+              <img th:if="${con.fotoUrlMascota != null and !#strings.isEmpty(con.fotoUrlMascota)}"
+                   th:src="${con.fotoUrlMascota}"
+                   th:alt="${con.nombreMascota}"
+                   class="mascota-list-avatar">
+              <div th:if="${con.fotoUrlMascota == null or #strings.isEmpty(con.fotoUrlMascota)}"
+                   class="mascota-list-avatar-placeholder"
+                   th:title="${con.nombreMascota}">
+                <i class="bi bi-paw-fill"></i>
+              </div>
+              <div>
+                <strong th:text="${con.nombreMascota}"></strong>
+                <small class="text-muted d-block" th:text="${con.nombreEspecie}"></small>
+              </div>
+            </div>
           </td>
           <td th:text="${con.nombrePropietario}"></td>
           <td th:text="${con.nombreVeterinario}"></td>
