@@ -35,3 +35,7 @@ build/
 ### Drawio temporales ###
 docs/.*.bkp
 docs/.*.dtmp
+
+### Docker — credenciales locales ###
+.env
+uploads/

@@ -1,0 +1,26 @@
+# Control de versiones
+.git
+.gitignore
+
+# Compilación local (Maven regenera dentro del contenedor)
+target/
+
+# Archivos de IDE
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+.settings/
+
+# Uploads locales (se montan como volumen)
+uploads/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentación
+docs/
+*.md

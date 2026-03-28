@@ -1,0 +1,70 @@
+services:
+
+  # ---------------------------------------------------------------------------
+  # Base de datos MySQL
+  # ---------------------------------------------------------------------------
+  basedatos:
+    image: mysql:8.4
+    container_name: petsalud-basedatos
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NOMBRE:-petsalud}
+      MYSQL_USER: ${DB_USUARIO:-petsalud}
+      MYSQL_PASSWORD: ${DB_CONTRASENA:-petsalud}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_CONTRASENA:-root_petsalud}
+      TZ: America/Bogota
+    volumes:
+      - datos-mysql:/var/lib/mysql
+      - ./docs/ini_db.sql:/docker-entrypoint-initdb.d/01-esquema.sql:ro
+      - ./docs/seed_data.sql:/docker-entrypoint-initdb.d/02-datos.sql:ro
+    networks:
+      - red-interna
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USUARIO:-petsalud}", "-p${DB_CONTRASENA:-petsalud}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # Aplicación Spring Boot — PetSalud
+  # ---------------------------------------------------------------------------
+  aplicacion:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: petsalud-app
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://basedatos:3306/${DB_NOMBRE:-petsalud}?useSSL=false&serverTimezone=America/Bogota&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USUARIO:-petsalud}
+      SPRING_DATASOURCE_PASSWORD: ${DB_CONTRASENA:-petsalud}
+      SPRING_THYMELEAF_CACHE: "true"
+      APP_UPLOAD_DIR: /app/uploads
+      TZ: America/Bogota
+    volumes:
+      - fotos-subidas:/app/uploads
+    networks:
+      - red-interna
+    depends_on:
+      basedatos:
+        condition: service_healthy
+
+# =============================================================================
+# Volúmenes persistentes
+# =============================================================================
+volumes:
+  datos-mysql:
+    name: petsalud-datos-mysql
+  fotos-subidas:
+    name: petsalud-fotos
+
+# =============================================================================
+# Red interna (los servicios no son accesibles entre sí desde fuera)
+# =============================================================================
+networks:
+  red-interna:
+    name: petsalud-red
+    driver: bridge
