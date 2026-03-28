@@ -20,11 +20,12 @@ services:
     networks:
       - red-interna
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USUARIO:-petsalud}", "-p${DB_CONTRASENA:-petsalud}"]
+      test: ["CMD", "mysql", "-h", "localhost", "-uroot", "-p${DB_ROOT_CONTRASENA:-root_petsalud}",
+             "-e", "SELECT 1 FROM petsalud.especie LIMIT 1;"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 12
+      start_period: 60s
 
   # ---------------------------------------------------------------------------
   # Aplicación Spring Boot — PetSalud
