@@ -34,4 +34,8 @@ public class DashboardCitaRow {
 
     public String getNombreEstadoCita()          { return nombreEstadoCita; }
     public void setNombreEstadoCita(String v)    { this.nombreEstadoCita = v; }
+
+    private String fotoUrlMascota;
+    public String getFotoUrlMascota()            { return fotoUrlMascota; }
+    public void setFotoUrlMascota(String v)      { this.fotoUrlMascota = v; }
 }

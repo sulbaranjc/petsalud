@@ -44,6 +44,7 @@ public class DashboardJdbcRepository implements DashboardRepository {
                    SELECT c.id,
                           con.id                              AS id_consulta,
                           m.nombre                            AS nombre_mascota,
+                          m.foto_url                          AS foto_url_mascota,
                           e.nombre                            AS nombre_especie,
                           CONCAT(p.apellido, ', ', p.nombre)  AS nombre_propietario,
                           c.fecha_hora,
@@ -64,6 +65,7 @@ public class DashboardJdbcRepository implements DashboardRepository {
             int idConsulta = rs.getInt("id_consulta");
             if (!rs.wasNull()) row.setIdConsulta(idConsulta);
             row.setNombreMascota(rs.getString("nombre_mascota"));
+            row.setFotoUrlMascota(rs.getString("foto_url_mascota"));
             row.setNombreEspecie(rs.getString("nombre_especie"));
             row.setNombrePropietario(rs.getString("nombre_propietario"));
             Timestamp ts = rs.getTimestamp("fecha_hora");
@@ -78,6 +80,7 @@ public class DashboardJdbcRepository implements DashboardRepository {
         String sql = """
                    SELECT con.id,
                           m.nombre                            AS nombre_mascota,
+                          m.foto_url                          AS foto_url_mascota,
                           e.nombre                            AS nombre_especie,
                           CONCAT(p.apellido, ', ', p.nombre)  AS nombre_propietario,
                           CONCAT(v.apellido, ', ', v.nombre)  AS nombre_veterinario,
@@ -96,6 +99,7 @@ public class DashboardJdbcRepository implements DashboardRepository {
             DashboardConsultaRow row = new DashboardConsultaRow();
             row.setId(rs.getInt("id"));
             row.setNombreMascota(rs.getString("nombre_mascota"));
+            row.setFotoUrlMascota(rs.getString("foto_url_mascota"));
             row.setNombreEspecie(rs.getString("nombre_especie"));
             row.setNombrePropietario(rs.getString("nombre_propietario"));
             row.setNombreVeterinario(rs.getString("nombre_veterinario"));

@@ -5,6 +5,28 @@
 <body>
 <main th:with="activePage='dashboard'">
 
+  <style>
+    .mascota-list-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--ps-border); flex-shrink: 0;
+      transition: border-color .2s, transform .2s;
+    }
+    .mascota-list-avatar-placeholder {
+      width: 36px; height: 36px;
+      border-radius: 50%; background: var(--ps-primary-light);
+      border: 2px solid var(--ps-border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ps-primary); font-size: .85rem; opacity: .8;
+      transition: border-color .2s, transform .2s;
+    }
+    .ps-table tbody tr:hover .mascota-list-avatar,
+    .ps-table tbody tr:hover .mascota-list-avatar-placeholder {
+      border-color: var(--ps-primary); transform: scale(1.08);
+    }
+    .mascota-nombre-cell { display: flex; align-items: center; gap: .55rem; }
+  </style>
+
   <!-- Encabezado -->
   <div class="page-header">
     <h1 class="page-title">Dashboard</h1>
@@ -79,8 +101,21 @@
         <tbody>
           <tr th:each="cita : ${citasHoy}">
             <td>
-              <strong th:text="${cita.nombreMascota}"></strong>
-              <small class="text-muted d-block" th:text="${cita.nombreEspecie}"></small>
+              <div class="mascota-nombre-cell">
+                <img th:if="${cita.fotoUrlMascota != null and !#strings.isEmpty(cita.fotoUrlMascota)}"
+                     th:src="${cita.fotoUrlMascota}"
+                     th:alt="${cita.nombreMascota}"
+                     class="mascota-list-avatar">
+                <div th:if="${cita.fotoUrlMascota == null or #strings.isEmpty(cita.fotoUrlMascota)}"
+                     class="mascota-list-avatar-placeholder"
+                     th:title="${cita.nombreMascota}">
+                  <i class="bi bi-paw-fill"></i>
+                </div>
+                <div>
+                  <strong th:text="${cita.nombreMascota}"></strong>
+                  <small class="text-muted d-block" th:text="${cita.nombreEspecie}"></small>
+                </div>
+              </div>
             </td>
             <td th:text="${cita.nombrePropietario}"></td>
             <td th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}"></td>
@@ -139,8 +174,21 @@
         <tbody>
           <tr th:each="con : ${consultasRecientes}">
             <td>
-              <strong th:text="${con.nombreMascota}"></strong>
-              <small class="text-muted d-block" th:text="${con.nombreEspecie}"></small>
+              <div class="mascota-nombre-cell">
+                <img th:if="${con.fotoUrlMascota != null and !#strings.isEmpty(con.fotoUrlMascota)}"
+                     th:src="${con.fotoUrlMascota}"
+                     th:alt="${con.nombreMascota}"
+                     class="mascota-list-avatar">
+                <div th:if="${con.fotoUrlMascota == null or #strings.isEmpty(con.fotoUrlMascota)}"
+                     class="mascota-list-avatar-placeholder"
+                     th:title="${con.nombreMascota}">
+                  <i class="bi bi-paw-fill"></i>
+                </div>
+                <div>
+                  <strong th:text="${con.nombreMascota}"></strong>
+                  <small class="text-muted d-block" th:text="${con.nombreEspecie}"></small>
+                </div>
+              </div>
             </td>
             <td th:text="${con.nombreVeterinario}"></td>
             <td th:text="${#temporals.format(con.fechaHora, 'dd/MM/yyyy')}"></td>
