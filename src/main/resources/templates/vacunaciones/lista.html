@@ -5,6 +5,28 @@
 <body>
 <main th:with="activePage='vacunaciones'">
 
+  <style>
+    .mascota-list-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--ps-border); flex-shrink: 0;
+      transition: border-color .2s, transform .2s;
+    }
+    .mascota-list-avatar-placeholder {
+      width: 42px; height: 42px;
+      border-radius: 50%; background: var(--ps-primary-light);
+      border: 2px solid var(--ps-border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ps-primary); font-size: .95rem; opacity: .8;
+      transition: border-color .2s, transform .2s;
+    }
+    .ps-table tbody tr:hover .mascota-list-avatar,
+    .ps-table tbody tr:hover .mascota-list-avatar-placeholder {
+      border-color: var(--ps-primary); transform: scale(1.08);
+    }
+    .mascota-nombre-cell { display: flex; align-items: center; gap: .65rem; }
+  </style>
+
   <div class="page-header">
     <h1 class="page-title">Historial de Vacunaciones</h1>
     <p class="page-subtitle">Vacunas aplicadas durante consultas médicas</p>
@@ -89,8 +111,21 @@
       <tbody>
         <tr th:each="vac : ${vacunaciones}">
           <td>
-            <strong th:text="${vac.nombreMascota}"></strong>
-            <small class="text-muted d-block" th:text="${vac.nombreEspecie}"></small>
+            <div class="mascota-nombre-cell">
+              <img th:if="${vac.fotoUrlMascota != null and !#strings.isEmpty(vac.fotoUrlMascota)}"
+                   th:src="${vac.fotoUrlMascota}"
+                   th:alt="${vac.nombreMascota}"
+                   class="mascota-list-avatar">
+              <div th:if="${vac.fotoUrlMascota == null or #strings.isEmpty(vac.fotoUrlMascota)}"
+                   class="mascota-list-avatar-placeholder"
+                   th:title="${vac.nombreMascota}">
+                <i class="bi bi-heart-fill"></i>
+              </div>
+              <div>
+                <strong th:text="${vac.nombreMascota}"></strong>
+                <small class="text-muted d-block" th:text="${vac.nombreEspecie}"></small>
+              </div>
+            </div>
           </td>
           <td th:text="${vac.nombrePropietario}"></td>
           <td th:text="${vac.nombreVacuna}"></td>

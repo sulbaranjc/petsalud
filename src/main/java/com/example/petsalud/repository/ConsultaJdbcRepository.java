@@ -34,6 +34,7 @@ public class ConsultaJdbcRepository implements ConsultaRepository {
         c.setDiagnostico(rs.getString("diagnostico"));
         c.setObservaciones(rs.getString("observaciones"));
         c.setNombreMascota(rs.getString("nombre_mascota"));
+        c.setFotoUrlMascota(rs.getString("foto_url_mascota"));
         c.setNombreEspecie(rs.getString("nombre_especie"));
         c.setNombrePropietario(rs.getString("nombre_propietario"));
         c.setNombreVeterinario(rs.getString("nombre_veterinario"));
@@ -82,6 +83,7 @@ public class ConsultaJdbcRepository implements ConsultaRepository {
                    con.observaciones,
                    ci.fecha_hora                          AS fecha_hora_cita,
                    m.nombre                               AS nombre_mascota,
+                   m.foto_url                             AS foto_url_mascota,
                    e.nombre                               AS nombre_especie,
                    CONCAT(p.apellido, ', ', p.nombre)     AS nombre_propietario,
                    CONCAT(v.apellido, ', ', v.nombre)     AS nombre_veterinario

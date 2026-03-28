@@ -34,4 +34,8 @@ public class DashboardConsultaRow {
 
     public String getDiagnostico()               { return diagnostico; }
     public void setDiagnostico(String v)         { this.diagnostico = v; }
+
+    private String fotoUrlMascota;
+    public String getFotoUrlMascota()            { return fotoUrlMascota; }
+    public void setFotoUrlMascota(String v)      { this.fotoUrlMascota = v; }
 }
