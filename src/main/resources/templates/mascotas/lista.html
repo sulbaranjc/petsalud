@@ -3,6 +3,47 @@
 <body>
 <main th:with="activePage='mascotas'">
 
+  <style>
+    /* ── Avatar de mascota en tabla ───────────────────────────────────────────── */
+    .mascota-list-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--ps-border);
+      flex-shrink: 0;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .mascota-list-avatar-placeholder {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--ps-primary-light);
+      border: 2px solid var(--ps-border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ps-primary);
+      font-size: .95rem;
+      opacity: .8;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .ps-table tbody tr:hover .mascota-list-avatar,
+    .ps-table tbody tr:hover .mascota-list-avatar-placeholder {
+      border-color: var(--ps-primary);
+      transform: scale(1.08);
+    }
+
+    .mascota-nombre-cell {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+    }
+  </style>
+
   <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
       <h1 class="page-title">Mascotas</h1>
@@ -123,7 +164,22 @@
       </thead>
       <tbody>
         <tr th:each="mascota : ${mascotas}">
-          <td><strong th:text="${mascota.nombre}"></strong></td>
+          <td>
+            <div class="mascota-nombre-cell">
+              <!-- Avatar con foto -->
+              <img th:if="${mascota.fotoUrl != null and !#strings.isEmpty(mascota.fotoUrl)}"
+                   th:src="${mascota.fotoUrl}"
+                   th:alt="${mascota.nombre}"
+                   class="mascota-list-avatar">
+              <!-- Placeholder pata cuando no hay foto -->
+              <div th:if="${mascota.fotoUrl == null or #strings.isEmpty(mascota.fotoUrl)}"
+                   class="mascota-list-avatar-placeholder"
+                   th:title="${mascota.nombre}">
+                <i class="bi bi-paw-fill"></i>
+              </div>
+              <strong th:text="${mascota.nombre}"></strong>
+            </div>
+          </td>
           <td>
             <span th:text="${mascota.nombreEspecie}"></span>
             <small class="text-muted d-block"
