@@ -16,6 +16,7 @@ public class VacunacionRow {
     private LocalDate proximaDosis;
     private String lote;
     private String observaciones;
+    private String fotoUrlMascota;
 
     public VacunacionRow() {}
 
@@ -60,4 +61,7 @@ public class VacunacionRow {
 
     public String getObservaciones()                   { return observaciones; }
     public void setObservaciones(String v)             { this.observaciones = v; }
+
+    public String getFotoUrlMascota()                  { return fotoUrlMascota; }
+    public void setFotoUrlMascota(String v)            { this.fotoUrlMascota = v; }
 }

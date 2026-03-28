@@ -72,6 +72,7 @@ public class ConsultaVacunaJdbcRepository implements ConsultaVacunaRepository {
             SELECT cv.id,
                    con.id                              AS id_consulta,
                    m.nombre                            AS nombre_mascota,
+                   m.foto_url                          AS foto_url_mascota,
                    e.nombre                            AS nombre_especie,
                    CONCAT(p.apellido, ', ', p.nombre)  AS nombre_propietario,
                    vac.nombre                          AS nombre_vacuna,
@@ -101,6 +102,7 @@ public class ConsultaVacunaJdbcRepository implements ConsultaVacunaRepository {
         row.setId(rs.getInt("id"));
         row.setIdConsulta(rs.getInt("id_consulta"));
         row.setNombreMascota(rs.getString("nombre_mascota"));
+        row.setFotoUrlMascota(rs.getString("foto_url_mascota"));
         row.setNombreEspecie(rs.getString("nombre_especie"));
         row.setNombrePropietario(rs.getString("nombre_propietario"));
         row.setNombreVacuna(rs.getString("nombre_vacuna"));
