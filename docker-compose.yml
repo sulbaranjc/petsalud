@@ -36,8 +36,8 @@ services:
       dockerfile: Dockerfile
     container_name: petsalud-app
     restart: unless-stopped
-    ports:
-      - "80:8080"
+    expose:
+      - "8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://basedatos:3306/${DB_NOMBRE:-petsalud}?useSSL=false&serverTimezone=America/Bogota&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USUARIO:-petsalud}
@@ -45,10 +45,13 @@ services:
       SPRING_THYMELEAF_CACHE: "true"
       APP_UPLOAD_DIR: /app/uploads
       TZ: America/Bogota
+      VIRTUAL_HOST: ${VIRTUAL_HOST:-petsalud.docker.sulbaranjc.com}
+      VIRTUAL_PORT: "8080"
     volumes:
       - fotos-subidas:/app/uploads
     networks:
       - red-interna
+      - proxy-externo
     depends_on:
       basedatos:
         condition: service_healthy
@@ -69,3 +72,6 @@ networks:
   red-interna:
     name: petsalud-red
     driver: bridge
+  proxy-externo:
+    external: true
+    name: nginx-proxy
