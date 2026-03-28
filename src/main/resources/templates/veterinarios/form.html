@@ -4,6 +4,103 @@
 <body>
 <main th:with="activePage='veterinarios'">
 
+  <style>
+    /* ── Avatar de foto de veterinario ───────────────────────────────────────── */
+    .mascota-avatar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+      padding: 1.5rem 0 1rem;
+      border-bottom: 1px solid var(--ps-border);
+      margin-bottom: .5rem;
+    }
+
+    .mascota-avatar-ring {
+      padding: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ps-primary) 0%, #60a5fa 100%);
+      box-shadow: 0 4px 18px rgba(37, 99, 235, .25);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .mascota-avatar-ring:hover {
+      transform: scale(1.07) translateY(-3px);
+      box-shadow: 0 10px 32px rgba(37, 99, 235, .4);
+    }
+
+    .mascota-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--ps-primary-light);
+      border: 4px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .mascota-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .mascota-avatar-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .3rem;
+      color: var(--ps-primary);
+      opacity: .65;
+    }
+
+    .mascota-avatar-placeholder i     { font-size: 2.8rem; }
+
+    .mascota-avatar-placeholder span {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .mascota-avatar-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, .55);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      opacity: 0;
+      transition: opacity .25s ease;
+      gap: .25rem;
+    }
+
+    .mascota-avatar-overlay i    { font-size: 1.8rem; }
+    .mascota-avatar-overlay span { font-size: .68rem; font-weight: 600; letter-spacing: .04em; }
+
+    .mascota-avatar-ring:hover .mascota-avatar-overlay { opacity: 1; }
+
+    .mascota-avatar-hint {
+      font-size: .78rem;
+      color: var(--ps-text-muted);
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    .mascota-avatar-hint i    { font-size: .85rem; color: var(--ps-primary); }
+    .mascota-avatar-formats   { font-size: .72rem; color: var(--ps-text-light); }
+  </style>
+
   <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
       <h1 class="page-title"
@@ -24,7 +121,52 @@
           enctype="multipart/form-data"
           novalidate>
 
-      <div class="row g-3">
+      <!-- ── Foto protagonista ──────────────────────────────────────────────── -->
+      <div class="mascota-avatar-wrap">
+
+        <div class="mascota-avatar-ring" onclick="document.getElementById('fotoFile').click()" title="Cambiar foto">
+          <div class="mascota-avatar">
+
+            <!-- Foto existente -->
+            <img th:if="${veterinario.fotoUrl != null and !#strings.isEmpty(veterinario.fotoUrl)}"
+                 id="fotoAvatarImg"
+                 th:src="${veterinario.fotoUrl}"
+                 alt="Foto del veterinario">
+
+            <!-- Placeholder cuando no hay foto -->
+            <div th:if="${veterinario.fotoUrl == null or #strings.isEmpty(veterinario.fotoUrl)}"
+                 id="fotoAvatarPlaceholder"
+                 class="mascota-avatar-placeholder">
+              <i class="bi bi-person-fill"></i>
+              <span>Sin foto</span>
+            </div>
+
+            <!-- Overlay de cámara al hover -->
+            <div class="mascota-avatar-overlay">
+              <i class="bi bi-camera-fill"></i>
+              <span th:text="${veterinario.id == null} ? 'Subir foto' : 'Cambiar foto'">Subir foto</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mascota-avatar-hint">
+          <i class="bi bi-camera"></i>
+          <span th:text="${veterinario.id == null}
+                          ? 'Haz clic en la imagen para subir una foto'
+                          : 'Haz clic en la imagen para cambiar la foto'">
+            Haz clic en la imagen para subir una foto
+          </span>
+        </div>
+        <span class="mascota-avatar-formats">JPG · PNG · WEBP · máx. 5 MB</span>
+
+        <input type="file" id="fotoFile" name="fotoFile" accept="image/*" style="display:none;">
+        <input type="hidden" th:field="*{fotoUrl}">
+
+        <div th:if="${errorFoto}" class="text-danger small" th:text="${errorFoto}"></div>
+      </div>
+      <!-- ── / Foto ──────────────────────────────────────────────────────────── -->
+
+      <div class="row g-3 mt-1">
 
         <!-- Nombre -->
         <div class="col-md-6">
@@ -110,36 +252,6 @@
           </div>
         </div>
 
-        <!-- Foto -->
-        <div class="col-12">
-          <label class="form-label fw-semibold">Foto <small class="text-muted">(opcional · JPG, PNG, WEBP · máx. 5 MB)</small></label>
-
-          <!-- Foto actual (solo en edición) -->
-          <div th:if="${veterinario.fotoUrl != null and !#strings.isEmpty(veterinario.fotoUrl)}" class="mb-2">
-            <img th:src="${veterinario.fotoUrl}" alt="Foto actual"
-                 style="height:100px;width:100px;object-fit:cover;border-radius:8px;border:1px solid #dee2e6;">
-            <small class="d-block text-muted mt-1">Foto actual</small>
-          </div>
-
-          <!-- Guarda la URL existente al hacer submit sin subir nueva foto -->
-          <input type="hidden" th:field="*{fotoUrl}">
-
-          <input type="file"
-                 id="fotoFile"
-                 name="fotoFile"
-                 class="form-control"
-                 accept="image/*">
-
-          <!-- Vista previa antes de guardar -->
-          <div id="fotoPreview" class="mt-2" style="display:none;">
-            <img id="fotoPreviewImg" src="" alt="Vista previa"
-                 style="height:100px;width:100px;object-fit:cover;border-radius:8px;border:1px solid #dee2e6;">
-            <small class="d-block text-muted mt-1">Vista previa</small>
-          </div>
-
-          <div th:if="${errorFoto}" class="text-danger small mt-1" th:text="${errorFoto}"></div>
-        </div>
-
         <!-- Activo (solo en edición) -->
         <div class="col-12" th:if="${veterinario.id != null}">
           <div class="form-check form-switch">
@@ -163,15 +275,24 @@
 
   <script>
     document.getElementById('fotoFile').addEventListener('change', function () {
-      const preview = document.getElementById('fotoPreview');
-      const img     = document.getElementById('fotoPreviewImg');
-      if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) { img.src = e.target.result; preview.style.display = 'block'; };
-        reader.readAsDataURL(this.files[0]);
-      } else {
-        preview.style.display = 'none';
-      }
+      if (!this.files || !this.files[0]) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const avatar = document.querySelector('.mascota-avatar');
+
+        const placeholder = document.getElementById('fotoAvatarPlaceholder');
+        if (placeholder) placeholder.style.display = 'none';
+
+        let img = document.getElementById('fotoAvatarImg');
+        if (!img) {
+          img = document.createElement('img');
+          img.id = 'fotoAvatarImg';
+          avatar.insertBefore(img, avatar.firstChild);
+        }
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(this.files[0]);
     });
   </script>
 
