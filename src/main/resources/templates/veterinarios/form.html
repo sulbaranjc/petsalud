@@ -2,7 +2,8 @@
 <html th:replace="~{layout/base :: layout(${veterinario.id == null} ? 'Nuevo Veterinario' : 'Editar Veterinario', ~{::main})}"
       lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-<main th:with="activePage='veterinarios'">
+<main th:with="activePage='veterinarios'"
+      style="display:flex; flex-direction:column; min-height:calc(100vh - var(--topbar-height));">
 
   <style>
     /* ── Avatar de foto de veterinario ───────────────────────────────────────── */
@@ -112,7 +113,8 @@
     </a>
   </div>
 
-  <div class="ps-card" style="max-width: 760px;">
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
+  <div class="ps-card" style="max-width: 600px; width:100%;">
     <form th:action="${veterinario.id == null}
                       ? @{/veterinarios}
                       : @{/veterinarios/{id}/editar(id=${veterinario.id})}"
@@ -272,6 +274,7 @@
 
     </form>
   </div>
+  </div><!-- /centering wrapper -->
 
   <script>
     document.getElementById('fotoFile').addEventListener('change', function () {
