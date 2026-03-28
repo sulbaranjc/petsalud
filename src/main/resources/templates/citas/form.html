@@ -2,7 +2,8 @@
 <html th:replace="~{layout/base :: layout(${cita.id == null} ? 'Nueva Cita' : 'Editar Cita', ~{::main})}"
       lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-<main th:with="activePage='citas'">
+<main th:with="activePage='citas'"
+      style="display:flex; flex-direction:column; min-height:calc(100vh - var(--topbar-height));">
 
   <style>
     /* ── Avatar de mascota en formulario de cita ─────────────────────────────── */
@@ -69,23 +70,32 @@
     }
   </style>
 
-  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
-    <div>
-      <h1 class="page-title" th:text="${cita.id == null} ? 'Nueva Cita' : 'Editar Cita'"></h1>
-      <p class="page-subtitle">Gestión de citas médicas agendadas</p>
-    </div>
-    <a th:href="@{/citas}" class="btn-ps-outline">
-      <i class="bi bi-arrow-left"></i> Volver
-    </a>
-  </div>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
 
-  <div class="ps-card" style="max-width: 720px;">
+    <div style="width:100%; max-width:720px; text-align:center; margin-bottom:1.25rem; padding: 0 1rem;">
+      <h1 class="page-title" th:text="${cita.id == null} ? 'Nueva Cita' : 'Editar Cita'"></h1>
+      <p class="page-subtitle" style="margin-bottom:0;">Gestión de citas médicas agendadas</p>
+    </div>
+
+  <div class="ps-card" style="max-width: 720px; width:100%;">
     <form th:action="${cita.id == null}
                       ? @{/citas}
                       : @{/citas/{id}/editar(id=${cita.id})}"
           th:object="${cita}"
           method="post"
           novalidate>
+
+      <!-- ── Volver ──────────────────────────────────────────────────────────── -->
+      <div class="mb-1">
+        <a th:href="@{/citas}"
+           style="display:inline-flex; align-items:center; gap:.35rem; font-size:.82rem;
+                  font-weight:600; color:var(--ps-text-muted); text-decoration:none;
+                  transition:color .2s;"
+           onmouseover="this.style.color='var(--ps-primary)'"
+           onmouseout="this.style.color='var(--ps-text-muted)'">
+          <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+      </div>
 
       <!-- Avatar de la mascota seleccionada — primera fila del card -->
       <div class="d-flex justify-content-center mb-1">
@@ -270,6 +280,8 @@
       actualizarAvatar();
     })();
   </script>
+
+  </div><!-- /centering wrapper -->
 
 </main>
 </body>

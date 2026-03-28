@@ -2,26 +2,35 @@
 <html th:replace="~{layout/base :: layout(${vacuna.id == null} ? 'Nueva Vacuna' : 'Editar Vacuna', ~{::main})}"
       lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-<main th:with="activePage='cat-vacunas'">
+<main th:with="activePage='cat-vacunas'"
+      style="display:flex; flex-direction:column; min-height:calc(100vh - var(--topbar-height));">
 
-  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
-    <div>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
+
+    <div style="width:100%; max-width:640px; text-align:center; margin-bottom:1.25rem; padding: 0 1rem;">
       <h1 class="page-title"
           th:text="${vacuna.id == null} ? 'Nueva Vacuna' : 'Editar Vacuna'"></h1>
-      <p class="page-subtitle">Catálogo de vacunas disponibles para aplicación</p>
+      <p class="page-subtitle" style="margin-bottom:0;">Catálogo de vacunas disponibles para aplicación</p>
     </div>
-    <a th:href="@{/catalogos/vacunas}" class="btn-ps-outline">
-      <i class="bi bi-arrow-left"></i> Volver
-    </a>
-  </div>
 
-  <div class="ps-card" style="max-width: 640px;">
+  <div class="ps-card" style="max-width: 640px; width:100%;">
     <form th:action="${vacuna.id == null}
                       ? @{/catalogos/vacunas}
                       : @{/catalogos/vacunas/{id}/editar(id=${vacuna.id})}"
           th:object="${vacuna}"
           method="post"
           novalidate>
+
+      <div class="mb-1">
+        <a th:href="@{/catalogos/vacunas}"
+           style="display:inline-flex; align-items:center; gap:.35rem; font-size:.82rem;
+                  font-weight:600; color:var(--ps-text-muted); text-decoration:none;
+                  transition:color .2s;"
+           onmouseover="this.style.color='var(--ps-primary)'"
+           onmouseout="this.style.color='var(--ps-text-muted)'">
+          <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+      </div>
 
       <!-- Nombre -->
       <div class="mb-3">
@@ -87,6 +96,7 @@
 
     </form>
   </div>
+  </div><!-- /centering wrapper -->
 
 </main>
 </body>

@@ -102,18 +102,14 @@
     .mascota-avatar-formats   { font-size: .72rem; color: var(--ps-text-light); }
   </style>
 
-  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
-    <div>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
+
+    <div style="width:100%; max-width:600px; text-align:center; margin-bottom:1.25rem; padding: 0 1rem;">
       <h1 class="page-title"
           th:text="${veterinario.id == null} ? 'Nuevo Veterinario' : 'Editar Veterinario'"></h1>
-      <p class="page-subtitle">Personal médico de la clínica</p>
+      <p class="page-subtitle" style="margin-bottom:0;">Personal médico de la clínica</p>
     </div>
-    <a th:href="@{/veterinarios}" class="btn-ps-outline">
-      <i class="bi bi-arrow-left"></i> Volver
-    </a>
-  </div>
 
-  <div style="flex:1; display:flex; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
   <div class="ps-card" style="max-width: 600px; width:100%;">
     <form th:action="${veterinario.id == null}
                       ? @{/veterinarios}
@@ -122,6 +118,18 @@
           method="post"
           enctype="multipart/form-data"
           novalidate>
+
+      <!-- ── Volver ──────────────────────────────────────────────────────────── -->
+      <div class="mb-1">
+        <a th:href="@{/veterinarios}"
+           style="display:inline-flex; align-items:center; gap:.35rem; font-size:.82rem;
+                  font-weight:600; color:var(--ps-text-muted); text-decoration:none;
+                  transition:color .2s;"
+           onmouseover="this.style.color='var(--ps-primary)'"
+           onmouseout="this.style.color='var(--ps-text-muted)'">
+          <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+      </div>
 
       <!-- ── Foto protagonista ──────────────────────────────────────────────── -->
       <div class="mascota-avatar-wrap">

@@ -2,7 +2,8 @@
 <html th:replace="~{layout/base :: layout(${mascota.id == null} ? 'Nueva Mascota' : 'Editar Mascota', ~{::main})}"
       lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-<main th:with="activePage='mascotas'">
+<main th:with="activePage='mascotas'"
+      style="display:flex; flex-direction:column; min-height:calc(100vh - var(--topbar-height));">
 
   <style>
     /* ── Avatar de foto de mascota ────────────────────────────────────────────── */
@@ -120,17 +121,14 @@
     }
   </style>
 
-  <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
-    <div>
-      <h1 class="page-title" th:text="${mascota.id == null} ? 'Nueva Mascota' : 'Editar Mascota'"></h1>
-      <p class="page-subtitle">Pacientes registrados en la clínica</p>
-    </div>
-    <a th:href="@{/mascotas}" class="btn-ps-outline">
-      <i class="bi bi-arrow-left"></i> Volver
-    </a>
-  </div>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
 
-  <div class="ps-card" style="max-width: 760px;">
+    <div style="width:100%; max-width:760px; text-align:center; margin-bottom:1.25rem; padding: 0 1rem;">
+      <h1 class="page-title" th:text="${mascota.id == null} ? 'Nueva Mascota' : 'Editar Mascota'"></h1>
+      <p class="page-subtitle" style="margin-bottom:0;">Pacientes registrados en la clínica</p>
+    </div>
+
+  <div class="ps-card" style="max-width: 760px; width:100%;">
     <form th:action="${mascota.id == null} ? @{/mascotas} : @{/mascotas/{id}/editar(id=${mascota.id})}"
           th:object="${mascota}"
           method="post"
@@ -138,6 +136,18 @@
           novalidate>
 
       <!-- ── Foto protagonista ──────────────────────────────────────────────── -->
+      <!-- ── Volver ──────────────────────────────────────────────────────────── -->
+      <div class="mb-1">
+        <a th:href="@{/mascotas}"
+           style="display:inline-flex; align-items:center; gap:.35rem; font-size:.82rem;
+                  font-weight:600; color:var(--ps-text-muted); text-decoration:none;
+                  transition:color .2s;"
+           onmouseover="this.style.color='var(--ps-primary)'"
+           onmouseout="this.style.color='var(--ps-text-muted)'">
+          <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+      </div>
+
       <div class="mascota-avatar-wrap">
 
         <div class="mascota-avatar-ring" onclick="document.getElementById('fotoFile').click()" title="Cambiar foto">
@@ -361,6 +371,8 @@
       });
     })();
   </script>
+
+  </div><!-- /centering wrapper -->
 
 </main>
 </body>
