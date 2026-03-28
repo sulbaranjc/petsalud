@@ -202,6 +202,10 @@
           </td>
           <td>
             <div class="table-actions">
+              <a th:href="@{/citas/nueva(idMascota=${mascota.id})}"
+                 class="action-btn action-btn-info" title="Nueva cita">
+                <i class="bi bi-calendar-plus-fill"></i>
+              </a>
               <a th:href="@{/mascotas/{id}/editar(id=${mascota.id})}"
                  class="action-btn action-btn-edit" title="Editar">
                 <i class="bi bi-pencil-fill"></i>

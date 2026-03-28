@@ -82,10 +82,12 @@ public class CitaController {
     // ── Crear ─────────────────────────────────────────────────────────────────
 
     @GetMapping("/nueva")
-    public String nuevaForm(Model model) {
+    public String nuevaForm(@RequestParam(required = false) Integer idMascota,
+                            Model model) {
         Cita cita = new Cita();
         estadoCitaService.findByNombre("Pendiente")
                 .ifPresent(e -> cita.setIdEstadoCita(e.getId()));
+        if (idMascota != null) cita.setIdMascota(idMascota);
         cargarFormModel(model, cita);
         return "citas/form";
     }
