@@ -35,6 +35,7 @@ public class CitaJdbcRepository implements CitaRepository {
         c.setNombreMascota(rs.getString("nombre_mascota"));
         c.setFotoUrlMascota(rs.getString("foto_url_mascota"));
         c.setNombreEspecie(rs.getString("nombre_especie"));
+        c.setNombreRaza(rs.getString("nombre_raza"));
         c.setNombrePropietario(rs.getString("nombre_propietario"));
         c.setNombreVeterinario(rs.getString("nombre_veterinario"));
         c.setNombreEstadoCita(rs.getString("nombre_estado_cita"));
@@ -55,6 +56,7 @@ public class CitaJdbcRepository implements CitaRepository {
               FROM cita c
               JOIN mascota     m   ON m.id  = c.id_mascota
               JOIN especie     e   ON e.id  = m.id_especie
+         LEFT JOIN raza        r   ON r.id  = m.id_raza
               JOIN propietario p   ON p.id  = m.id_propietario
               JOIN veterinario v   ON v.id  = c.id_veterinario
               JOIN estado_cita ec  ON ec.id = c.id_estado_cita
@@ -74,6 +76,7 @@ public class CitaJdbcRepository implements CitaRepository {
                    m.nombre                              AS nombre_mascota,
                    m.foto_url                            AS foto_url_mascota,
                    e.nombre                              AS nombre_especie,
+                   r.nombre                              AS nombre_raza,
                    CONCAT(p.apellido, ', ', p.nombre)    AS nombre_propietario,
                    CONCAT(v.apellido, ', ', v.nombre)    AS nombre_veterinario,
                    ec.nombre                             AS nombre_estado_cita
