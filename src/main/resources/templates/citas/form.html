@@ -4,6 +4,71 @@
 <body>
 <main th:with="activePage='citas'">
 
+  <style>
+    /* ── Avatar de mascota en formulario de cita ─────────────────────────────── */
+    .cita-mascota-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      padding: 1rem 0 .5rem;
+      opacity: 0;
+      transform: scale(.85);
+      transition: opacity .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none;
+    }
+
+    .cita-mascota-preview.visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .cita-mascota-ring {
+      padding: 4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ps-primary) 0%, #60a5fa 100%);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, .25);
+    }
+
+    .cita-mascota-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--ps-primary-light);
+      border: 3px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cita-mascota-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cita-mascota-avatar-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .2rem;
+      color: var(--ps-primary);
+      opacity: .65;
+    }
+
+    .cita-mascota-avatar-placeholder i { font-size: 2.2rem; }
+
+    .cita-mascota-label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--ps-text-muted);
+      letter-spacing: .02em;
+    }
+  </style>
+
   <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
       <h1 class="page-title" th:text="${cita.id == null} ? 'Nueva Cita' : 'Editar Cita'"></h1>
@@ -33,10 +98,11 @@
                   th:field="*{idMascota}"
                   th:classappend="${#fields.hasErrors('idMascota')} ? 'is-invalid'"
                   class="form-select">
-            <option value="">— Seleccione una mascota —</option>
+            <option value="" data-foto-url="">— Seleccione una mascota —</option>
             <option th:each="m : ${mascotas}"
                     th:value="${m.id}"
                     th:text="${m.nombre + ' (' + m.nombreEspecie + ') – ' + m.nombrePropietario}"
+                    th:attr="data-foto-url=${m.fotoUrl != null ? m.fotoUrl : ''}"
                     th:selected="${m.id == cita.idMascota}">
             </option>
           </select>
@@ -63,6 +129,21 @@
           </select>
           <div th:if="${#fields.hasErrors('idVeterinario')}" class="invalid-feedback">
             <span th:errors="*{idVeterinario}"></span>
+          </div>
+        </div>
+
+        <!-- Avatar de la mascota seleccionada (aparece con animación al elegir) -->
+        <div class="col-12 d-flex justify-content-center">
+          <div class="cita-mascota-preview" id="mascotaPreview">
+            <div class="cita-mascota-ring">
+              <div class="cita-mascota-avatar" id="mascotaAvatarWrap">
+                <img id="mascotaAvatarImg" src="" alt="" style="display:none;">
+                <div id="mascotaAvatarPlaceholder" class="cita-mascota-avatar-placeholder">
+                  <i class="bi bi-paw-fill"></i>
+                </div>
+              </div>
+            </div>
+            <span class="cita-mascota-label" id="mascotaAvatarNombre"></span>
           </div>
         </div>
 
@@ -147,6 +228,48 @@
 
     </form>
   </div>
+
+  <script>
+    (function () {
+      const select      = document.getElementById('idMascota');
+      const preview     = document.getElementById('mascotaPreview');
+      const avatarImg   = document.getElementById('mascotaAvatarImg');
+      const placeholder = document.getElementById('mascotaAvatarPlaceholder');
+      const nombreLabel = document.getElementById('mascotaAvatarNombre');
+
+      function actualizarAvatar() {
+        const opt     = select.options[select.selectedIndex];
+        const fotoUrl = opt ? opt.dataset.fotoUrl : '';
+        const nombre  = opt ? opt.text : '';
+
+        if (!opt || !opt.value) {
+          preview.classList.remove('visible');
+          return;
+        }
+
+        // Actualizar nombre debajo del avatar
+        nombreLabel.textContent = opt.text.split(' –')[0]; // solo "Nombre (Especie)"
+
+        if (fotoUrl) {
+          avatarImg.src = fotoUrl;
+          avatarImg.alt = nombre;
+          avatarImg.style.display = 'block';
+          placeholder.style.display = 'none';
+        } else {
+          avatarImg.style.display = 'none';
+          avatarImg.src = '';
+          placeholder.style.display = 'flex';
+        }
+
+        preview.classList.add('visible');
+      }
+
+      select.addEventListener('change', actualizarAvatar);
+
+      // Aplicar al cargar si ya viene pre-seleccionada (ej: desde lista de mascotas)
+      actualizarAvatar();
+    })();
+  </script>
 
 </main>
 </body>
