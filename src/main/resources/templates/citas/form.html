@@ -87,6 +87,21 @@
           method="post"
           novalidate>
 
+      <!-- Avatar de la mascota seleccionada — primera fila del card -->
+      <div class="d-flex justify-content-center mb-1">
+        <div class="cita-mascota-preview" id="mascotaPreview">
+          <div class="cita-mascota-ring">
+            <div class="cita-mascota-avatar" id="mascotaAvatarWrap">
+              <img id="mascotaAvatarImg" src="" alt="" style="display:none;">
+              <div id="mascotaAvatarPlaceholder" class="cita-mascota-avatar-placeholder">
+                <i class="bi bi-paw-fill"></i>
+              </div>
+            </div>
+          </div>
+          <span class="cita-mascota-label" id="mascotaAvatarNombre"></span>
+        </div>
+      </div>
+
       <div class="row g-3">
 
         <!-- Mascota -->
@@ -129,21 +144,6 @@
           </select>
           <div th:if="${#fields.hasErrors('idVeterinario')}" class="invalid-feedback">
             <span th:errors="*{idVeterinario}"></span>
-          </div>
-        </div>
-
-        <!-- Avatar de la mascota seleccionada (aparece con animación al elegir) -->
-        <div class="col-12 d-flex justify-content-center">
-          <div class="cita-mascota-preview" id="mascotaPreview">
-            <div class="cita-mascota-ring">
-              <div class="cita-mascota-avatar" id="mascotaAvatarWrap">
-                <img id="mascotaAvatarImg" src="" alt="" style="display:none;">
-                <div id="mascotaAvatarPlaceholder" class="cita-mascota-avatar-placeholder">
-                  <i class="bi bi-paw-fill"></i>
-                </div>
-              </div>
-            </div>
-            <span class="cita-mascota-label" id="mascotaAvatarNombre"></span>
           </div>
         </div>
 
