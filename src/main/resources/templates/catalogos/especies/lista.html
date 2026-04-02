@@ -3,6 +3,144 @@
 <body>
 <main th:with="activePage='cat-especies'">
 
+  <!-- Los estilos deben ir DENTRO de <main> para que Thymeleaf los incluya en el layout -->
+  <style>
+    /* ── Grid ─────────────────────────────────────────────────────────────── */
+    .especies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(315px, 315px));
+      gap: 1.25rem;
+      justify-content: start;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────────────────── */
+    .especie-card {
+      background: var(--ps-card-bg);
+      border: 1px solid var(--ps-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      width: 315px;
+      transition: box-shadow .22s, transform .22s;
+    }
+
+    .especie-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    /* ── Imagen — altura FIJA, recorte estricto ───────────────────────────── */
+    .especie-card-img {
+      position: relative;
+      width: 100%;
+      height: 222px;          /* fijo, no crece */
+      flex-shrink: 0;
+      overflow: hidden;       /* recorta cualquier desbordamiento */
+      background: var(--ps-primary-light);
+    }
+
+    .especie-card-img img {
+      position: absolute;     /* saca la imagen del flujo normal */
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;      /* rellena sin deformar */
+      display: block;
+    }
+
+    .especie-card-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ps-primary);
+      font-size: 3rem;
+      opacity: .35;
+    }
+
+    /* ── Badge de estado sobre la foto ───────────────────────────────────── */
+    .especie-card-status {
+      position: absolute;
+      top: .55rem;
+      right: .55rem;
+      padding: .2rem .55rem;
+      border-radius: 20px;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .025em;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 1;
+    }
+
+    .especie-status-active   { background: rgba(220,252,231,.9); color: #15803d; }
+    .especie-status-inactive { background: rgba(241,245,249,.9); color: var(--ps-text-muted); }
+
+    /* ── Cuerpo ───────────────────────────────────────────────────────────── */
+    .especie-card-body {
+      padding: .85rem 1rem .9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .3rem;
+      flex: 1;
+    }
+
+    .especie-card-name {
+      margin: 0;
+      font-size: .93rem;
+      font-weight: 700;
+      color: var(--ps-text);
+      text-align: center;
+      line-height: 1.3;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .especie-card-desc {
+      margin: 0;
+      font-size: .76rem;
+      color: var(--ps-text-muted);
+      text-align: center;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* ── Línea divisoria + acciones ──────────────────────────────────────── */
+    .especie-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+      padding-top: .55rem;
+      margin-top: .35rem;
+      border-top: 1px solid var(--ps-border);
+      width: 100%;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .especies-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .especie-card {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <!-- Cabecera -->
   <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
       <h1 class="page-title">Especies</h1>
@@ -39,85 +177,81 @@
             <option value="0" th:selected="${activoFiltro == '0'}">Inactivo</option>
           </select>
         </div>
-        <div class="col-md-4 d-flex gap-2 justify-content-end">
-          <button type="submit" class="btn-ps-outline"><i class="bi bi-funnel"></i> Filtrar</button>
-          <a th:href="@{/catalogos/especies}" class="btn-ps-outline"><i class="bi bi-x-lg"></i> Limpiar</a>
+        <div class="col-md-4 d-flex gap-2 justify-content-end flex-wrap">
+          <input type="hidden" name="sortBy" value="nombre">
+          <button type="submit"
+                  th:name="sortDir"
+                  th:value="${sortDir == 'asc' ? 'desc' : 'asc'}"
+                  class="btn-ps-outline">
+            <i th:class="${sortDir == 'asc'} ? 'bi bi-sort-alpha-down' : 'bi bi-sort-alpha-up-alt'"></i>
+            <span th:text="${sortDir == 'asc'} ? 'A→Z' : 'Z→A'"></span>
+          </button>
+          <button type="submit" name="sortDir" th:value="${sortDir}" class="btn-ps-outline">
+            <i class="bi bi-funnel"></i> Filtrar
+          </button>
+          <a th:href="@{/catalogos/especies}" class="btn-ps-outline">
+            <i class="bi bi-x-lg"></i> Limpiar
+          </a>
         </div>
       </div>
     </div>
   </form>
 
-  <!-- Tabla -->
-  <div class="ps-card">
-    <table class="ps-table">
-      <thead>
-        <tr>
-          <th style="width:56px;"></th>
-          <th th:with="col='nombre', nextDir=${sortBy == 'nombre' ? (sortDir == 'asc' ? 'desc' : 'asc') : 'asc'}">
-            <a th:href="@{/catalogos/especies(q=${q}, activo=${activoFiltro}, sortBy=${col}, sortDir=${nextDir}, page=1)}"
-               th:class="${sortBy == col} ? 'sort-link sort-link-active' : 'sort-link'">
-              Nombre
-              <i th:if="${sortBy == col and sortDir == 'asc'}"  class="bi bi-sort-up-alt sort-icon"></i>
-              <i th:if="${sortBy == col and sortDir == 'desc'}" class="bi bi-sort-down-alt sort-icon"></i>
-              <i th:unless="${sortBy == col}" class="bi bi-arrow-down-up sort-icon"></i>
-            </a>
-          </th>
-          <th>Descripción</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="especie : ${especies}">
-          <td>
-            <img th:if="${especie.fotoUrl != null}"
-                 th:src="${especie.fotoUrl}"
-                 th:alt="${especie.nombre}"
-                 style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid var(--ps-border);">
-            <span th:unless="${especie.fotoUrl != null}"
-                  style="display:inline-flex; align-items:center; justify-content:center;
-                         width:40px; height:40px; border-radius:6px;
-                         background:var(--ps-bg-subtle); color:var(--ps-text-muted); font-size:1.2rem;">
-              <i class="bi bi-image"></i>
-            </span>
-          </td>
-          <td><strong th:text="${especie.nombre}"></strong></td>
-          <td th:text="${especie.descripcion ?: '—'}"></td>
-          <td>
-            <span th:if="${especie.activo}"    class="ps-badge badge-success">Activo</span>
-            <span th:unless="${especie.activo}" class="ps-badge badge-neutral">Inactivo</span>
-          </td>
-          <td>
-            <div class="table-actions">
-              <a th:href="@{/catalogos/especies/{id}/editar(id=${especie.id})}"
-                 class="action-btn action-btn-edit" title="Editar">
-                <i class="bi bi-pencil-fill"></i>
-              </a>
-              <form th:action="@{/catalogos/especies/{id}/toggle(id=${especie.id})}"
-                    method="post" style="display:inline;">
-                <button type="submit"
-                        th:class="${especie.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
-                        th:title="${especie.activo} ? 'Desactivar' : 'Activar'">
-                  <i th:class="${especie.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
-                </button>
-              </form>
-            </div>
-          </td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(especies)}">
-          <td colspan="5" class="text-center text-muted py-4">No hay especies registradas.</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Grid de cards -->
+  <div th:if="${!#lists.isEmpty(especies)}" class="especies-grid">
+    <div class="especie-card" th:each="especie : ${especies}">
 
-    <!-- Paginación -->
-    <div class="ps-pagination">
+      <!-- Imagen con altura fija -->
+      <div class="especie-card-img">
+        <img th:if="${especie.fotoUrl != null}"
+             th:src="${especie.fotoUrl}"
+             th:alt="${especie.nombre}">
+        <div th:unless="${especie.fotoUrl != null}" class="especie-card-placeholder">
+          <i class="bi bi-image"></i>
+        </div>
+        <span th:if="${especie.activo}"     class="especie-card-status especie-status-active">Activo</span>
+        <span th:unless="${especie.activo}" class="especie-card-status especie-status-inactive">Inactivo</span>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="especie-card-body">
+        <h3 class="especie-card-name" th:text="${especie.nombre}"></h3>
+        <p  class="especie-card-desc" th:text="${especie.descripcion ?: 'Sin descripción'}"></p>
+
+        <!-- Acciones -->
+        <div class="especie-card-footer">
+          <a th:href="@{/catalogos/especies/{id}/editar(id=${especie.id})}"
+             class="action-btn action-btn-edit" title="Editar">
+            <i class="bi bi-pencil-fill"></i>
+          </a>
+          <form th:action="@{/catalogos/especies/{id}/toggle(id=${especie.id})}"
+                method="post" style="display:inline;">
+            <button type="submit"
+                    th:class="${especie.activo} ? 'action-btn action-btn-danger' : 'action-btn action-btn-success'"
+                    th:title="${especie.activo} ? 'Desactivar' : 'Activar'">
+              <i th:class="${especie.activo} ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div th:if="${#lists.isEmpty(especies)}" class="ps-card text-center py-5 text-muted">
+    <i class="bi bi-search" style="font-size:2rem; opacity:.35;"></i>
+    <p class="mt-2 mb-0">No hay especies registradas.</p>
+  </div>
+
+  <!-- Paginación -->
+  <div th:if="${pagina.totalElements > 0}" class="ps-card" style="padding:.75rem 1.25rem;">
+    <div class="ps-pagination" style="border-top:none; padding-top:0; margin-top:0;">
       <span class="pagination-info"
             th:text="'Mostrando ' + ${pagina.from} + '–' + ${pagina.to}
                      + ' de ' + ${pagina.totalElements} + ' registros'">
       </span>
       <div class="pagination-controls">
-
         <a th:if="${pagina.hasPrevious()}"
            th:href="@{/catalogos/especies(q=${q}, activo=${activoFiltro}, sortBy=${sortBy}, sortDir=${sortDir}, page=${pagina.pageNumber - 1})}"
            class="page-btn"><i class="bi bi-chevron-left"></i></a>
@@ -137,7 +271,6 @@
            class="page-btn"><i class="bi bi-chevron-right"></i></a>
         <span th:unless="${pagina.hasNext()}" class="page-btn disabled">
           <i class="bi bi-chevron-right"></i></span>
-
       </div>
     </div>
   </div>

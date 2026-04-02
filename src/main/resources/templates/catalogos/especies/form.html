@@ -5,6 +5,100 @@
 <main th:with="activePage='cat-especies'"
       style="display:flex; flex-direction:column; min-height:calc(100vh - var(--topbar-height));">
 
+  <style>
+    .especie-avatar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+      padding: 1.25rem 0 1.1rem;
+      border-bottom: 1px solid var(--ps-border);
+      margin-bottom: .5rem;
+    }
+
+    .especie-avatar-ring {
+      padding: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ps-primary) 0%, #60a5fa 100%);
+      box-shadow: 0 4px 18px rgba(37,99,235,.25);
+      transition: transform .22s, box-shadow .22s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .especie-avatar-ring:hover {
+      transform: scale(1.07) translateY(-3px);
+      box-shadow: 0 10px 32px rgba(37,99,235,.4);
+    }
+
+    .especie-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--ps-primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .especie-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .especie-avatar-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .3rem;
+      color: var(--ps-primary);
+      opacity: .65;
+    }
+
+    .especie-avatar-placeholder i    { font-size: 2.8rem; }
+    .especie-avatar-placeholder span {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .especie-avatar-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(37,99,235,.55);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      opacity: 0;
+      transition: opacity .25s ease;
+      gap: .25rem;
+    }
+
+    .especie-avatar-overlay i    { font-size: 1.8rem; }
+    .especie-avatar-overlay span { font-size: .68rem; font-weight: 600; letter-spacing: .04em; }
+
+    .especie-avatar-ring:hover .especie-avatar-overlay { opacity: 1; }
+
+    .especie-avatar-hint {
+      font-size: .78rem;
+      color: var(--ps-text-muted);
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    .especie-avatar-hint i    { font-size: .85rem; color: var(--ps-primary); }
+    .especie-avatar-formats   { font-size: .72rem; color: var(--ps-text-light); }
+  </style>
+
   <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: .5rem 0 2rem;">
 
     <div style="width:100%; max-width:640px; text-align:center; margin-bottom:1.25rem; padding: 0 1rem;">
@@ -29,6 +123,52 @@
           <i class="bi bi-arrow-left"></i> Volver al listado
         </a>
       </div>
+
+      <!-- Imagen representativa — avatar interactivo (arriba de los campos) -->
+      <div class="especie-avatar-wrap">
+
+        <div class="especie-avatar-ring" onclick="document.getElementById('fotoFile').click()" title="Cambiar imagen">
+          <div class="especie-avatar">
+
+            <!-- Imagen existente -->
+            <img th:if="${especie.fotoUrl != null and !#strings.isEmpty(especie.fotoUrl)}"
+                 id="especieAvatarImg"
+                 th:src="${especie.fotoUrl}"
+                 alt="Imagen de la especie">
+
+            <!-- Placeholder cuando no hay imagen -->
+            <div th:if="${especie.fotoUrl == null or #strings.isEmpty(especie.fotoUrl)}"
+                 id="especieAvatarPlaceholder"
+                 class="especie-avatar-placeholder">
+              <i class="bi bi-image"></i>
+              <span>Sin imagen</span>
+            </div>
+
+            <!-- Overlay de cámara al hover -->
+            <div class="especie-avatar-overlay">
+              <i class="bi bi-camera-fill"></i>
+              <span th:text="${especie.id == null} ? 'Subir imagen' : 'Cambiar imagen'">Subir imagen</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="especie-avatar-hint">
+          <i class="bi bi-camera"></i>
+          <span th:text="${especie.id == null} ? 'Haz clic en la imagen para subir una foto' : 'Haz clic en la imagen para cambiar la foto'">
+            Haz clic en la imagen para subir una foto
+          </span>
+        </div>
+        <span class="especie-avatar-formats">JPG · PNG · WEBP · máx. 5 MB</span>
+
+        <!-- Campo file oculto — se activa al clicar el avatar -->
+        <input type="file" id="fotoFile" name="fotoFile" accept="image/*" style="display:none;">
+
+        <!-- Preserva la URL existente al enviar sin nueva imagen -->
+        <input type="hidden" th:field="*{fotoUrl}">
+
+        <div th:if="${errorFoto}" class="text-danger small" th:text="${errorFoto}"></div>
+      </div>
+      <!-- ── / Imagen ─────────────────────────────────────────────────────────── -->
 
       <!-- Nombre -->
       <div class="mb-3">
@@ -60,27 +200,6 @@
         </div>
       </div>
 
-      <!-- Imagen representativa -->
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Imagen representativa</label>
-
-        <!-- Vista previa si ya existe imagen -->
-        <div th:if="${especie.fotoUrl != null}" class="mb-2">
-          <img th:src="${especie.fotoUrl}" alt="Imagen actual"
-               style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid var(--ps-border);">
-          <small class="d-block text-muted mt-1">Imagen actual. Sube una nueva para reemplazarla.</small>
-        </div>
-
-        <input type="file" id="fotoFile" name="fotoFile"
-               class="form-control" accept="image/*">
-        <small class="form-text text-muted">Formatos permitidos: JPG, PNG, WebP. Opcional.</small>
-
-        <!-- Conservar fotoUrl al editar si no se sube nueva imagen -->
-        <input type="hidden" th:field="*{fotoUrl}">
-
-        <div th:if="${errorFoto}" class="text-danger mt-1 small" th:text="${errorFoto}"></div>
-      </div>
-
       <!-- Activo (solo en edición) -->
       <div class="mb-4" th:if="${especie.id != null}">
         <div class="form-check form-switch">
@@ -101,6 +220,34 @@
     </form>
   </div>
   </div><!-- /centering wrapper -->
+
+  <script>
+    (function () {
+      // ── Avatar: vista previa al seleccionar archivo ──────────────────────────
+      document.getElementById('fotoFile').addEventListener('change', function () {
+        if (!this.files || !this.files[0]) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const avatar = document.querySelector('.especie-avatar');
+
+          // Ocultar placeholder si existe
+          const placeholder = document.getElementById('especieAvatarPlaceholder');
+          if (placeholder) placeholder.style.display = 'none';
+
+          // Actualizar o crear el <img> del avatar
+          let img = document.getElementById('especieAvatarImg');
+          if (!img) {
+            img = document.createElement('img');
+            img.id = 'especieAvatarImg';
+            avatar.insertBefore(img, avatar.firstChild);
+          }
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(this.files[0]);
+      });
+    })();
+  </script>
 
 </main>
 </body>
