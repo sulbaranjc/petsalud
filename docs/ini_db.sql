@@ -21,6 +21,7 @@ CREATE TABLE especie (
   id          INT          NOT NULL AUTO_INCREMENT COMMENT 'Identificador único de la especie',
   nombre      VARCHAR(60)  NOT NULL                COMMENT 'Nombre de la especie (ej: Perro, Gato, Ave)',
   descripcion VARCHAR(255)     NULL                COMMENT 'Descripción opcional de la especie',
+  foto_url    VARCHAR(500)     NULL                COMMENT 'URL o ruta de la imagen representativa de la especie',
   activo      TINYINT(1)   NOT NULL DEFAULT 1      COMMENT '1 = activo, 0 = inactivo',
   PRIMARY KEY (id),
   UNIQUE INDEX uq_especie_nombre (nombre)

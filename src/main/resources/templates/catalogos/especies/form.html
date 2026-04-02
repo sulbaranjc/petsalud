@@ -16,6 +16,7 @@
     <form th:action="${especie.id == null} ? @{/catalogos/especies} : @{/catalogos/especies/{id}/editar(id=${especie.id})}"
           th:object="${especie}"
           method="post"
+          enctype="multipart/form-data"
           novalidate>
 
       <div class="mb-1">
@@ -57,6 +58,27 @@
         <div th:if="${#fields.hasErrors('descripcion')}" class="invalid-feedback">
           <span th:errors="*{descripcion}"></span>
         </div>
+      </div>
+
+      <!-- Imagen representativa -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Imagen representativa</label>
+
+        <!-- Vista previa si ya existe imagen -->
+        <div th:if="${especie.fotoUrl != null}" class="mb-2">
+          <img th:src="${especie.fotoUrl}" alt="Imagen actual"
+               style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid var(--ps-border);">
+          <small class="d-block text-muted mt-1">Imagen actual. Sube una nueva para reemplazarla.</small>
+        </div>
+
+        <input type="file" id="fotoFile" name="fotoFile"
+               class="form-control" accept="image/*">
+        <small class="form-text text-muted">Formatos permitidos: JPG, PNG, WebP. Opcional.</small>
+
+        <!-- Conservar fotoUrl al editar si no se sube nueva imagen -->
+        <input type="hidden" th:field="*{fotoUrl}">
+
+        <div th:if="${errorFoto}" class="text-danger mt-1 small" th:text="${errorFoto}"></div>
       </div>
 
       <!-- Activo (solo en edición) -->

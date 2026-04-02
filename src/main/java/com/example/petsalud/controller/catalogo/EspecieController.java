@@ -2,14 +2,17 @@ package com.example.petsalud.controller.catalogo;
 
 import com.example.petsalud.model.Page;
 import com.example.petsalud.model.catalogo.Especie;
+import com.example.petsalud.service.FileStorageService;
 import com.example.petsalud.service.catalogo.EspecieService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,10 +26,13 @@ public class EspecieController {
 
     private static final Set<String> SORT_COLS = Set.of("nombre");
 
-    private final EspecieService especieService;
+    private final EspecieService     especieService;
+    private final FileStorageService fileStorageService;
 
-    public EspecieController(EspecieService especieService) {
-        this.especieService = especieService;
+    public EspecieController(EspecieService especieService,
+                             FileStorageService fileStorageService) {
+        this.especieService     = especieService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping
@@ -90,9 +96,19 @@ public class EspecieController {
     @PostMapping
     public String guardar(@Valid @ModelAttribute Especie especie,
                           BindingResult result,
+                          @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
+                          Model model,
                           RedirectAttributes flash) {
         if (result.hasErrors()) {
             return "catalogos/especies/form";
+        }
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                especie.setFotoUrl(fileStorageService.store(fotoFile, "especies"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la imagen: " + e.getMessage());
+                return "catalogos/especies/form";
+            }
         }
         especieService.save(especie);
         flash.addFlashAttribute("mensajeExito", "Especie guardada correctamente.");
@@ -109,11 +125,22 @@ public class EspecieController {
     public String actualizar(@PathVariable Integer id,
                              @Valid @ModelAttribute Especie especie,
                              BindingResult result,
+                             @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
+                             Model model,
                              RedirectAttributes flash) {
         if (result.hasErrors()) {
             return "catalogos/especies/form";
         }
         especie.setId(id);
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                especie.setFotoUrl(fileStorageService.store(fotoFile, "especies"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la imagen: " + e.getMessage());
+                return "catalogos/especies/form";
+            }
+        }
+        // Si no se subió archivo nuevo, especie.fotoUrl conserva el valor del hidden field
         especieService.save(especie);
         flash.addFlashAttribute("mensajeExito", "Especie actualizada correctamente.");
         return "redirect:/catalogos/especies";

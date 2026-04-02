@@ -28,12 +28,13 @@ public class EspecieJdbcRepository implements EspecieRepository {
         e.setId(rs.getInt("id"));
         e.setNombre(rs.getString("nombre"));
         e.setDescripcion(rs.getString("descripcion"));
+        e.setFotoUrl(rs.getString("foto_url"));
         e.setActivo(rs.getBoolean("activo"));
         return e;
     };
 
     private static final String BASE_SELECT =
-            "SELECT id, nombre, descripcion, activo FROM especie";
+            "SELECT id, nombre, descripcion, foto_url, activo FROM especie";
 
     private static final Map<String, String[]> SORT_COLUMNS = Map.of(
             "nombre", new String[]{"nombre"}
@@ -83,7 +84,7 @@ public class EspecieJdbcRepository implements EspecieRepository {
 
     @Override
     public Optional<Especie> findById(Integer id) {
-        String sql = "SELECT id, nombre, descripcion, activo FROM especie WHERE id = :id";
+        String sql = "SELECT id, nombre, descripcion, foto_url, activo FROM especie WHERE id = :id";
         return jdbc.query(sql, Map.of("id", id), ROW_MAPPER)
                    .stream().findFirst();
     }
@@ -99,8 +100,8 @@ public class EspecieJdbcRepository implements EspecieRepository {
 
     private void insert(Especie especie) {
         String sql = """
-                INSERT INTO especie (nombre, descripcion, activo)
-                VALUES (:nombre, :descripcion, :activo)
+                INSERT INTO especie (nombre, descripcion, foto_url, activo)
+                VALUES (:nombre, :descripcion, :fotoUrl, :activo)
                 """;
         jdbc.update(sql, toParams(especie));
     }
@@ -110,6 +111,7 @@ public class EspecieJdbcRepository implements EspecieRepository {
                 UPDATE especie
                    SET nombre      = :nombre,
                        descripcion = :descripcion,
+                       foto_url    = :fotoUrl,
                        activo      = :activo
                  WHERE id = :id
                 """;
@@ -121,6 +123,7 @@ public class EspecieJdbcRepository implements EspecieRepository {
                 .addValue("id",          especie.getId())
                 .addValue("nombre",      especie.getNombre())
                 .addValue("descripcion", especie.getDescripcion())
+                .addValue("fotoUrl",     especie.getFotoUrl())
                 .addValue("activo",      especie.isActivo());
     }
 }
