@@ -185,39 +185,69 @@
         </div>
       </div>
 
-      <!-- Especie -->
-      <div class="mb-3">
-        <label for="idEspecie" class="form-label fw-semibold">Especie <span class="text-danger">*</span></label>
-        <select id="idEspecie"
-                th:field="*{idEspecie}"
-                th:classappend="${#fields.hasErrors('idEspecie')} ? 'is-invalid'"
-                class="form-select">
-          <option value="">-- Seleccione una especie --</option>
-          <option th:each="especie : ${especies}"
-                  th:value="${especie.id}"
-                  th:text="${especie.nombre}">
-          </option>
-        </select>
-        <div th:if="${#fields.hasErrors('idEspecie')}" class="invalid-feedback">
-          <span th:errors="*{idEspecie}"></span>
-        </div>
-      </div>
+      <!-- Bloque inferior: columna izquierda (campos) + columna derecha (imagen especie) -->
+      <div style="display:flex; gap:1rem; align-items:stretch;">
 
-      <!-- Activo (solo en edición) -->
-      <div class="mb-4" th:if="${raza.id != null}">
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
-          <label class="form-check-label fw-semibold" for="activo">Activo</label>
-        </div>
-      </div>
+        <!-- ── Columna izquierda: Especie, Activo, Botones ─────────────────── -->
+        <div style="flex:0 0 44%; display:flex; flex-direction:column; justify-content:space-between;">
 
-      <!-- Acciones -->
-      <div class="d-flex gap-2">
-        <button type="submit" class="btn-ps-primary">
-          <i class="bi bi-floppy-fill"></i>
-          <span th:text="${raza.id == null} ? 'Guardar' : 'Actualizar'"></span>
-        </button>
-        <a th:href="@{/catalogos/razas}" class="btn-ps-outline">Cancelar</a>
+          <!-- Especie -->
+          <div class="mb-3">
+            <label for="idEspecie" class="form-label fw-semibold">Especie <span class="text-danger">*</span></label>
+            <select id="idEspecie"
+                    th:field="*{idEspecie}"
+                    th:classappend="${#fields.hasErrors('idEspecie')} ? 'is-invalid'"
+                    class="form-select">
+              <option value="" data-foto="">-- Seleccione --</option>
+              <option th:each="especie : ${especies}"
+                      th:value="${especie.id}"
+                      th:text="${especie.nombre}"
+                      th:attr="data-foto=${especie.fotoUrl}">
+              </option>
+            </select>
+            <div th:if="${#fields.hasErrors('idEspecie')}" class="invalid-feedback" style="display:block;">
+              <span th:errors="*{idEspecie}"></span>
+            </div>
+          </div>
+
+          <!-- Activo (solo en edición) -->
+          <div class="mb-3" th:if="${raza.id != null}">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
+              <label class="form-check-label fw-semibold" for="activo">Activo</label>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-ps-primary">
+              <i class="bi bi-floppy-fill"></i>
+              <span th:text="${raza.id == null} ? 'Guardar' : 'Actualizar'"></span>
+            </button>
+            <a th:href="@{/catalogos/razas}" class="btn-ps-outline">Cancelar</a>
+          </div>
+
+        </div>
+
+        <!-- ── Columna derecha: imagen de la especie seleccionada ──────────── -->
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:.4rem;">
+          <div id="especieImgWrap"
+               style="width:100%; flex:1; min-height:0; border-radius:var(--radius-md);
+                      overflow:hidden; border:1px solid var(--ps-border);
+                      background:var(--ps-primary-light);
+                      display:flex; align-items:center; justify-content:center;">
+            <img id="especiePreviewImg"
+                 alt="Imagen de la especie"
+                 style="width:100%; height:100%; object-fit:cover; display:none;">
+            <span id="especiePreviewPlaceholder"
+                  style="color:var(--ps-primary); font-size:2.8rem; opacity:.35;">
+              <i class="bi bi-image"></i>
+            </span>
+          </div>
+          <small id="especiePreviewNombre"
+                 style="font-size:.75rem; color:var(--ps-text-muted); font-weight:600; text-align:center;"></small>
+        </div>
+
       </div>
 
     </form>
@@ -226,6 +256,36 @@
 
   <script>
     (function () {
+
+      // ── Preview de imagen de especie al cambiar el select ──────────────────
+      function actualizarEspeciePreview(select) {
+        const opt  = select.options[select.selectedIndex];
+        const foto = opt ? opt.getAttribute('data-foto') : '';
+        const img  = document.getElementById('especiePreviewImg');
+        const ph   = document.getElementById('especiePreviewPlaceholder');
+        const nom  = document.getElementById('especiePreviewNombre');
+
+        if (foto) {
+          img.src = foto;
+          img.style.display = 'block';
+          ph.style.display  = 'none';
+          nom.textContent   = opt.textContent.trim();
+        } else {
+          img.style.display = 'none';
+          ph.style.display  = '';
+          nom.textContent   = '';
+        }
+      }
+
+      const selectEspecie = document.getElementById('idEspecie');
+      // Cargar preview con el valor actual al abrir el formulario
+      actualizarEspeciePreview(selectEspecie);
+      // Actualizar al cambiar
+      selectEspecie.addEventListener('change', function () {
+        actualizarEspeciePreview(this);
+      });
+
+      // ── Avatar de la raza ──────────────────────────────────────────────────
       document.getElementById('fotoFile').addEventListener('change', function () {
         if (!this.files || !this.files[0]) return;
 

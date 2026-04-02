@@ -148,176 +148,196 @@
         </a>
       </div>
 
-      <div class="mascota-avatar-wrap">
+      <!-- ── Layout dos columnas: izquierda campos / derecha imágenes ──────────── -->
+      <div style="display:flex; gap:1.25rem; align-items:stretch;">
 
-        <div class="mascota-avatar-ring" onclick="document.getElementById('fotoFile').click()" title="Cambiar foto">
-          <div class="mascota-avatar">
+        <!-- ── Columna izquierda: avatar + campos + botones ───────────────────── -->
+        <div style="flex:0 0 56%; display:flex; flex-direction:column;">
 
-            <!-- Foto existente -->
-            <img th:if="${mascota.fotoUrl != null and !#strings.isEmpty(mascota.fotoUrl)}"
-                 id="fotoAvatarImg"
-                 th:src="${mascota.fotoUrl}"
-                 alt="Foto de la mascota">
+          <!-- Avatar compacto -->
+          <div class="mascota-avatar-wrap" style="padding:.6rem 0 .7rem;">
 
-            <!-- Placeholder cuando no hay foto -->
-            <div th:if="${mascota.fotoUrl == null or #strings.isEmpty(mascota.fotoUrl)}"
-                 id="fotoAvatarPlaceholder"
-                 class="mascota-avatar-placeholder">
-              <i class="bi bi-heart-fill"></i>
-              <span>Sin foto</span>
+            <div class="mascota-avatar-ring" onclick="document.getElementById('fotoFile').click()" title="Cambiar foto">
+              <div class="mascota-avatar">
+                <img th:if="${mascota.fotoUrl != null and !#strings.isEmpty(mascota.fotoUrl)}"
+                     id="fotoAvatarImg"
+                     th:src="${mascota.fotoUrl}"
+                     alt="Foto de la mascota">
+                <div th:if="${mascota.fotoUrl == null or #strings.isEmpty(mascota.fotoUrl)}"
+                     id="fotoAvatarPlaceholder"
+                     class="mascota-avatar-placeholder">
+                  <i class="bi bi-heart-fill"></i>
+                  <span>Sin foto</span>
+                </div>
+                <div class="mascota-avatar-overlay">
+                  <i class="bi bi-camera-fill"></i>
+                  <span th:text="${mascota.id == null} ? 'Subir foto' : 'Cambiar foto'">Subir foto</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Overlay de cámara al hover -->
-            <div class="mascota-avatar-overlay">
-              <i class="bi bi-camera-fill"></i>
-              <span th:text="${mascota.id == null} ? 'Subir foto' : 'Cambiar foto'">Subir foto</span>
+            <div class="mascota-avatar-hint">
+              <i class="bi bi-camera"></i>
+              <span th:text="${mascota.id == null} ? 'Haz clic en la imagen para subir una foto' : 'Haz clic en la imagen para cambiar la foto'">
+                Haz clic en la imagen para subir una foto
+              </span>
             </div>
+            <span class="mascota-avatar-formats">JPG · PNG · WEBP · máx. 5 MB</span>
+
+            <input type="file" id="fotoFile" name="fotoFile" accept="image/*" style="display:none;">
+            <input type="hidden" th:field="*{fotoUrl}">
+            <div th:if="${errorFoto}" class="text-danger small" th:text="${errorFoto}"></div>
           </div>
-        </div>
 
-        <div class="mascota-avatar-hint">
-          <i class="bi bi-camera"></i>
-          <span th:text="${mascota.id == null} ? 'Haz clic en la imagen para subir una foto' : 'Haz clic en la imagen para cambiar la foto'">
-            Haz clic en la imagen para subir una foto
-          </span>
-        </div>
-        <span class="mascota-avatar-formats">JPG · PNG · WEBP · máx. 5 MB</span>
+          <!-- Campos -->
+          <div class="row g-2 mt-1" style="flex:1;">
 
-        <!-- Campo file oculto — se activa al clicar el avatar -->
-        <input type="file" id="fotoFile" name="fotoFile" accept="image/*" style="display:none;">
+            <!-- Nombre -->
+            <div class="col-12">
+              <label for="nombre" class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+              <input type="text" id="nombre" th:field="*{nombre}"
+                     th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                     class="form-control" placeholder="Nombre de la mascota" maxlength="100">
+              <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                <span th:errors="*{nombre}"></span>
+              </div>
+            </div>
 
-        <!-- Preserva la URL existente al enviar sin nueva foto -->
-        <input type="hidden" th:field="*{fotoUrl}">
+            <!-- Fecha + Sexo -->
+            <div class="col-7">
+              <label for="fechaNacimiento" class="form-label fw-semibold">Fecha de nacimiento</label>
+              <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control">
+            </div>
+            <div class="col-5">
+              <label for="sexo" class="form-label fw-semibold">Sexo <span class="text-danger">*</span></label>
+              <select id="sexo" th:field="*{sexo}"
+                      th:classappend="${#fields.hasErrors('sexo')} ? 'is-invalid'"
+                      class="form-select">
+                <option value="Desconocido">Desconocido</option>
+                <option value="M">Macho</option>
+                <option value="F">Hembra</option>
+              </select>
+              <div th:if="${#fields.hasErrors('sexo')}" class="invalid-feedback">
+                <span th:errors="*{sexo}"></span>
+              </div>
+            </div>
 
-        <div th:if="${errorFoto}" class="text-danger small" th:text="${errorFoto}"></div>
-      </div>
-      <!-- ── / Foto ──────────────────────────────────────────────────────────── -->
+            <!-- Color -->
+            <div class="col-12">
+              <label for="color" class="form-label fw-semibold">Color / pelaje</label>
+              <input type="text" id="color" th:field="*{color}" class="form-control"
+                     placeholder="Ej: Negro con manchas blancas" maxlength="80">
+            </div>
 
-      <div class="row g-3 mt-1">
+            <!-- Propietario -->
+            <div class="col-12">
+              <label for="idPropietario" class="form-label fw-semibold">Propietario <span class="text-danger">*</span></label>
+              <select id="idPropietario" th:field="*{idPropietario}"
+                      th:classappend="${#fields.hasErrors('idPropietario')} ? 'is-invalid'"
+                      class="form-select">
+                <option value="">-- Seleccione un propietario --</option>
+                <option th:each="p : ${propietarios}" th:value="${p.id}" th:text="${p.nombreCompleto}"></option>
+              </select>
+              <div th:if="${#fields.hasErrors('idPropietario')}" class="invalid-feedback">
+                <span th:errors="*{idPropietario}"></span>
+              </div>
+            </div>
 
-        <!-- Nombre -->
-        <div class="col-md-6">
-          <label for="nombre" class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
-          <input type="text"
-                 id="nombre"
-                 th:field="*{nombre}"
-                 th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
-                 class="form-control"
-                 placeholder="Nombre de la mascota"
-                 maxlength="100">
-          <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
-            <span th:errors="*{nombre}"></span>
+            <!-- Especie -->
+            <div class="col-12">
+              <label for="idEspecie" class="form-label fw-semibold">Especie <span class="text-danger">*</span></label>
+              <select id="idEspecie" th:field="*{idEspecie}"
+                      th:classappend="${#fields.hasErrors('idEspecie')} ? 'is-invalid'"
+                      class="form-select">
+                <option value="" data-foto="">-- Seleccione una especie --</option>
+                <option th:each="especie : ${especies}"
+                        th:value="${especie.id}"
+                        th:text="${especie.nombre}"
+                        th:attr="data-foto=${especie.fotoUrl}">
+                </option>
+              </select>
+              <div th:if="${#fields.hasErrors('idEspecie')}" class="invalid-feedback">
+                <span th:errors="*{idEspecie}"></span>
+              </div>
+            </div>
+
+            <!-- Raza -->
+            <div class="col-12">
+              <label for="idRaza" class="form-label fw-semibold">
+                Raza <small class="text-muted">(opcional)</small>
+              </label>
+              <select id="idRaza" th:field="*{idRaza}" class="form-select">
+                <option value="" data-foto="" data-id-especie="">Sin raza / Mestizo</option>
+                <option th:each="raza : ${razas}"
+                        th:value="${raza.id}"
+                        th:text="${raza.nombre}"
+                        th:attr="data-id-especie=${raza.idEspecie}, data-foto=${raza.fotoUrl}">
+                </option>
+              </select>
+              <small class="text-muted">Seleccione primero una especie para ver sus razas.</small>
+            </div>
+
+            <!-- Activo -->
+            <div class="col-12" th:if="${mascota.id != null}">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
+                <label class="form-check-label fw-semibold" for="activo">Activo</label>
+              </div>
+            </div>
+
+          </div><!-- /row campos -->
+
+          <!-- Botones -->
+          <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn-ps-primary">
+              <i class="bi bi-floppy-fill"></i>
+              <span th:text="${mascota.id == null} ? 'Guardar' : 'Actualizar'"></span>
+            </button>
+            <a th:href="@{/mascotas}" class="btn-ps-outline">Cancelar</a>
           </div>
-        </div>
 
-        <!-- Fecha de nacimiento -->
-        <div class="col-md-3">
-          <label for="fechaNacimiento" class="form-label fw-semibold">Fecha de nacimiento</label>
-          <input type="date"
-                 id="fechaNacimiento"
-                 th:field="*{fechaNacimiento}"
-                 class="form-control">
-        </div>
+        </div><!-- /columna izquierda -->
 
-        <!-- Sexo -->
-        <div class="col-md-3">
-          <label for="sexo" class="form-label fw-semibold">Sexo <span class="text-danger">*</span></label>
-          <select id="sexo"
-                  th:field="*{sexo}"
-                  th:classappend="${#fields.hasErrors('sexo')} ? 'is-invalid'"
-                  class="form-select">
-            <option value="Desconocido">Desconocido</option>
-            <option value="M">Macho</option>
-            <option value="F">Hembra</option>
-          </select>
-          <div th:if="${#fields.hasErrors('sexo')}" class="invalid-feedback">
-            <span th:errors="*{sexo}"></span>
+        <!-- ── Columna derecha: imágenes de especie y raza ────────────────────── -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:.75rem;">
+
+          <!-- Imagen especie -->
+          <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+            <div style="flex:1; border-radius:var(--radius-md); overflow:hidden;
+                        border:1px solid var(--ps-border); background:var(--ps-primary-light);
+                        display:flex; align-items:center; justify-content:center; position:relative;
+                        min-height:0;">
+              <img id="especiePreviewImg" alt="Especie"
+                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;">
+              <span id="especiePreviewPh" style="color:var(--ps-primary); font-size:2.8rem; opacity:.35;">
+                <i class="bi bi-image"></i>
+              </span>
+            </div>
+            <small id="especiePreviewNom"
+                   style="display:block; text-align:center; font-size:.73rem;
+                          color:var(--ps-text-muted); font-weight:600; margin-top:.3rem;"></small>
           </div>
-        </div>
 
-        <!-- Color -->
-        <div class="col-md-6">
-          <label for="color" class="form-label fw-semibold">Color / pelaje</label>
-          <input type="text"
-                 id="color"
-                 th:field="*{color}"
-                 class="form-control"
-                 placeholder="Ej: Negro con manchas blancas"
-                 maxlength="80">
-        </div>
-
-        <!-- Propietario -->
-        <div class="col-md-6">
-          <label for="idPropietario" class="form-label fw-semibold">Propietario <span class="text-danger">*</span></label>
-          <select id="idPropietario"
-                  th:field="*{idPropietario}"
-                  th:classappend="${#fields.hasErrors('idPropietario')} ? 'is-invalid'"
-                  class="form-select">
-            <option value="">-- Seleccione un propietario --</option>
-            <option th:each="p : ${propietarios}"
-                    th:value="${p.id}"
-                    th:text="${p.nombreCompleto}">
-            </option>
-          </select>
-          <div th:if="${#fields.hasErrors('idPropietario')}" class="invalid-feedback">
-            <span th:errors="*{idPropietario}"></span>
+          <!-- Imagen raza -->
+          <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+            <div style="flex:1; border-radius:var(--radius-md); overflow:hidden;
+                        border:1px solid var(--ps-border); background:var(--ps-primary-light);
+                        display:flex; align-items:center; justify-content:center; position:relative;
+                        min-height:0;">
+              <img id="razaPreviewImg" alt="Raza"
+                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;">
+              <span id="razaPreviewPh" style="color:var(--ps-primary); font-size:2.8rem; opacity:.35;">
+                <i class="bi bi-image"></i>
+              </span>
+            </div>
+            <small id="razaPreviewNom"
+                   style="display:block; text-align:center; font-size:.73rem;
+                          color:var(--ps-text-muted); font-weight:600; margin-top:.3rem;"></small>
           </div>
-        </div>
 
-        <!-- Especie -->
-        <div class="col-md-6">
-          <label for="idEspecie" class="form-label fw-semibold">Especie <span class="text-danger">*</span></label>
-          <select id="idEspecie"
-                  th:field="*{idEspecie}"
-                  th:classappend="${#fields.hasErrors('idEspecie')} ? 'is-invalid'"
-                  class="form-select">
-            <option value="">-- Seleccione una especie --</option>
-            <option th:each="especie : ${especies}"
-                    th:value="${especie.id}"
-                    th:text="${especie.nombre}">
-            </option>
-          </select>
-          <div th:if="${#fields.hasErrors('idEspecie')}" class="invalid-feedback">
-            <span th:errors="*{idEspecie}"></span>
-          </div>
-        </div>
+        </div><!-- /columna derecha -->
 
-        <!-- Raza (filtrada por especie vía JS) -->
-        <div class="col-md-6">
-          <label for="idRaza" class="form-label fw-semibold">
-            Raza <small class="text-muted">(opcional)</small>
-          </label>
-          <select id="idRaza"
-                  th:field="*{idRaza}"
-                  class="form-select">
-            <option value="">Sin raza / Mestizo</option>
-            <option th:each="raza : ${razas}"
-                    th:value="${raza.id}"
-                    th:text="${raza.nombre}"
-                    th:attr="data-id-especie=${raza.idEspecie}">
-            </option>
-          </select>
-          <small class="text-muted">Seleccione primero una especie para ver sus razas.</small>
-        </div>
-
-        <!-- Activo (solo en edición) -->
-        <div class="col-12" th:if="${mascota.id != null}">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
-            <label class="form-check-label fw-semibold" for="activo">Activo</label>
-          </div>
-        </div>
-
-      </div><!-- /row -->
-
-      <!-- Acciones -->
-      <div class="d-flex gap-2 mt-4">
-        <button type="submit" class="btn-ps-primary">
-          <i class="bi bi-floppy-fill"></i>
-          <span th:text="${mascota.id == null} ? 'Guardar' : 'Actualizar'"></span>
-        </button>
-        <a th:href="@{/mascotas}" class="btn-ps-outline">Cancelar</a>
-      </div>
+      </div><!-- /layout dos columnas -->
 
     </form>
   </div>
@@ -341,10 +361,40 @@
             razaActual.dataset.idEspecie !== idEsp) {
           razaSelect.value = '';
         }
+        actualizarPreview(razaSelect, 'razaPreviewImg', 'razaPreviewPh', 'razaPreviewNom');
       }
 
       especieSelect.addEventListener('change', filtrarRazas);
       filtrarRazas();
+
+      // ── Previews de especie y raza ───────────────────────────────────────────
+      function actualizarPreview(select, imgId, phId, nomId) {
+        const opt  = select.options[select.selectedIndex];
+        const foto = opt ? (opt.getAttribute('data-foto') || '') : '';
+        const img  = document.getElementById(imgId);
+        const ph   = document.getElementById(phId);
+        const nom  = document.getElementById(nomId);
+        if (foto) {
+          img.src = foto;
+          img.style.display = 'block';
+          ph.style.display  = 'none';
+          nom.textContent   = opt.textContent.trim();
+        } else {
+          img.style.display = 'none';
+          ph.style.display  = '';
+          nom.textContent   = '';
+        }
+      }
+
+      especieSelect.addEventListener('change', function () {
+        actualizarPreview(this, 'especiePreviewImg', 'especiePreviewPh', 'especiePreviewNom');
+      });
+      razaSelect.addEventListener('change', function () {
+        actualizarPreview(this, 'razaPreviewImg', 'razaPreviewPh', 'razaPreviewNom');
+      });
+      // Cargar previews con los valores actuales al abrir el formulario
+      actualizarPreview(especieSelect, 'especiePreviewImg', 'especiePreviewPh', 'especiePreviewNom');
+      actualizarPreview(razaSelect,    'razaPreviewImg',    'razaPreviewPh',    'razaPreviewNom');
 
       // ── Avatar: vista previa al seleccionar archivo ──────────────────────────
       document.getElementById('fotoFile').addEventListener('change', function () {
