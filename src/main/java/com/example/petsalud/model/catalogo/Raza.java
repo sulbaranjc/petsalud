@@ -15,6 +15,9 @@ public class Raza {
     @NotNull(message = "La especie es obligatoria")
     private Integer idEspecie;
 
+    @Size(max = 500, message = "La URL de la foto no puede superar los 500 caracteres")
+    private String fotoUrl;
+
     private boolean activo = true;
 
     /** Campo de solo lectura, poblado desde JOIN con especie. */
@@ -30,6 +33,9 @@ public class Raza {
 
     public Integer getIdEspecie() { return idEspecie; }
     public void setIdEspecie(Integer idEspecie) { this.idEspecie = idEspecie; }
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }

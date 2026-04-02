@@ -2,6 +2,7 @@ package com.example.petsalud.controller.catalogo;
 
 import com.example.petsalud.model.Page;
 import com.example.petsalud.model.catalogo.Raza;
+import com.example.petsalud.service.FileStorageService;
 import com.example.petsalud.service.catalogo.EspecieService;
 import com.example.petsalud.service.catalogo.RazaService;
 import jakarta.validation.Valid;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,12 +27,16 @@ public class RazaController {
 
     private static final Set<String> SORT_COLS = Set.of("nombre", "especie");
 
-    private final RazaService razaService;
-    private final EspecieService especieService;
+    private final RazaService        razaService;
+    private final EspecieService     especieService;
+    private final FileStorageService fileStorageService;
 
-    public RazaController(RazaService razaService, EspecieService especieService) {
-        this.razaService = razaService;
-        this.especieService = especieService;
+    public RazaController(RazaService razaService,
+                          EspecieService especieService,
+                          FileStorageService fileStorageService) {
+        this.razaService        = razaService;
+        this.especieService     = especieService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping
@@ -97,11 +104,21 @@ public class RazaController {
     @PostMapping
     public String guardar(@Valid @ModelAttribute Raza raza,
                           BindingResult result,
+                          @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
                           Model model,
                           RedirectAttributes flash) {
         if (result.hasErrors()) {
             model.addAttribute("especies", especieService.findAll());
             return "catalogos/razas/form";
+        }
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                raza.setFotoUrl(fileStorageService.store(fotoFile, "razas"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la imagen: " + e.getMessage());
+                model.addAttribute("especies", especieService.findAll());
+                return "catalogos/razas/form";
+            }
         }
         razaService.save(raza);
         flash.addFlashAttribute("mensajeExito", "Raza guardada correctamente.");
@@ -119,6 +136,7 @@ public class RazaController {
     public String actualizar(@PathVariable Integer id,
                              @Valid @ModelAttribute Raza raza,
                              BindingResult result,
+                             @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
                              Model model,
                              RedirectAttributes flash) {
         if (result.hasErrors()) {
@@ -126,6 +144,16 @@ public class RazaController {
             return "catalogos/razas/form";
         }
         raza.setId(id);
+        if (fotoFile != null && !fotoFile.isEmpty()) {
+            try {
+                raza.setFotoUrl(fileStorageService.store(fotoFile, "razas"));
+            } catch (IOException e) {
+                model.addAttribute("errorFoto", "No se pudo guardar la imagen: " + e.getMessage());
+                model.addAttribute("especies", especieService.findAll());
+                return "catalogos/razas/form";
+            }
+        }
+        // Si no se subió archivo nuevo, raza.fotoUrl conserva el valor del hidden field
         razaService.save(raza);
         flash.addFlashAttribute("mensajeExito", "Raza actualizada correctamente.");
         return "redirect:/catalogos/razas";

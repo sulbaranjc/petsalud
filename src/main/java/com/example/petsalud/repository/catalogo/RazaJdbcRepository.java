@@ -28,6 +28,7 @@ public class RazaJdbcRepository implements RazaRepository {
         r.setId(rs.getInt("id"));
         r.setNombre(rs.getString("nombre"));
         r.setIdEspecie(rs.getInt("id_especie"));
+        r.setFotoUrl(rs.getString("foto_url"));
         r.setActivo(rs.getBoolean("activo"));
         r.setNombreEspecie(rs.getString("nombre_especie"));
         return r;
@@ -37,6 +38,7 @@ public class RazaJdbcRepository implements RazaRepository {
             SELECT r.id,
                    r.nombre,
                    r.id_especie,
+                   r.foto_url,
                    r.activo,
                    e.nombre AS nombre_especie
               FROM raza r
@@ -111,8 +113,8 @@ public class RazaJdbcRepository implements RazaRepository {
 
     private void insert(Raza raza) {
         String sql = """
-                INSERT INTO raza (nombre, id_especie, activo)
-                VALUES (:nombre, :idEspecie, :activo)
+                INSERT INTO raza (nombre, id_especie, foto_url, activo)
+                VALUES (:nombre, :idEspecie, :fotoUrl, :activo)
                 """;
         jdbc.update(sql, toParams(raza));
     }
@@ -122,6 +124,7 @@ public class RazaJdbcRepository implements RazaRepository {
                 UPDATE raza
                    SET nombre     = :nombre,
                        id_especie = :idEspecie,
+                       foto_url   = :fotoUrl,
                        activo     = :activo
                  WHERE id = :id
                 """;
@@ -133,6 +136,7 @@ public class RazaJdbcRepository implements RazaRepository {
                 .addValue("id",        raza.getId())
                 .addValue("nombre",    raza.getNombre())
                 .addValue("idEspecie", raza.getIdEspecie())
+                .addValue("fotoUrl",   raza.getFotoUrl())
                 .addValue("activo",    raza.isActivo());
     }
 }

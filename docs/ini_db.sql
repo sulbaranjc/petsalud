@@ -91,6 +91,7 @@ CREATE TABLE raza (
   id         INT          NOT NULL AUTO_INCREMENT COMMENT 'Identificador único de la raza',
   nombre     VARCHAR(100) NOT NULL                COMMENT 'Nombre de la raza (ej: Labrador, Siamés)',
   id_especie INT          NOT NULL                COMMENT 'Especie a la que pertenece esta raza',
+  foto_url   VARCHAR(500)     NULL                COMMENT 'URL o ruta de la imagen representativa de la raza',
   activo     TINYINT(1)   NOT NULL DEFAULT 1      COMMENT '1 = activo, 0 = inactivo',
   PRIMARY KEY (id),
   UNIQUE INDEX uq_raza_nombre_especie (nombre, id_especie),
